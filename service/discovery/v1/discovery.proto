@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package dubbo.service.discovery.v1;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+
+option go_package = "github.com/dubbo-kubernetes/xds-api/service/discovery/v1;discoveryv1";
+
+// A DiscoveryRequest requests a set of versioned resources of the same type for
+// a given Envoy node on some API.
+// [#next-free-field: 8]
+message DiscoveryRequest {
+  string version_info = 1;
+
+  repeated string resource_names = 3;
+
+  string type_url = 4;
+
+  string response_nonce = 5;
+}
+
+// [#next-free-field: 8]
+message DiscoveryResponse {
+  string version_info = 1;
+
+  repeated google.protobuf.Any resources = 2;
+
+  // [#not-implemented-hide:]
+  bool canary = 3;
+
+  string type_url = 4;
+
+  string nonce = 5;
+}
+
+// [#next-free-field: 10]
+message DeltaDiscoveryRequest {
+  string type_url = 2;
+
+  repeated string resource_names_subscribe = 3;
+
+  repeated string resource_names_unsubscribe = 4;
+
+  map<string, string> initial_resource_versions = 5;
+
+  string response_nonce = 6;
+}
+
+// [#next-free-field: 10]
+message DeltaDiscoveryResponse {
+  string system_version_info = 1;
+
+  repeated Resource resources = 2;
+
+  string type_url = 3;
+
+  repeated string removed_resources = 4;
+
+  string nonce = 5;
+}
+
+// [#next-free-field: 10]
+message Resource {
+  message CacheControl {
+    bool do_not_cache = 1;
+  }
+
+  // The resource's name, to distinguish it from others of the same type of resource.
+  // Only one of "name" or "resource_name" may be set.
+  string name = 1;
+
+  repeated string aliases = 2;
+
+  string version = 3;
+
+  google.protobuf.Any resource = 4;
+
+  google.protobuf.Duration ttl = 5;
+
+  // Cache control properties for the resource.
+  // [#not-implemented-hide:]
+  CacheControl cache_control = 6;
+}

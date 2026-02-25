@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package config.endpoint.v1;
+
+import "google/protobuf/wrappers.proto";
+import "config/endpoint/v1/endpoint_components.proto";
+
+option go_package = "github.com/dubbo-kubernetes/xds-api/config/endpoint/v1;endpointv1";
+
+// Each route from RDS will map to a single cluster or traffic split across
+// clusters using weights expressed in the RDS WeightedCluster.
+//
+// With EDS, cluster membership is determined at runtime via the Endpoint
+// Discovery Service. Each Cluster has associated with it a load_assignment
+// which needs to be fetched in two cases:
+//
+// 1. During initial Envoy startup, for clusters defined in the static Bootstrap config.
+// 2. When associated Cluster is updated via CDS.
+//
+// [#next-free-field: 6]
+message ClusterLoadAssignment {
+  string cluster_name = 1;
+  repeated LocalityLbEndpoints endpoints = 2;
+}

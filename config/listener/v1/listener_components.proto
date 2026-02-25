@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package config.listener.v1;
+
+import "google/protobuf/any.proto";
+
+option go_package = "github.com/dubbo-kubernetes/xds-api/config/listener/v1;listenerv1";
+
+// [#next-free-field: 6]
+message Filter {
+
+  string name = 1;
+
+  oneof config_type {
+    google.protobuf.Any typed_config = 4;
+  }
+
+  reserved 2, 3;
+  reserved "config";
+}
+
+// [#next-free-field: 10]
+message FilterChain {
+  repeated Filter filters = 3;
+
+  reserved 2, 8;
+  reserved "tls_context", "on_demand_configuration";
+}

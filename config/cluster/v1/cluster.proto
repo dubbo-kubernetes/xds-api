@@ -1,0 +1,93 @@
+syntax = "proto3";
+
+package config.cluster.v1;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/wrappers.proto";
+import "config/core/v1/base.proto";
+import "config/endpoint/v1/endpoint.proto";
+
+option go_package = "github.com/dubbo-kubernetes/xds-api/config/cluster/v1;clusterv1";
+
+// Configuration for a single upstream cluster.
+message Cluster {
+
+  // Only valid when discovery type is EDS.
+  message EdsClusterConfig {
+    // Configuration for the source of EDS updates for this Cluster.
+    config.core.v1.ConfigSource eds_config = 1;
+
+    // Optional alternative to cluster name to present to EDS. This does not
+    // have the same restrictions as cluster name, i.e. it may be arbitrary
+    // length.
+    string service_name = 2;
+  }
+
+  // Common configuration for all load balancer implementations.
+  // [#next-free-field: 9]
+  message CommonLbConfig {
+  }
+
+  // Refer to :ref:`service discovery type <arch_overview_service_discovery_types>`
+  // for an explanation on each type.
+  enum DiscoveryType {
+    // Refer to the static discovery type.
+    STATIC = 0;
+
+    // Refer to the strict DNS discovery type.
+    STRICT_DNS = 1;
+
+    // Refer to the logical DNS discovery type.
+    LOGICAL_DNS = 2;
+
+    // Refer to the service discovery type.
+    EDS = 3;
+  }
+
+  // Refer to :ref:`load balancer type <arch_overview_load_balancing_types>` for an explanation on each type.
+  enum LbPolicy {
+    // Refer to the round robin load balancing policy for an explanation.
+    ROUND_ROBIN = 0;
+
+    // Refer to the least request load balancing policy for an explanation.
+    LEAST_REQUEST = 1;
+
+    // Refer to the ring hash load balancing policy for an explanation.
+    RING_HASH = 2;
+
+    // Refer to the random load balancing policy for an explanation.
+    RANDOM = 3;
+  }
+
+  // Supplies the name of the cluster which must be unique across all clusters.
+  string name = 1;
+
+  // An optional alternative to the cluster name to be used for observability.
+  string alt_stat_name = 28;
+
+  oneof cluster_discovery_type {
+    // The :ref:`service discovery type <arch_overview_service_discovery_types>`
+    // to use for resolving the cluster.
+    DiscoveryType type = 2;
+  }
+
+  // Configuration to use for EDS updates for the Cluster.
+  EdsClusterConfig eds_cluster_config = 3;
+
+  // The timeout for new network connections to hosts in the cluster.
+  google.protobuf.Duration connect_timeout = 4;
+
+  // Soft limit on size of the cluster's connections read and write buffers.
+  google.protobuf.UInt32Value per_connection_buffer_limit_bytes = 5;
+
+  // The load balancer type to use when picking a host in the cluster.
+  LbPolicy lb_policy = 6;
+
+  // Setting this is required for specifying members of STATIC, STRICT_DNS or LOGICAL_DNS clusters.
+  config.endpoint.v1.ClusterLoadAssignment load_assignment = 33;
+
+  // Common configuration for all load balancer implementations.
+  CommonLbConfig common_lb_config = 27;
+}

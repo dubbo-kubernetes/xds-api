@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package extensions.filters.network.http_connection_manager.v1;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+import "config/core/v1/base.proto";
+import "config/route/v1/route.proto";
+
+option go_package = "github.com/dubbo-kubernetes/xds-api/extensions/filters/network/http_connection_manager/v1;http_connection_managerv1";
+
+// [#next-free-field: 62]
+// [#extension: envoy.filters.network.http_connection_manager]
+message HttpConnectionManager {
+
+  enum CodecType {
+    // For every new connection, the connection manager will determine which codec to use.
+    AUTO = 0;
+  }
+
+  // Supplies the type of codec that the connection manager should use.
+  CodecType codec_type = 1;
+
+  // The human readable prefix to use when emitting statistics for the
+  // connection manager. See the statistics documentation for more information.
+  string stat_prefix = 2;
+
+  oneof route_specifier {
+    // The connection manager's route table will be dynamically loaded via the RDS API.
+    Rds rds = 3;
+
+    // The route table for the connection manager is static and is specified in this property.
+    config.route.v1.RouteConfiguration route_config = 4;
+  }
+
+  // A list of individual HTTP filters that make up the filter chain for requests made to the
+  // connection manager.
+  repeated HttpFilter http_filters = 5;
+}
+
+// Configuration to compose a new response from response by filter.
+// [#next-free-field: 6]
+
+// Configuration to use RDS for the route configuration.
+message Rds {
+  // Configuration source specifier for RDS.
+  config.core.v1.ConfigSource config_source = 1;
+
+  // The name of the route configuration. This name will be passed to the RDS API.
+  string route_config_name = 2;
+}
+
+// [#next-free-field: 8]
+message HttpFilter {
+  // The name of the filter configuration. It also serves as a resource name in ExtensionConfigDS.
+  string name = 1;
+
+  oneof config_type {
+    // Filter specific configuration which depends on the filter being instantiated.
+    // See the supported filters for further documentation.
+    // [#extension-category: envoy.filters.http]
+    google.protobuf.Any typed_config = 4;
+  }
+}
