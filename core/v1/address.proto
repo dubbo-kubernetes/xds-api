@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package core.v1;
+
+import "google/protobuf/wrappers.proto";
+
+option go_package = "github.com/dubbo-kubernetes/core/v1;corev1";
+
+message Address {}
+

@@ -3,10 +3,13 @@ syntax = "proto3";
 package endpoint.v1;
 
 import "google/protobuf/wrappers.proto";
+import "core/v1/base.proto";
+import "core/v1/address.proto";
 
 option go_package = "github.com/dubbo-kubernetes/xds-api/endpoint/v1;endpointv1";
 
 message Endpoint {
+  core.v1.Address address = 1;
 }
 
 message LbEndpoint {
@@ -22,7 +25,7 @@ message LocalityLbEndpoints {
   message LbEndpointList {
     repeated LbEndpoint lb_endpoints = 1;
   }
-
+  core.v1.Locality locality = 1;
   repeated LbEndpoint lb_endpoints = 2;
 
   google.protobuf.UInt32Value load_balancing_weight = 3;

@@ -7,6 +7,8 @@
 package endpointv1
 
 import (
+	v1 "github.com/dubbo-kubernetes/core/v1"
+	v11 "github.com/dubbo-kubernetes/xds-api/core/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
@@ -24,6 +26,7 @@ const (
 
 type Endpoint struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Address       *v1.Address            `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -56,6 +59,13 @@ func (x *Endpoint) ProtoReflect() protoreflect.Message {
 // Deprecated: Use Endpoint.ProtoReflect.Descriptor instead.
 func (*Endpoint) Descriptor() ([]byte, []int) {
 	return file_endpoint_v1_endpoint_components_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Endpoint) GetAddress() *v1.Address {
+	if x != nil {
+		return x.Address
+	}
+	return nil
 }
 
 type LbEndpoint struct {
@@ -150,6 +160,7 @@ func (*LbEndpoint_EndpointName) isLbEndpoint_HostIdentifier() {}
 
 type LocalityLbEndpoints struct {
 	state               protoimpl.MessageState  `protogen:"open.v1"`
+	Locality            *v11.Locality           `protobuf:"bytes,1,opt,name=locality,proto3" json:"locality,omitempty"`
 	LbEndpoints         []*LbEndpoint           `protobuf:"bytes,2,rep,name=lb_endpoints,json=lbEndpoints,proto3" json:"lb_endpoints,omitempty"`
 	LoadBalancingWeight *wrapperspb.UInt32Value `protobuf:"bytes,3,opt,name=load_balancing_weight,json=loadBalancingWeight,proto3" json:"load_balancing_weight,omitempty"`
 	Priority            uint32                  `protobuf:"varint,5,opt,name=priority,proto3" json:"priority,omitempty"`
@@ -186,6 +197,13 @@ func (x *LocalityLbEndpoints) ProtoReflect() protoreflect.Message {
 // Deprecated: Use LocalityLbEndpoints.ProtoReflect.Descriptor instead.
 func (*LocalityLbEndpoints) Descriptor() ([]byte, []int) {
 	return file_endpoint_v1_endpoint_components_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *LocalityLbEndpoints) GetLocality() *v11.Locality {
+	if x != nil {
+		return x.Locality
+	}
+	return nil
 }
 
 func (x *LocalityLbEndpoints) GetLbEndpoints() []*LbEndpoint {
@@ -264,16 +282,17 @@ var File_endpoint_v1_endpoint_components_proto protoreflect.FileDescriptor
 
 const file_endpoint_v1_endpoint_components_proto_rawDesc = "" +
 	"\n" +
-	"%endpoint/v1/endpoint_components.proto\x12\vendpoint.v1\x1a\x1egoogle/protobuf/wrappers.proto\"\n" +
-	"\n" +
-	"\bEndpoint\"\xcd\x01\n" +
+	"%endpoint/v1/endpoint_components.proto\x12\vendpoint.v1\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x12core/v1/base.proto\x1a\x15core/v1/address.proto\"6\n" +
+	"\bEndpoint\x12*\n" +
+	"\aaddress\x18\x01 \x01(\v2\x10.core.v1.AddressR\aaddress\"\xcd\x01\n" +
 	"\n" +
 	"LbEndpoint\x123\n" +
 	"\bendpoint\x18\x01 \x01(\v2\x15.endpoint.v1.EndpointH\x00R\bendpoint\x12%\n" +
 	"\rendpoint_name\x18\x05 \x01(\tH\x00R\fendpointName\x12P\n" +
 	"\x15load_balancing_weight\x18\x04 \x01(\v2\x1c.google.protobuf.UInt32ValueR\x13loadBalancingWeightB\x11\n" +
-	"\x0fhost_identifier\"\xc9\x02\n" +
-	"\x13LocalityLbEndpoints\x12:\n" +
+	"\x0fhost_identifier\"\xf8\x02\n" +
+	"\x13LocalityLbEndpoints\x12-\n" +
+	"\blocality\x18\x01 \x01(\v2\x11.core.v1.LocalityR\blocality\x12:\n" +
 	"\flb_endpoints\x18\x02 \x03(\v2\x17.endpoint.v1.LbEndpointR\vlbEndpoints\x12P\n" +
 	"\x15load_balancing_weight\x18\x03 \x01(\v2\x1c.google.protobuf.UInt32ValueR\x13loadBalancingWeight\x12\x1a\n" +
 	"\bpriority\x18\x05 \x01(\rR\bpriority\x12:\n" +
@@ -299,20 +318,24 @@ var file_endpoint_v1_endpoint_components_proto_goTypes = []any{
 	(*LbEndpoint)(nil),                         // 1: endpoint.v1.LbEndpoint
 	(*LocalityLbEndpoints)(nil),                // 2: endpoint.v1.LocalityLbEndpoints
 	(*LocalityLbEndpoints_LbEndpointList)(nil), // 3: endpoint.v1.LocalityLbEndpoints.LbEndpointList
-	(*wrapperspb.UInt32Value)(nil),             // 4: google.protobuf.UInt32Value
+	(*v1.Address)(nil),                         // 4: core.v1.Address
+	(*wrapperspb.UInt32Value)(nil),             // 5: google.protobuf.UInt32Value
+	(*v11.Locality)(nil),                       // 6: core.v1.Locality
 }
 var file_endpoint_v1_endpoint_components_proto_depIdxs = []int32{
-	0, // 0: endpoint.v1.LbEndpoint.endpoint:type_name -> endpoint.v1.Endpoint
-	4, // 1: endpoint.v1.LbEndpoint.load_balancing_weight:type_name -> google.protobuf.UInt32Value
-	1, // 2: endpoint.v1.LocalityLbEndpoints.lb_endpoints:type_name -> endpoint.v1.LbEndpoint
-	4, // 3: endpoint.v1.LocalityLbEndpoints.load_balancing_weight:type_name -> google.protobuf.UInt32Value
-	4, // 4: endpoint.v1.LocalityLbEndpoints.proximity:type_name -> google.protobuf.UInt32Value
-	1, // 5: endpoint.v1.LocalityLbEndpoints.LbEndpointList.lb_endpoints:type_name -> endpoint.v1.LbEndpoint
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	4, // 0: endpoint.v1.Endpoint.address:type_name -> core.v1.Address
+	0, // 1: endpoint.v1.LbEndpoint.endpoint:type_name -> endpoint.v1.Endpoint
+	5, // 2: endpoint.v1.LbEndpoint.load_balancing_weight:type_name -> google.protobuf.UInt32Value
+	6, // 3: endpoint.v1.LocalityLbEndpoints.locality:type_name -> core.v1.Locality
+	1, // 4: endpoint.v1.LocalityLbEndpoints.lb_endpoints:type_name -> endpoint.v1.LbEndpoint
+	5, // 5: endpoint.v1.LocalityLbEndpoints.load_balancing_weight:type_name -> google.protobuf.UInt32Value
+	5, // 6: endpoint.v1.LocalityLbEndpoints.proximity:type_name -> google.protobuf.UInt32Value
+	1, // 7: endpoint.v1.LocalityLbEndpoints.LbEndpointList.lb_endpoints:type_name -> endpoint.v1.LbEndpoint
+	8, // [8:8] is the sub-list for method output_type
+	8, // [8:8] is the sub-list for method input_type
+	8, // [8:8] is the sub-list for extension type_name
+	8, // [8:8] is the sub-list for extension extendee
+	0, // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_endpoint_v1_endpoint_components_proto_init() }
