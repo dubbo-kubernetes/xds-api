@@ -23,9 +23,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// A DiscoveryRequest requests a set of versioned resources of the same type for
-// a given Envoy node on some API.
-// [#next-free-field: 8]
 type DiscoveryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	VersionInfo   string                 `protobuf:"bytes,1,opt,name=version_info,json=versionInfo,proto3" json:"version_info,omitempty"`
@@ -94,15 +91,13 @@ func (x *DiscoveryRequest) GetResponseNonce() string {
 	return ""
 }
 
-// [#next-free-field: 8]
 type DiscoveryResponse struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	VersionInfo string                 `protobuf:"bytes,1,opt,name=version_info,json=versionInfo,proto3" json:"version_info,omitempty"`
-	Resources   []*anypb.Any           `protobuf:"bytes,2,rep,name=resources,proto3" json:"resources,omitempty"`
-	// [#not-implemented-hide:]
-	Canary        bool   `protobuf:"varint,3,opt,name=canary,proto3" json:"canary,omitempty"`
-	TypeUrl       string `protobuf:"bytes,4,opt,name=type_url,json=typeUrl,proto3" json:"type_url,omitempty"`
-	Nonce         string `protobuf:"bytes,5,opt,name=nonce,proto3" json:"nonce,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	VersionInfo   string                 `protobuf:"bytes,1,opt,name=version_info,json=versionInfo,proto3" json:"version_info,omitempty"`
+	Resources     []*anypb.Any           `protobuf:"bytes,2,rep,name=resources,proto3" json:"resources,omitempty"`
+	Canary        bool                   `protobuf:"varint,3,opt,name=canary,proto3" json:"canary,omitempty"`
+	TypeUrl       string                 `protobuf:"bytes,4,opt,name=type_url,json=typeUrl,proto3" json:"type_url,omitempty"`
+	Nonce         string                 `protobuf:"bytes,5,opt,name=nonce,proto3" json:"nonce,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -172,7 +167,6 @@ func (x *DiscoveryResponse) GetNonce() string {
 	return ""
 }
 
-// [#next-free-field: 10]
 type DeltaDiscoveryRequest struct {
 	state                    protoimpl.MessageState `protogen:"open.v1"`
 	TypeUrl                  string                 `protobuf:"bytes,2,opt,name=type_url,json=typeUrl,proto3" json:"type_url,omitempty"`
@@ -249,7 +243,6 @@ func (x *DeltaDiscoveryRequest) GetResponseNonce() string {
 	return ""
 }
 
-// [#next-free-field: 10]
 type DeltaDiscoveryResponse struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	SystemVersionInfo string                 `protobuf:"bytes,1,opt,name=system_version_info,json=systemVersionInfo,proto3" json:"system_version_info,omitempty"`
@@ -328,16 +321,12 @@ func (x *DeltaDiscoveryResponse) GetNonce() string {
 
 // [#next-free-field: 10]
 type Resource struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// The resource's name, to distinguish it from others of the same type of resource.
-	// Only one of "name" or "resource_name" may be set.
-	Name     string               `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Aliases  []string             `protobuf:"bytes,2,rep,name=aliases,proto3" json:"aliases,omitempty"`
-	Version  string               `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty"`
-	Resource *anypb.Any           `protobuf:"bytes,4,opt,name=resource,proto3" json:"resource,omitempty"`
-	Ttl      *durationpb.Duration `protobuf:"bytes,5,opt,name=ttl,proto3" json:"ttl,omitempty"`
-	// Cache control properties for the resource.
-	// [#not-implemented-hide:]
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Aliases       []string               `protobuf:"bytes,2,rep,name=aliases,proto3" json:"aliases,omitempty"`
+	Version       string                 `protobuf:"bytes,3,opt,name=version,proto3" json:"version,omitempty"`
+	Resource      *anypb.Any             `protobuf:"bytes,4,opt,name=resource,proto3" json:"resource,omitempty"`
+	Ttl           *durationpb.Duration   `protobuf:"bytes,5,opt,name=ttl,proto3" json:"ttl,omitempty"`
 	CacheControl  *Resource_CacheControl `protobuf:"bytes,6,opt,name=cache_control,json=cacheControl,proto3" json:"cache_control,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -463,7 +452,7 @@ var File_service_discovery_v1_discovery_proto protoreflect.FileDescriptor
 
 const file_service_discovery_v1_discovery_proto_rawDesc = "" +
 	"\n" +
-	"$service/discovery/v1/discovery.proto\x12\x1adubbo.service.discovery.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\"\x9e\x01\n" +
+	"$service/discovery/v1/discovery.proto\x12\x14service.discovery.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\"\x9e\x01\n" +
 	"\x10DiscoveryRequest\x12!\n" +
 	"\fversion_info\x18\x01 \x01(\tR\vversionInfo\x12%\n" +
 	"\x0eresource_names\x18\x03 \x03(\tR\rresourceNames\x12\x19\n" +
@@ -474,29 +463,29 @@ const file_service_discovery_v1_discovery_proto_rawDesc = "" +
 	"\tresources\x18\x02 \x03(\v2\x14.google.protobuf.AnyR\tresources\x12\x16\n" +
 	"\x06canary\x18\x03 \x01(\bR\x06canary\x12\x19\n" +
 	"\btype_url\x18\x04 \x01(\tR\atypeUrl\x12\x14\n" +
-	"\x05nonce\x18\x05 \x01(\tR\x05nonce\"\xaa\x03\n" +
+	"\x05nonce\x18\x05 \x01(\tR\x05nonce\"\xa4\x03\n" +
 	"\x15DeltaDiscoveryRequest\x12\x19\n" +
 	"\btype_url\x18\x02 \x01(\tR\atypeUrl\x128\n" +
 	"\x18resource_names_subscribe\x18\x03 \x03(\tR\x16resourceNamesSubscribe\x12<\n" +
-	"\x1aresource_names_unsubscribe\x18\x04 \x03(\tR\x18resourceNamesUnsubscribe\x12\x8a\x01\n" +
-	"\x19initial_resource_versions\x18\x05 \x03(\v2N.dubbo.service.discovery.v1.DeltaDiscoveryRequest.InitialResourceVersionsEntryR\x17initialResourceVersions\x12%\n" +
+	"\x1aresource_names_unsubscribe\x18\x04 \x03(\tR\x18resourceNamesUnsubscribe\x12\x84\x01\n" +
+	"\x19initial_resource_versions\x18\x05 \x03(\v2H.service.discovery.v1.DeltaDiscoveryRequest.InitialResourceVersionsEntryR\x17initialResourceVersions\x12%\n" +
 	"\x0eresponse_nonce\x18\x06 \x01(\tR\rresponseNonce\x1aJ\n" +
 	"\x1cInitialResourceVersionsEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xea\x01\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"\xe4\x01\n" +
 	"\x16DeltaDiscoveryResponse\x12.\n" +
-	"\x13system_version_info\x18\x01 \x01(\tR\x11systemVersionInfo\x12B\n" +
-	"\tresources\x18\x02 \x03(\v2$.dubbo.service.discovery.v1.ResourceR\tresources\x12\x19\n" +
+	"\x13system_version_info\x18\x01 \x01(\tR\x11systemVersionInfo\x12<\n" +
+	"\tresources\x18\x02 \x03(\v2\x1e.service.discovery.v1.ResourceR\tresources\x12\x19\n" +
 	"\btype_url\x18\x03 \x01(\tR\atypeUrl\x12+\n" +
 	"\x11removed_resources\x18\x04 \x03(\tR\x10removedResources\x12\x14\n" +
-	"\x05nonce\x18\x05 \x01(\tR\x05nonce\"\xbb\x02\n" +
+	"\x05nonce\x18\x05 \x01(\tR\x05nonce\"\xb5\x02\n" +
 	"\bResource\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
 	"\aaliases\x18\x02 \x03(\tR\aaliases\x12\x18\n" +
 	"\aversion\x18\x03 \x01(\tR\aversion\x120\n" +
 	"\bresource\x18\x04 \x01(\v2\x14.google.protobuf.AnyR\bresource\x12+\n" +
-	"\x03ttl\x18\x05 \x01(\v2\x19.google.protobuf.DurationR\x03ttl\x12V\n" +
-	"\rcache_control\x18\x06 \x01(\v21.dubbo.service.discovery.v1.Resource.CacheControlR\fcacheControl\x1a0\n" +
+	"\x03ttl\x18\x05 \x01(\v2\x19.google.protobuf.DurationR\x03ttl\x12P\n" +
+	"\rcache_control\x18\x06 \x01(\v2+.service.discovery.v1.Resource.CacheControlR\fcacheControl\x1a0\n" +
 	"\fCacheControl\x12 \n" +
 	"\fdo_not_cache\x18\x01 \x01(\bR\n" +
 	"doNotCacheBFZDgithub.com/dubbo-kubernetes/xds-api/service/discovery/v1;discoveryv1b\x06proto3"
@@ -515,23 +504,23 @@ func file_service_discovery_v1_discovery_proto_rawDescGZIP() []byte {
 
 var file_service_discovery_v1_discovery_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_service_discovery_v1_discovery_proto_goTypes = []any{
-	(*DiscoveryRequest)(nil),       // 0: dubbo.service.discovery.v1.DiscoveryRequest
-	(*DiscoveryResponse)(nil),      // 1: dubbo.service.discovery.v1.DiscoveryResponse
-	(*DeltaDiscoveryRequest)(nil),  // 2: dubbo.service.discovery.v1.DeltaDiscoveryRequest
-	(*DeltaDiscoveryResponse)(nil), // 3: dubbo.service.discovery.v1.DeltaDiscoveryResponse
-	(*Resource)(nil),               // 4: dubbo.service.discovery.v1.Resource
-	nil,                            // 5: dubbo.service.discovery.v1.DeltaDiscoveryRequest.InitialResourceVersionsEntry
-	(*Resource_CacheControl)(nil),  // 6: dubbo.service.discovery.v1.Resource.CacheControl
+	(*DiscoveryRequest)(nil),       // 0: service.discovery.v1.DiscoveryRequest
+	(*DiscoveryResponse)(nil),      // 1: service.discovery.v1.DiscoveryResponse
+	(*DeltaDiscoveryRequest)(nil),  // 2: service.discovery.v1.DeltaDiscoveryRequest
+	(*DeltaDiscoveryResponse)(nil), // 3: service.discovery.v1.DeltaDiscoveryResponse
+	(*Resource)(nil),               // 4: service.discovery.v1.Resource
+	nil,                            // 5: service.discovery.v1.DeltaDiscoveryRequest.InitialResourceVersionsEntry
+	(*Resource_CacheControl)(nil),  // 6: service.discovery.v1.Resource.CacheControl
 	(*anypb.Any)(nil),              // 7: google.protobuf.Any
 	(*durationpb.Duration)(nil),    // 8: google.protobuf.Duration
 }
 var file_service_discovery_v1_discovery_proto_depIdxs = []int32{
-	7, // 0: dubbo.service.discovery.v1.DiscoveryResponse.resources:type_name -> google.protobuf.Any
-	5, // 1: dubbo.service.discovery.v1.DeltaDiscoveryRequest.initial_resource_versions:type_name -> dubbo.service.discovery.v1.DeltaDiscoveryRequest.InitialResourceVersionsEntry
-	4, // 2: dubbo.service.discovery.v1.DeltaDiscoveryResponse.resources:type_name -> dubbo.service.discovery.v1.Resource
-	7, // 3: dubbo.service.discovery.v1.Resource.resource:type_name -> google.protobuf.Any
-	8, // 4: dubbo.service.discovery.v1.Resource.ttl:type_name -> google.protobuf.Duration
-	6, // 5: dubbo.service.discovery.v1.Resource.cache_control:type_name -> dubbo.service.discovery.v1.Resource.CacheControl
+	7, // 0: service.discovery.v1.DiscoveryResponse.resources:type_name -> google.protobuf.Any
+	5, // 1: service.discovery.v1.DeltaDiscoveryRequest.initial_resource_versions:type_name -> service.discovery.v1.DeltaDiscoveryRequest.InitialResourceVersionsEntry
+	4, // 2: service.discovery.v1.DeltaDiscoveryResponse.resources:type_name -> service.discovery.v1.Resource
+	7, // 3: service.discovery.v1.Resource.resource:type_name -> google.protobuf.Any
+	8, // 4: service.discovery.v1.Resource.ttl:type_name -> google.protobuf.Duration
+	6, // 5: service.discovery.v1.Resource.cache_control:type_name -> service.discovery.v1.Resource.CacheControl
 	6, // [6:6] is the sub-list for method output_type
 	6, // [6:6] is the sub-list for method input_type
 	6, // [6:6] is the sub-list for extension type_name

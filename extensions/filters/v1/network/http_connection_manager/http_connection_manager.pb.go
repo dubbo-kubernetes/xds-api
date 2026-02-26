@@ -7,8 +7,8 @@
 package http_connection_managerv1
 
 import (
-	v11 "github.com/dubbo-kubernetes/xds-api/config/core/v1"
-	v1 "github.com/dubbo-kubernetes/xds-api/config/route/v1"
+	v11 "github.com/dubbo-kubernetes/xds-api/core/v1"
+	v1 "github.com/dubbo-kubernetes/xds-api/route/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	anypb "google.golang.org/protobuf/types/known/anypb"
@@ -29,7 +29,6 @@ const (
 type HttpConnectionManager_CodecType int32
 
 const (
-	// For every new connection, the connection manager will determine which codec to use.
 	HttpConnectionManager_AUTO HttpConnectionManager_CodecType = 0
 )
 
@@ -70,25 +69,18 @@ func (HttpConnectionManager_CodecType) EnumDescriptor() ([]byte, []int) {
 	return file_extensions_filters_v1_network_http_connection_manager_http_connection_manager_proto_rawDescGZIP(), []int{0, 0}
 }
 
-// [#next-free-field: 62]
-// [#extension: envoy.filters.network.http_connection_manager]
 type HttpConnectionManager struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Supplies the type of codec that the connection manager should use.
-	CodecType HttpConnectionManager_CodecType `protobuf:"varint,1,opt,name=codec_type,json=codecType,proto3,enum=extensions.filters.network.http_connection_manager.v1.HttpConnectionManager_CodecType" json:"codec_type,omitempty"`
-	// The human readable prefix to use when emitting statistics for the
-	// connection manager. See the statistics documentation for more information.
-	StatPrefix string `protobuf:"bytes,2,opt,name=stat_prefix,json=statPrefix,proto3" json:"stat_prefix,omitempty"`
+	state      protoimpl.MessageState          `protogen:"open.v1"`
+	CodecType  HttpConnectionManager_CodecType `protobuf:"varint,1,opt,name=codec_type,json=codecType,proto3,enum=extensions.filters.network.http_connection_manager.v1.HttpConnectionManager_CodecType" json:"codec_type,omitempty"`
+	StatPrefix string                          `protobuf:"bytes,2,opt,name=stat_prefix,json=statPrefix,proto3" json:"stat_prefix,omitempty"`
 	// Types that are valid to be assigned to RouteSpecifier:
 	//
 	//	*HttpConnectionManager_Rds
 	//	*HttpConnectionManager_RouteConfig
 	RouteSpecifier isHttpConnectionManager_RouteSpecifier `protobuf_oneof:"route_specifier"`
-	// A list of individual HTTP filters that make up the filter chain for requests made to the
-	// connection manager.
-	HttpFilters   []*HttpFilter `protobuf:"bytes,5,rep,name=http_filters,json=httpFilters,proto3" json:"http_filters,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	HttpFilters    []*HttpFilter                          `protobuf:"bytes,5,rep,name=http_filters,json=httpFilters,proto3" json:"http_filters,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *HttpConnectionManager) Reset() {
@@ -172,12 +164,10 @@ type isHttpConnectionManager_RouteSpecifier interface {
 }
 
 type HttpConnectionManager_Rds struct {
-	// The connection manager's route table will be dynamically loaded via the RDS API.
 	Rds *Rds `protobuf:"bytes,3,opt,name=rds,proto3,oneof"`
 }
 
 type HttpConnectionManager_RouteConfig struct {
-	// The route table for the connection manager is static and is specified in this property.
 	RouteConfig *v1.RouteConfiguration `protobuf:"bytes,4,opt,name=route_config,json=routeConfig,proto3,oneof"`
 }
 
@@ -185,13 +175,10 @@ func (*HttpConnectionManager_Rds) isHttpConnectionManager_RouteSpecifier() {}
 
 func (*HttpConnectionManager_RouteConfig) isHttpConnectionManager_RouteSpecifier() {}
 
-// Configuration to use RDS for the route configuration.
 type Rds struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Configuration source specifier for RDS.
-	ConfigSource *v11.ConfigSource `protobuf:"bytes,1,opt,name=config_source,json=configSource,proto3" json:"config_source,omitempty"`
-	// The name of the route configuration. This name will be passed to the RDS API.
-	RouteConfigName string `protobuf:"bytes,2,opt,name=route_config_name,json=routeConfigName,proto3" json:"route_config_name,omitempty"`
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	ConfigSource    *v11.ConfigSource      `protobuf:"bytes,1,opt,name=config_source,json=configSource,proto3" json:"config_source,omitempty"`
+	RouteConfigName string                 `protobuf:"bytes,2,opt,name=route_config_name,json=routeConfigName,proto3" json:"route_config_name,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -240,11 +227,9 @@ func (x *Rds) GetRouteConfigName() string {
 	return ""
 }
 
-// [#next-free-field: 8]
 type HttpFilter struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The name of the filter configuration. It also serves as a resource name in ExtensionConfigDS.
-	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	// Types that are valid to be assigned to ConfigType:
 	//
 	//	*HttpFilter_TypedConfig
@@ -311,9 +296,6 @@ type isHttpFilter_ConfigType interface {
 }
 
 type HttpFilter_TypedConfig struct {
-	// Filter specific configuration which depends on the filter being instantiated.
-	// See the supported filters for further documentation.
-	// [#extension-category: envoy.filters.http]
 	TypedConfig *anypb.Any `protobuf:"bytes,4,opt,name=typed_config,json=typedConfig,proto3,oneof"`
 }
 
@@ -323,20 +305,20 @@ var File_extensions_filters_v1_network_http_connection_manager_http_connection_m
 
 const file_extensions_filters_v1_network_http_connection_manager_http_connection_manager_proto_rawDesc = "" +
 	"\n" +
-	"Sextensions/filters/v1/network/http_connection_manager/http_connection_manager.proto\x125extensions.filters.network.http_connection_manager.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x19config/core/v1/base.proto\x1a\x1bconfig/route/v1/route.proto\"\xd9\x03\n" +
+	"Sextensions/filters/v1/network/http_connection_manager/http_connection_manager.proto\x125extensions.filters.network.http_connection_manager.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x12core/v1/base.proto\x1a\x1bcore/v1/config_source.proto\x1a\x14route/v1/route.proto\"\xd2\x03\n" +
 	"\x15HttpConnectionManager\x12u\n" +
 	"\n" +
 	"codec_type\x18\x01 \x01(\x0e2V.extensions.filters.network.http_connection_manager.v1.HttpConnectionManager.CodecTypeR\tcodecType\x12\x1f\n" +
 	"\vstat_prefix\x18\x02 \x01(\tR\n" +
 	"statPrefix\x12N\n" +
-	"\x03rds\x18\x03 \x01(\v2:.extensions.filters.network.http_connection_manager.v1.RdsH\x00R\x03rds\x12H\n" +
-	"\froute_config\x18\x04 \x01(\v2#.config.route.v1.RouteConfigurationH\x00R\vrouteConfig\x12d\n" +
+	"\x03rds\x18\x03 \x01(\v2:.extensions.filters.network.http_connection_manager.v1.RdsH\x00R\x03rds\x12A\n" +
+	"\froute_config\x18\x04 \x01(\v2\x1c.route.v1.RouteConfigurationH\x00R\vrouteConfig\x12d\n" +
 	"\fhttp_filters\x18\x05 \x03(\v2A.extensions.filters.network.http_connection_manager.v1.HttpFilterR\vhttpFilters\"\x15\n" +
 	"\tCodecType\x12\b\n" +
 	"\x04AUTO\x10\x00B\x11\n" +
-	"\x0froute_specifier\"t\n" +
-	"\x03Rds\x12A\n" +
-	"\rconfig_source\x18\x01 \x01(\v2\x1c.config.core.v1.ConfigSourceR\fconfigSource\x12*\n" +
+	"\x0froute_specifier\"m\n" +
+	"\x03Rds\x12:\n" +
+	"\rconfig_source\x18\x01 \x01(\v2\x15.core.v1.ConfigSourceR\fconfigSource\x12*\n" +
 	"\x11route_config_name\x18\x02 \x01(\tR\x0frouteConfigName\"j\n" +
 	"\n" +
 	"HttpFilter\x12\x12\n" +
@@ -363,16 +345,16 @@ var file_extensions_filters_v1_network_http_connection_manager_http_connection_m
 	(*HttpConnectionManager)(nil),        // 1: extensions.filters.network.http_connection_manager.v1.HttpConnectionManager
 	(*Rds)(nil),                          // 2: extensions.filters.network.http_connection_manager.v1.Rds
 	(*HttpFilter)(nil),                   // 3: extensions.filters.network.http_connection_manager.v1.HttpFilter
-	(*v1.RouteConfiguration)(nil),        // 4: config.route.v1.RouteConfiguration
-	(*v11.ConfigSource)(nil),             // 5: config.core.v1.ConfigSource
+	(*v1.RouteConfiguration)(nil),        // 4: route.v1.RouteConfiguration
+	(*v11.ConfigSource)(nil),             // 5: core.v1.ConfigSource
 	(*anypb.Any)(nil),                    // 6: google.protobuf.Any
 }
 var file_extensions_filters_v1_network_http_connection_manager_http_connection_manager_proto_depIdxs = []int32{
 	0, // 0: extensions.filters.network.http_connection_manager.v1.HttpConnectionManager.codec_type:type_name -> extensions.filters.network.http_connection_manager.v1.HttpConnectionManager.CodecType
 	2, // 1: extensions.filters.network.http_connection_manager.v1.HttpConnectionManager.rds:type_name -> extensions.filters.network.http_connection_manager.v1.Rds
-	4, // 2: extensions.filters.network.http_connection_manager.v1.HttpConnectionManager.route_config:type_name -> config.route.v1.RouteConfiguration
+	4, // 2: extensions.filters.network.http_connection_manager.v1.HttpConnectionManager.route_config:type_name -> route.v1.RouteConfiguration
 	3, // 3: extensions.filters.network.http_connection_manager.v1.HttpConnectionManager.http_filters:type_name -> extensions.filters.network.http_connection_manager.v1.HttpFilter
-	5, // 4: extensions.filters.network.http_connection_manager.v1.Rds.config_source:type_name -> config.core.v1.ConfigSource
+	5, // 4: extensions.filters.network.http_connection_manager.v1.Rds.config_source:type_name -> core.v1.ConfigSource
 	6, // 5: extensions.filters.network.http_connection_manager.v1.HttpFilter.typed_config:type_name -> google.protobuf.Any
 	6, // [6:6] is the sub-list for method output_type
 	6, // [6:6] is the sub-list for method input_type

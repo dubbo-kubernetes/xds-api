@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.33.0
-// source: config/endpoint/v1/endpoint_components.proto
+// source: endpoint/v1/endpoint_components.proto
 
 package endpointv1
 
@@ -30,7 +30,7 @@ type Endpoint struct {
 
 func (x *Endpoint) Reset() {
 	*x = Endpoint{}
-	mi := &file_config_endpoint_v1_endpoint_components_proto_msgTypes[0]
+	mi := &file_endpoint_v1_endpoint_components_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -42,7 +42,7 @@ func (x *Endpoint) String() string {
 func (*Endpoint) ProtoMessage() {}
 
 func (x *Endpoint) ProtoReflect() protoreflect.Message {
-	mi := &file_config_endpoint_v1_endpoint_components_proto_msgTypes[0]
+	mi := &file_endpoint_v1_endpoint_components_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -55,7 +55,7 @@ func (x *Endpoint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Endpoint.ProtoReflect.Descriptor instead.
 func (*Endpoint) Descriptor() ([]byte, []int) {
-	return file_config_endpoint_v1_endpoint_components_proto_rawDescGZIP(), []int{0}
+	return file_endpoint_v1_endpoint_components_proto_rawDescGZIP(), []int{0}
 }
 
 type LbEndpoint struct {
@@ -72,7 +72,7 @@ type LbEndpoint struct {
 
 func (x *LbEndpoint) Reset() {
 	*x = LbEndpoint{}
-	mi := &file_config_endpoint_v1_endpoint_components_proto_msgTypes[1]
+	mi := &file_endpoint_v1_endpoint_components_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -84,7 +84,7 @@ func (x *LbEndpoint) String() string {
 func (*LbEndpoint) ProtoMessage() {}
 
 func (x *LbEndpoint) ProtoReflect() protoreflect.Message {
-	mi := &file_config_endpoint_v1_endpoint_components_proto_msgTypes[1]
+	mi := &file_endpoint_v1_endpoint_components_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -97,7 +97,7 @@ func (x *LbEndpoint) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LbEndpoint.ProtoReflect.Descriptor instead.
 func (*LbEndpoint) Descriptor() ([]byte, []int) {
-	return file_config_endpoint_v1_endpoint_components_proto_rawDescGZIP(), []int{1}
+	return file_endpoint_v1_endpoint_components_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *LbEndpoint) GetHostIdentifier() isLbEndpoint_HostIdentifier {
@@ -160,7 +160,7 @@ type LocalityLbEndpoints struct {
 
 func (x *LocalityLbEndpoints) Reset() {
 	*x = LocalityLbEndpoints{}
-	mi := &file_config_endpoint_v1_endpoint_components_proto_msgTypes[2]
+	mi := &file_endpoint_v1_endpoint_components_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -172,7 +172,7 @@ func (x *LocalityLbEndpoints) String() string {
 func (*LocalityLbEndpoints) ProtoMessage() {}
 
 func (x *LocalityLbEndpoints) ProtoReflect() protoreflect.Message {
-	mi := &file_config_endpoint_v1_endpoint_components_proto_msgTypes[2]
+	mi := &file_endpoint_v1_endpoint_components_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -185,7 +185,7 @@ func (x *LocalityLbEndpoints) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LocalityLbEndpoints.ProtoReflect.Descriptor instead.
 func (*LocalityLbEndpoints) Descriptor() ([]byte, []int) {
-	return file_config_endpoint_v1_endpoint_components_proto_rawDescGZIP(), []int{2}
+	return file_endpoint_v1_endpoint_components_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *LocalityLbEndpoints) GetLbEndpoints() []*LbEndpoint {
@@ -225,7 +225,7 @@ type LocalityLbEndpoints_LbEndpointList struct {
 
 func (x *LocalityLbEndpoints_LbEndpointList) Reset() {
 	*x = LocalityLbEndpoints_LbEndpointList{}
-	mi := &file_config_endpoint_v1_endpoint_components_proto_msgTypes[3]
+	mi := &file_endpoint_v1_endpoint_components_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -237,7 +237,7 @@ func (x *LocalityLbEndpoints_LbEndpointList) String() string {
 func (*LocalityLbEndpoints_LbEndpointList) ProtoMessage() {}
 
 func (x *LocalityLbEndpoints_LbEndpointList) ProtoReflect() protoreflect.Message {
-	mi := &file_config_endpoint_v1_endpoint_components_proto_msgTypes[3]
+	mi := &file_endpoint_v1_endpoint_components_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -250,7 +250,7 @@ func (x *LocalityLbEndpoints_LbEndpointList) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use LocalityLbEndpoints_LbEndpointList.ProtoReflect.Descriptor instead.
 func (*LocalityLbEndpoints_LbEndpointList) Descriptor() ([]byte, []int) {
-	return file_config_endpoint_v1_endpoint_components_proto_rawDescGZIP(), []int{2, 0}
+	return file_endpoint_v1_endpoint_components_proto_rawDescGZIP(), []int{2, 0}
 }
 
 func (x *LocalityLbEndpoints_LbEndpointList) GetLbEndpoints() []*LbEndpoint {
@@ -260,54 +260,54 @@ func (x *LocalityLbEndpoints_LbEndpointList) GetLbEndpoints() []*LbEndpoint {
 	return nil
 }
 
-var File_config_endpoint_v1_endpoint_components_proto protoreflect.FileDescriptor
+var File_endpoint_v1_endpoint_components_proto protoreflect.FileDescriptor
 
-const file_config_endpoint_v1_endpoint_components_proto_rawDesc = "" +
+const file_endpoint_v1_endpoint_components_proto_rawDesc = "" +
 	"\n" +
-	",config/endpoint/v1/endpoint_components.proto\x12\x12config.endpoint.v1\x1a\x1egoogle/protobuf/wrappers.proto\"\n" +
+	"%endpoint/v1/endpoint_components.proto\x12\vendpoint.v1\x1a\x1egoogle/protobuf/wrappers.proto\"\n" +
 	"\n" +
-	"\bEndpoint\"\xd4\x01\n" +
+	"\bEndpoint\"\xcd\x01\n" +
 	"\n" +
-	"LbEndpoint\x12:\n" +
-	"\bendpoint\x18\x01 \x01(\v2\x1c.config.endpoint.v1.EndpointH\x00R\bendpoint\x12%\n" +
+	"LbEndpoint\x123\n" +
+	"\bendpoint\x18\x01 \x01(\v2\x15.endpoint.v1.EndpointH\x00R\bendpoint\x12%\n" +
 	"\rendpoint_name\x18\x05 \x01(\tH\x00R\fendpointName\x12P\n" +
 	"\x15load_balancing_weight\x18\x04 \x01(\v2\x1c.google.protobuf.UInt32ValueR\x13loadBalancingWeightB\x11\n" +
-	"\x0fhost_identifier\"\xd7\x02\n" +
-	"\x13LocalityLbEndpoints\x12A\n" +
-	"\flb_endpoints\x18\x02 \x03(\v2\x1e.config.endpoint.v1.LbEndpointR\vlbEndpoints\x12P\n" +
+	"\x0fhost_identifier\"\xc9\x02\n" +
+	"\x13LocalityLbEndpoints\x12:\n" +
+	"\flb_endpoints\x18\x02 \x03(\v2\x17.endpoint.v1.LbEndpointR\vlbEndpoints\x12P\n" +
 	"\x15load_balancing_weight\x18\x03 \x01(\v2\x1c.google.protobuf.UInt32ValueR\x13loadBalancingWeight\x12\x1a\n" +
 	"\bpriority\x18\x05 \x01(\rR\bpriority\x12:\n" +
-	"\tproximity\x18\x06 \x01(\v2\x1c.google.protobuf.UInt32ValueR\tproximity\x1aS\n" +
-	"\x0eLbEndpointList\x12A\n" +
-	"\flb_endpoints\x18\x01 \x03(\v2\x1e.config.endpoint.v1.LbEndpointR\vlbEndpointsBCZAgithub.com/dubbo-kubernetes/xds-api/config/endpoint/v1;endpointv1b\x06proto3"
+	"\tproximity\x18\x06 \x01(\v2\x1c.google.protobuf.UInt32ValueR\tproximity\x1aL\n" +
+	"\x0eLbEndpointList\x12:\n" +
+	"\flb_endpoints\x18\x01 \x03(\v2\x17.endpoint.v1.LbEndpointR\vlbEndpointsB<Z:github.com/dubbo-kubernetes/xds-api/endpoint/v1;endpointv1b\x06proto3"
 
 var (
-	file_config_endpoint_v1_endpoint_components_proto_rawDescOnce sync.Once
-	file_config_endpoint_v1_endpoint_components_proto_rawDescData []byte
+	file_endpoint_v1_endpoint_components_proto_rawDescOnce sync.Once
+	file_endpoint_v1_endpoint_components_proto_rawDescData []byte
 )
 
-func file_config_endpoint_v1_endpoint_components_proto_rawDescGZIP() []byte {
-	file_config_endpoint_v1_endpoint_components_proto_rawDescOnce.Do(func() {
-		file_config_endpoint_v1_endpoint_components_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_config_endpoint_v1_endpoint_components_proto_rawDesc), len(file_config_endpoint_v1_endpoint_components_proto_rawDesc)))
+func file_endpoint_v1_endpoint_components_proto_rawDescGZIP() []byte {
+	file_endpoint_v1_endpoint_components_proto_rawDescOnce.Do(func() {
+		file_endpoint_v1_endpoint_components_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_endpoint_v1_endpoint_components_proto_rawDesc), len(file_endpoint_v1_endpoint_components_proto_rawDesc)))
 	})
-	return file_config_endpoint_v1_endpoint_components_proto_rawDescData
+	return file_endpoint_v1_endpoint_components_proto_rawDescData
 }
 
-var file_config_endpoint_v1_endpoint_components_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_config_endpoint_v1_endpoint_components_proto_goTypes = []any{
-	(*Endpoint)(nil),                           // 0: config.endpoint.v1.Endpoint
-	(*LbEndpoint)(nil),                         // 1: config.endpoint.v1.LbEndpoint
-	(*LocalityLbEndpoints)(nil),                // 2: config.endpoint.v1.LocalityLbEndpoints
-	(*LocalityLbEndpoints_LbEndpointList)(nil), // 3: config.endpoint.v1.LocalityLbEndpoints.LbEndpointList
+var file_endpoint_v1_endpoint_components_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_endpoint_v1_endpoint_components_proto_goTypes = []any{
+	(*Endpoint)(nil),                           // 0: endpoint.v1.Endpoint
+	(*LbEndpoint)(nil),                         // 1: endpoint.v1.LbEndpoint
+	(*LocalityLbEndpoints)(nil),                // 2: endpoint.v1.LocalityLbEndpoints
+	(*LocalityLbEndpoints_LbEndpointList)(nil), // 3: endpoint.v1.LocalityLbEndpoints.LbEndpointList
 	(*wrapperspb.UInt32Value)(nil),             // 4: google.protobuf.UInt32Value
 }
-var file_config_endpoint_v1_endpoint_components_proto_depIdxs = []int32{
-	0, // 0: config.endpoint.v1.LbEndpoint.endpoint:type_name -> config.endpoint.v1.Endpoint
-	4, // 1: config.endpoint.v1.LbEndpoint.load_balancing_weight:type_name -> google.protobuf.UInt32Value
-	1, // 2: config.endpoint.v1.LocalityLbEndpoints.lb_endpoints:type_name -> config.endpoint.v1.LbEndpoint
-	4, // 3: config.endpoint.v1.LocalityLbEndpoints.load_balancing_weight:type_name -> google.protobuf.UInt32Value
-	4, // 4: config.endpoint.v1.LocalityLbEndpoints.proximity:type_name -> google.protobuf.UInt32Value
-	1, // 5: config.endpoint.v1.LocalityLbEndpoints.LbEndpointList.lb_endpoints:type_name -> config.endpoint.v1.LbEndpoint
+var file_endpoint_v1_endpoint_components_proto_depIdxs = []int32{
+	0, // 0: endpoint.v1.LbEndpoint.endpoint:type_name -> endpoint.v1.Endpoint
+	4, // 1: endpoint.v1.LbEndpoint.load_balancing_weight:type_name -> google.protobuf.UInt32Value
+	1, // 2: endpoint.v1.LocalityLbEndpoints.lb_endpoints:type_name -> endpoint.v1.LbEndpoint
+	4, // 3: endpoint.v1.LocalityLbEndpoints.load_balancing_weight:type_name -> google.protobuf.UInt32Value
+	4, // 4: endpoint.v1.LocalityLbEndpoints.proximity:type_name -> google.protobuf.UInt32Value
+	1, // 5: endpoint.v1.LocalityLbEndpoints.LbEndpointList.lb_endpoints:type_name -> endpoint.v1.LbEndpoint
 	6, // [6:6] is the sub-list for method output_type
 	6, // [6:6] is the sub-list for method input_type
 	6, // [6:6] is the sub-list for extension type_name
@@ -315,12 +315,12 @@ var file_config_endpoint_v1_endpoint_components_proto_depIdxs = []int32{
 	0, // [0:6] is the sub-list for field type_name
 }
 
-func init() { file_config_endpoint_v1_endpoint_components_proto_init() }
-func file_config_endpoint_v1_endpoint_components_proto_init() {
-	if File_config_endpoint_v1_endpoint_components_proto != nil {
+func init() { file_endpoint_v1_endpoint_components_proto_init() }
+func file_endpoint_v1_endpoint_components_proto_init() {
+	if File_endpoint_v1_endpoint_components_proto != nil {
 		return
 	}
-	file_config_endpoint_v1_endpoint_components_proto_msgTypes[1].OneofWrappers = []any{
+	file_endpoint_v1_endpoint_components_proto_msgTypes[1].OneofWrappers = []any{
 		(*LbEndpoint_Endpoint)(nil),
 		(*LbEndpoint_EndpointName)(nil),
 	}
@@ -328,17 +328,17 @@ func file_config_endpoint_v1_endpoint_components_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_config_endpoint_v1_endpoint_components_proto_rawDesc), len(file_config_endpoint_v1_endpoint_components_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_endpoint_v1_endpoint_components_proto_rawDesc), len(file_endpoint_v1_endpoint_components_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_config_endpoint_v1_endpoint_components_proto_goTypes,
-		DependencyIndexes: file_config_endpoint_v1_endpoint_components_proto_depIdxs,
-		MessageInfos:      file_config_endpoint_v1_endpoint_components_proto_msgTypes,
+		GoTypes:           file_endpoint_v1_endpoint_components_proto_goTypes,
+		DependencyIndexes: file_endpoint_v1_endpoint_components_proto_depIdxs,
+		MessageInfos:      file_endpoint_v1_endpoint_components_proto_msgTypes,
 	}.Build()
-	File_config_endpoint_v1_endpoint_components_proto = out.File
-	file_config_endpoint_v1_endpoint_components_proto_goTypes = nil
-	file_config_endpoint_v1_endpoint_components_proto_depIdxs = nil
+	File_endpoint_v1_endpoint_components_proto = out.File
+	file_endpoint_v1_endpoint_components_proto_goTypes = nil
+	file_endpoint_v1_endpoint_components_proto_depIdxs = nil
 }

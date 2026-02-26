@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.33.0
-// source: config/listener/v1/listener_components.proto
+// source: listener/v1/listener_components.proto
 
 package listenerv1
 
@@ -22,7 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// [#next-free-field: 6]
 type Filter struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -36,7 +35,7 @@ type Filter struct {
 
 func (x *Filter) Reset() {
 	*x = Filter{}
-	mi := &file_config_listener_v1_listener_components_proto_msgTypes[0]
+	mi := &file_listener_v1_listener_components_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -48,7 +47,7 @@ func (x *Filter) String() string {
 func (*Filter) ProtoMessage() {}
 
 func (x *Filter) ProtoReflect() protoreflect.Message {
-	mi := &file_config_listener_v1_listener_components_proto_msgTypes[0]
+	mi := &file_listener_v1_listener_components_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -61,7 +60,7 @@ func (x *Filter) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Filter.ProtoReflect.Descriptor instead.
 func (*Filter) Descriptor() ([]byte, []int) {
-	return file_config_listener_v1_listener_components_proto_rawDescGZIP(), []int{0}
+	return file_listener_v1_listener_components_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *Filter) GetName() string {
@@ -107,7 +106,7 @@ type FilterChain struct {
 
 func (x *FilterChain) Reset() {
 	*x = FilterChain{}
-	mi := &file_config_listener_v1_listener_components_proto_msgTypes[1]
+	mi := &file_listener_v1_listener_components_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -119,7 +118,7 @@ func (x *FilterChain) String() string {
 func (*FilterChain) ProtoMessage() {}
 
 func (x *FilterChain) ProtoReflect() protoreflect.Message {
-	mi := &file_config_listener_v1_listener_components_proto_msgTypes[1]
+	mi := &file_listener_v1_listener_components_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -132,7 +131,7 @@ func (x *FilterChain) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FilterChain.ProtoReflect.Descriptor instead.
 func (*FilterChain) Descriptor() ([]byte, []int) {
-	return file_config_listener_v1_listener_components_proto_rawDescGZIP(), []int{1}
+	return file_listener_v1_listener_components_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *FilterChain) GetFilters() []*Filter {
@@ -142,39 +141,39 @@ func (x *FilterChain) GetFilters() []*Filter {
 	return nil
 }
 
-var File_config_listener_v1_listener_components_proto protoreflect.FileDescriptor
+var File_listener_v1_listener_components_proto protoreflect.FileDescriptor
 
-const file_config_listener_v1_listener_components_proto_rawDesc = "" +
+const file_listener_v1_listener_components_proto_rawDesc = "" +
 	"\n" +
-	",config/listener/v1/listener_components.proto\x12\x12config.listener.v1\x1a\x19google/protobuf/any.proto\"z\n" +
+	"%listener/v1/listener_components.proto\x12\vlistener.v1\x1a\x19google/protobuf/any.proto\"z\n" +
 	"\x06Filter\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x129\n" +
 	"\ftyped_config\x18\x04 \x01(\v2\x14.google.protobuf.AnyH\x00R\vtypedConfigB\r\n" +
-	"\vconfig_typeJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04R\x06config\"u\n" +
-	"\vFilterChain\x124\n" +
-	"\afilters\x18\x03 \x03(\v2\x1a.config.listener.v1.FilterR\afiltersJ\x04\b\x02\x10\x03J\x04\b\b\x10\tR\vtls_contextR\x17on_demand_configurationBCZAgithub.com/dubbo-kubernetes/xds-api/config/listener/v1;listenerv1b\x06proto3"
+	"\vconfig_typeJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04R\x06config\"n\n" +
+	"\vFilterChain\x12-\n" +
+	"\afilters\x18\x03 \x03(\v2\x13.listener.v1.FilterR\afiltersJ\x04\b\x02\x10\x03J\x04\b\b\x10\tR\vtls_contextR\x17on_demand_configurationB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
 
 var (
-	file_config_listener_v1_listener_components_proto_rawDescOnce sync.Once
-	file_config_listener_v1_listener_components_proto_rawDescData []byte
+	file_listener_v1_listener_components_proto_rawDescOnce sync.Once
+	file_listener_v1_listener_components_proto_rawDescData []byte
 )
 
-func file_config_listener_v1_listener_components_proto_rawDescGZIP() []byte {
-	file_config_listener_v1_listener_components_proto_rawDescOnce.Do(func() {
-		file_config_listener_v1_listener_components_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_config_listener_v1_listener_components_proto_rawDesc), len(file_config_listener_v1_listener_components_proto_rawDesc)))
+func file_listener_v1_listener_components_proto_rawDescGZIP() []byte {
+	file_listener_v1_listener_components_proto_rawDescOnce.Do(func() {
+		file_listener_v1_listener_components_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_listener_v1_listener_components_proto_rawDesc), len(file_listener_v1_listener_components_proto_rawDesc)))
 	})
-	return file_config_listener_v1_listener_components_proto_rawDescData
+	return file_listener_v1_listener_components_proto_rawDescData
 }
 
-var file_config_listener_v1_listener_components_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_config_listener_v1_listener_components_proto_goTypes = []any{
-	(*Filter)(nil),      // 0: config.listener.v1.Filter
-	(*FilterChain)(nil), // 1: config.listener.v1.FilterChain
+var file_listener_v1_listener_components_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_listener_v1_listener_components_proto_goTypes = []any{
+	(*Filter)(nil),      // 0: listener.v1.Filter
+	(*FilterChain)(nil), // 1: listener.v1.FilterChain
 	(*anypb.Any)(nil),   // 2: google.protobuf.Any
 }
-var file_config_listener_v1_listener_components_proto_depIdxs = []int32{
-	2, // 0: config.listener.v1.Filter.typed_config:type_name -> google.protobuf.Any
-	0, // 1: config.listener.v1.FilterChain.filters:type_name -> config.listener.v1.Filter
+var file_listener_v1_listener_components_proto_depIdxs = []int32{
+	2, // 0: listener.v1.Filter.typed_config:type_name -> google.protobuf.Any
+	0, // 1: listener.v1.FilterChain.filters:type_name -> listener.v1.Filter
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
@@ -182,29 +181,29 @@ var file_config_listener_v1_listener_components_proto_depIdxs = []int32{
 	0, // [0:2] is the sub-list for field type_name
 }
 
-func init() { file_config_listener_v1_listener_components_proto_init() }
-func file_config_listener_v1_listener_components_proto_init() {
-	if File_config_listener_v1_listener_components_proto != nil {
+func init() { file_listener_v1_listener_components_proto_init() }
+func file_listener_v1_listener_components_proto_init() {
+	if File_listener_v1_listener_components_proto != nil {
 		return
 	}
-	file_config_listener_v1_listener_components_proto_msgTypes[0].OneofWrappers = []any{
+	file_listener_v1_listener_components_proto_msgTypes[0].OneofWrappers = []any{
 		(*Filter_TypedConfig)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_config_listener_v1_listener_components_proto_rawDesc), len(file_config_listener_v1_listener_components_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_listener_v1_listener_components_proto_rawDesc), len(file_listener_v1_listener_components_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_config_listener_v1_listener_components_proto_goTypes,
-		DependencyIndexes: file_config_listener_v1_listener_components_proto_depIdxs,
-		MessageInfos:      file_config_listener_v1_listener_components_proto_msgTypes,
+		GoTypes:           file_listener_v1_listener_components_proto_goTypes,
+		DependencyIndexes: file_listener_v1_listener_components_proto_depIdxs,
+		MessageInfos:      file_listener_v1_listener_components_proto_msgTypes,
 	}.Build()
-	File_config_listener_v1_listener_components_proto = out.File
-	file_config_listener_v1_listener_components_proto_goTypes = nil
-	file_config_listener_v1_listener_components_proto_depIdxs = nil
+	File_listener_v1_listener_components_proto = out.File
+	file_listener_v1_listener_components_proto_goTypes = nil
+	file_listener_v1_listener_components_proto_depIdxs = nil
 }

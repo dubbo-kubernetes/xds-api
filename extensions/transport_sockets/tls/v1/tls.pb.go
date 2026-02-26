@@ -22,20 +22,12 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// [#next-free-field: 8]
 type UpstreamTlsContext struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Common TLS context settings.
-	//
-	// .. attention::
-	//
-	//	Server certificate verification is not enabled by default. To enable verification, configure
-	//	:ref:`trusted_ca<envoy_v3_api_field_extensions.transport_sockets.tls.v3.CertificateValidationContext.trusted_ca>`.
-	CommonTlsContext *CommonTlsContext `protobuf:"bytes,1,opt,name=common_tls_context,json=commonTlsContext,proto3" json:"common_tls_context,omitempty"`
-	// SNI string to use when creating TLS backend connections.
-	Sni           string `protobuf:"bytes,2,opt,name=sni,proto3" json:"sni,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	CommonTlsContext *CommonTlsContext      `protobuf:"bytes,1,opt,name=common_tls_context,json=commonTlsContext,proto3" json:"common_tls_context,omitempty"`
+	Sni              string                 `protobuf:"bytes,2,opt,name=sni,proto3" json:"sni,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *UpstreamTlsContext) Reset() {
@@ -82,13 +74,10 @@ func (x *UpstreamTlsContext) GetSni() string {
 	return ""
 }
 
-// [#next-free-field: 12]
 type DownstreamTlsContext struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	CommonTlsContext *CommonTlsContext      `protobuf:"bytes,1,opt,name=common_tls_context,json=commonTlsContext,proto3" json:"common_tls_context,omitempty"`
-	// If specified, Envoy will reject connections without a valid client
-	// certificate.
-	RequireClientCertificate *wrapperspb.BoolValue `protobuf:"bytes,2,opt,name=require_client_certificate,json=requireClientCertificate,proto3" json:"require_client_certificate,omitempty"`
+	state                    protoimpl.MessageState `protogen:"open.v1"`
+	CommonTlsContext         *CommonTlsContext      `protobuf:"bytes,1,opt,name=common_tls_context,json=commonTlsContext,proto3" json:"common_tls_context,omitempty"`
+	RequireClientCertificate *wrapperspb.BoolValue  `protobuf:"bytes,2,opt,name=require_client_certificate,json=requireClientCertificate,proto3" json:"require_client_certificate,omitempty"`
 	unknownFields            protoimpl.UnknownFields
 	sizeCache                protoimpl.SizeCache
 }
@@ -137,8 +126,6 @@ func (x *DownstreamTlsContext) GetRequireClientCertificate() *wrapperspb.BoolVal
 	return nil
 }
 
-// TLS context shared by both client and server TLS contexts.
-// [#next-free-field: 17]
 type CommonTlsContext struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to ValidationContextType:
@@ -200,45 +187,15 @@ type isCommonTlsContext_ValidationContextType interface {
 }
 
 type CommonTlsContext_CombinedValidationContext struct {
-	// Combines the default "CertificateValidationContext" with the SDS-provided dynamic context for certificate
-	// validation.
-	//
-	// When the SDS server returns a dynamic "CertificateValidationContext", it is merged
-	// with the default context using "Message::MergeFrom()". The merging rules are as follows:
-	//
-	// * **Singular Fields:** Dynamic fields override the default singular fields.
-	// * **Repeated Fields:** Dynamic repeated fields are concatenated with the default repeated fields.
-	// * **Boolean Fields:** Boolean fields are combined using a logical OR operation.
-	//
-	// The resulting "CertificateValidationContext" is used to perform certificate validation.
 	CombinedValidationContext *CommonTlsContext_CombinedCertificateValidationContext `protobuf:"bytes,8,opt,name=combined_validation_context,json=combinedValidationContext,proto3,oneof"`
 }
 
 func (*CommonTlsContext_CombinedValidationContext) isCommonTlsContext_ValidationContextType() {}
 
-// Similar to CertificateProvider above, but allows the provider instances to be configured on
-// the client side instead of being sent from the control plane.
-//
-// DEPRECATED: This message was moved outside of CommonTlsContext
-// and now lives in common.proto.
-//
-// [#not-implemented-hide:]
 type CommonTlsContext_CertificateProviderInstance struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
-	// Provider instance name. This name must be defined in the client's configuration (e.g., a
-	// bootstrap file) to correspond to a provider instance (i.e., the same data in the typed_config
-	// field that would be sent in the CertificateProvider message if the config was sent by the
-	// control plane). If not present, defaults to "default".
-	//
-	// Instance names should generally be defined not in terms of the underlying provider
-	// implementation (e.g., "file_watcher") but rather in terms of the function of the
-	// certificates (e.g., "foo_deployment_identity").
-	InstanceName string `protobuf:"bytes,1,opt,name=instance_name,json=instanceName,proto3" json:"instance_name,omitempty"`
-	// Opaque name used to specify certificate instances or types. For example, "ROOTCA" to specify
-	// a root-certificate (validation context) or "example.com" to specify a certificate for a
-	// particular domain. Not all provider instances will actually use this field, so the value
-	// defaults to the empty string.
-	CertificateName string `protobuf:"bytes,2,opt,name=certificate_name,json=certificateName,proto3" json:"certificate_name,omitempty"`
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	InstanceName    string                 `protobuf:"bytes,1,opt,name=instance_name,json=instanceName,proto3" json:"instance_name,omitempty"`
+	CertificateName string                 `protobuf:"bytes,2,opt,name=certificate_name,json=certificateName,proto3" json:"certificate_name,omitempty"`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }

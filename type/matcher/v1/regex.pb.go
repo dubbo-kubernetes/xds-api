@@ -22,7 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// A regex matcher designed for safety when used with untrusted input.
 type RegexMatcher struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Regex         string                 `protobuf:"bytes,2,opt,name=regex,proto3" json:"regex,omitempty"`

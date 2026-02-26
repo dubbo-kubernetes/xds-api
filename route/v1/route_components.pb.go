@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.33.0
-// source: config/route/v1/route_components.proto
+// source: route/v1/route_components.proto
 
 package routev1
 
@@ -25,7 +25,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// [#next-free-field: 26]
 type VirtualHost struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -37,7 +36,7 @@ type VirtualHost struct {
 
 func (x *VirtualHost) Reset() {
 	*x = VirtualHost{}
-	mi := &file_config_route_v1_route_components_proto_msgTypes[0]
+	mi := &file_route_v1_route_components_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -49,7 +48,7 @@ func (x *VirtualHost) String() string {
 func (*VirtualHost) ProtoMessage() {}
 
 func (x *VirtualHost) ProtoReflect() protoreflect.Message {
-	mi := &file_config_route_v1_route_components_proto_msgTypes[0]
+	mi := &file_route_v1_route_components_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -62,7 +61,7 @@ func (x *VirtualHost) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use VirtualHost.ProtoReflect.Descriptor instead.
 func (*VirtualHost) Descriptor() ([]byte, []int) {
-	return file_config_route_v1_route_components_proto_rawDescGZIP(), []int{0}
+	return file_route_v1_route_components_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *VirtualHost) GetName() string {
@@ -100,7 +99,7 @@ type Route struct {
 
 func (x *Route) Reset() {
 	*x = Route{}
-	mi := &file_config_route_v1_route_components_proto_msgTypes[1]
+	mi := &file_route_v1_route_components_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -112,7 +111,7 @@ func (x *Route) String() string {
 func (*Route) ProtoMessage() {}
 
 func (x *Route) ProtoReflect() protoreflect.Message {
-	mi := &file_config_route_v1_route_components_proto_msgTypes[1]
+	mi := &file_route_v1_route_components_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -125,7 +124,7 @@ func (x *Route) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Route.ProtoReflect.Descriptor instead.
 func (*Route) Descriptor() ([]byte, []int) {
-	return file_config_route_v1_route_components_proto_rawDescGZIP(), []int{1}
+	return file_route_v1_route_components_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Route) GetName() string {
@@ -178,7 +177,7 @@ type WeightedCluster struct {
 
 func (x *WeightedCluster) Reset() {
 	*x = WeightedCluster{}
-	mi := &file_config_route_v1_route_components_proto_msgTypes[2]
+	mi := &file_route_v1_route_components_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -190,7 +189,7 @@ func (x *WeightedCluster) String() string {
 func (*WeightedCluster) ProtoMessage() {}
 
 func (x *WeightedCluster) ProtoReflect() protoreflect.Message {
-	mi := &file_config_route_v1_route_components_proto_msgTypes[2]
+	mi := &file_route_v1_route_components_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -203,7 +202,7 @@ func (x *WeightedCluster) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WeightedCluster.ProtoReflect.Descriptor instead.
 func (*WeightedCluster) Descriptor() ([]byte, []int) {
-	return file_config_route_v1_route_components_proto_rawDescGZIP(), []int{2}
+	return file_route_v1_route_components_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *WeightedCluster) GetClusters() []*WeightedCluster_ClusterWeight {
@@ -220,7 +219,6 @@ func (x *WeightedCluster) GetTotalWeight() *wrapperspb.UInt32Value {
 	return nil
 }
 
-// [#next-free-field: 18]
 type RouteMatch struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to PathSpecifier:
@@ -235,7 +233,7 @@ type RouteMatch struct {
 
 func (x *RouteMatch) Reset() {
 	*x = RouteMatch{}
-	mi := &file_config_route_v1_route_components_proto_msgTypes[3]
+	mi := &file_route_v1_route_components_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -247,7 +245,7 @@ func (x *RouteMatch) String() string {
 func (*RouteMatch) ProtoMessage() {}
 
 func (x *RouteMatch) ProtoReflect() protoreflect.Message {
-	mi := &file_config_route_v1_route_components_proto_msgTypes[3]
+	mi := &file_route_v1_route_components_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -260,7 +258,7 @@ func (x *RouteMatch) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RouteMatch.ProtoReflect.Descriptor instead.
 func (*RouteMatch) Descriptor() ([]byte, []int) {
-	return file_config_route_v1_route_components_proto_rawDescGZIP(), []int{3}
+	return file_route_v1_route_components_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *RouteMatch) GetPathSpecifier() isRouteMatch_PathSpecifier {
@@ -319,7 +317,6 @@ func (*RouteMatch_Path) isRouteMatch_PathSpecifier() {}
 
 func (*RouteMatch_SafeRegex) isRouteMatch_PathSpecifier() {}
 
-// [#next-free-field: 42]
 type RouteAction struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to ClusterSpecifier:
@@ -333,7 +330,7 @@ type RouteAction struct {
 
 func (x *RouteAction) Reset() {
 	*x = RouteAction{}
-	mi := &file_config_route_v1_route_components_proto_msgTypes[4]
+	mi := &file_route_v1_route_components_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -345,7 +342,7 @@ func (x *RouteAction) String() string {
 func (*RouteAction) ProtoMessage() {}
 
 func (x *RouteAction) ProtoReflect() protoreflect.Message {
-	mi := &file_config_route_v1_route_components_proto_msgTypes[4]
+	mi := &file_route_v1_route_components_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -358,7 +355,7 @@ func (x *RouteAction) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RouteAction.ProtoReflect.Descriptor instead.
 func (*RouteAction) Descriptor() ([]byte, []int) {
-	return file_config_route_v1_route_components_proto_rawDescGZIP(), []int{4}
+	return file_route_v1_route_components_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *RouteAction) GetClusterSpecifier() isRouteAction_ClusterSpecifier {
@@ -413,7 +410,7 @@ type WeightedCluster_ClusterWeight struct {
 
 func (x *WeightedCluster_ClusterWeight) Reset() {
 	*x = WeightedCluster_ClusterWeight{}
-	mi := &file_config_route_v1_route_components_proto_msgTypes[5]
+	mi := &file_route_v1_route_components_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -425,7 +422,7 @@ func (x *WeightedCluster_ClusterWeight) String() string {
 func (*WeightedCluster_ClusterWeight) ProtoMessage() {}
 
 func (x *WeightedCluster_ClusterWeight) ProtoReflect() protoreflect.Message {
-	mi := &file_config_route_v1_route_components_proto_msgTypes[5]
+	mi := &file_route_v1_route_components_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -438,7 +435,7 @@ func (x *WeightedCluster_ClusterWeight) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use WeightedCluster_ClusterWeight.ProtoReflect.Descriptor instead.
 func (*WeightedCluster_ClusterWeight) Descriptor() ([]byte, []int) {
-	return file_config_route_v1_route_components_proto_rawDescGZIP(), []int{2, 0}
+	return file_route_v1_route_components_proto_rawDescGZIP(), []int{2, 0}
 }
 
 func (x *WeightedCluster_ClusterWeight) GetName() string {
@@ -462,22 +459,22 @@ func (x *WeightedCluster_ClusterWeight) GetClusterHeader() string {
 	return ""
 }
 
-var File_config_route_v1_route_components_proto protoreflect.FileDescriptor
+var File_route_v1_route_components_proto protoreflect.FileDescriptor
 
-const file_config_route_v1_route_components_proto_rawDesc = "" +
+const file_route_v1_route_components_proto_rawDesc = "" +
 	"\n" +
-	"&config/route/v1/route_components.proto\x12\x0fconfig.route.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x1btype/matcher/v1/regex.proto\"k\n" +
+	"\x1froute/v1/route_components.proto\x12\broute.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x1btype/matcher/v1/regex.proto\"d\n" +
 	"\vVirtualHost\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x18\n" +
-	"\adomains\x18\x02 \x03(\tR\adomains\x12.\n" +
-	"\x06routes\x18\x03 \x03(\v2\x16.config.route.v1.RouteR\x06routes\"\x8e\x01\n" +
+	"\adomains\x18\x02 \x03(\tR\adomains\x12'\n" +
+	"\x06routes\x18\x03 \x03(\v2\x0f.route.v1.RouteR\x06routes\"\x80\x01\n" +
 	"\x05Route\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x121\n" +
-	"\x05match\x18\x02 \x01(\v2\x1b.config.route.v1.RouteMatchR\x05match\x124\n" +
-	"\x05route\x18\x03 \x01(\v2\x1c.config.route.v1.RouteActionH\x00R\x05routeB\b\n" +
-	"\x06action\"\xa1\x02\n" +
-	"\x0fWeightedCluster\x12J\n" +
-	"\bclusters\x18\x01 \x03(\v2..config.route.v1.WeightedCluster.ClusterWeightR\bclusters\x12?\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12*\n" +
+	"\x05match\x18\x02 \x01(\v2\x14.route.v1.RouteMatchR\x05match\x12-\n" +
+	"\x05route\x18\x03 \x01(\v2\x15.route.v1.RouteActionH\x00R\x05routeB\b\n" +
+	"\x06action\"\x9a\x02\n" +
+	"\x0fWeightedCluster\x12C\n" +
+	"\bclusters\x18\x01 \x03(\v2'.route.v1.WeightedCluster.ClusterWeightR\bclusters\x12?\n" +
 	"\ftotal_weight\x18\x02 \x01(\v2\x1c.google.protobuf.UInt32ValueR\vtotalWeight\x1a\x80\x01\n" +
 	"\rClusterWeight\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x124\n" +
@@ -490,44 +487,44 @@ const file_config_route_v1_route_components_proto_rawDesc = "" +
 	"\n" +
 	"safe_regex\x18\n" +
 	" \x01(\v2\x1d.type.matcher.v1.RegexMatcherH\x00R\tsafeRegexB\x10\n" +
-	"\x0epath_specifier\"\x8f\x01\n" +
+	"\x0epath_specifier\"\x88\x01\n" +
 	"\vRouteAction\x12\x1a\n" +
-	"\acluster\x18\x01 \x01(\tH\x00R\acluster\x12O\n" +
-	"\x11weighted_clusters\x18\x03 \x01(\v2 .config.route.v1.WeightedClusterH\x00R\x10weightedClustersB\x13\n" +
-	"\x11cluster_specifierB=Z;github.com/dubbo-kubernetes/xds-api/config/route/v1;routev1b\x06proto3"
+	"\acluster\x18\x01 \x01(\tH\x00R\acluster\x12H\n" +
+	"\x11weighted_clusters\x18\x03 \x01(\v2\x19.route.v1.WeightedClusterH\x00R\x10weightedClustersB\x13\n" +
+	"\x11cluster_specifierB6Z4github.com/dubbo-kubernetes/xds-api/route/v1;routev1b\x06proto3"
 
 var (
-	file_config_route_v1_route_components_proto_rawDescOnce sync.Once
-	file_config_route_v1_route_components_proto_rawDescData []byte
+	file_route_v1_route_components_proto_rawDescOnce sync.Once
+	file_route_v1_route_components_proto_rawDescData []byte
 )
 
-func file_config_route_v1_route_components_proto_rawDescGZIP() []byte {
-	file_config_route_v1_route_components_proto_rawDescOnce.Do(func() {
-		file_config_route_v1_route_components_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_config_route_v1_route_components_proto_rawDesc), len(file_config_route_v1_route_components_proto_rawDesc)))
+func file_route_v1_route_components_proto_rawDescGZIP() []byte {
+	file_route_v1_route_components_proto_rawDescOnce.Do(func() {
+		file_route_v1_route_components_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_route_v1_route_components_proto_rawDesc), len(file_route_v1_route_components_proto_rawDesc)))
 	})
-	return file_config_route_v1_route_components_proto_rawDescData
+	return file_route_v1_route_components_proto_rawDescData
 }
 
-var file_config_route_v1_route_components_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
-var file_config_route_v1_route_components_proto_goTypes = []any{
-	(*VirtualHost)(nil),                   // 0: config.route.v1.VirtualHost
-	(*Route)(nil),                         // 1: config.route.v1.Route
-	(*WeightedCluster)(nil),               // 2: config.route.v1.WeightedCluster
-	(*RouteMatch)(nil),                    // 3: config.route.v1.RouteMatch
-	(*RouteAction)(nil),                   // 4: config.route.v1.RouteAction
-	(*WeightedCluster_ClusterWeight)(nil), // 5: config.route.v1.WeightedCluster.ClusterWeight
+var file_route_v1_route_components_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_route_v1_route_components_proto_goTypes = []any{
+	(*VirtualHost)(nil),                   // 0: route.v1.VirtualHost
+	(*Route)(nil),                         // 1: route.v1.Route
+	(*WeightedCluster)(nil),               // 2: route.v1.WeightedCluster
+	(*RouteMatch)(nil),                    // 3: route.v1.RouteMatch
+	(*RouteAction)(nil),                   // 4: route.v1.RouteAction
+	(*WeightedCluster_ClusterWeight)(nil), // 5: route.v1.WeightedCluster.ClusterWeight
 	(*wrapperspb.UInt32Value)(nil),        // 6: google.protobuf.UInt32Value
 	(*v1.RegexMatcher)(nil),               // 7: type.matcher.v1.RegexMatcher
 }
-var file_config_route_v1_route_components_proto_depIdxs = []int32{
-	1, // 0: config.route.v1.VirtualHost.routes:type_name -> config.route.v1.Route
-	3, // 1: config.route.v1.Route.match:type_name -> config.route.v1.RouteMatch
-	4, // 2: config.route.v1.Route.route:type_name -> config.route.v1.RouteAction
-	5, // 3: config.route.v1.WeightedCluster.clusters:type_name -> config.route.v1.WeightedCluster.ClusterWeight
-	6, // 4: config.route.v1.WeightedCluster.total_weight:type_name -> google.protobuf.UInt32Value
-	7, // 5: config.route.v1.RouteMatch.safe_regex:type_name -> type.matcher.v1.RegexMatcher
-	2, // 6: config.route.v1.RouteAction.weighted_clusters:type_name -> config.route.v1.WeightedCluster
-	6, // 7: config.route.v1.WeightedCluster.ClusterWeight.weight:type_name -> google.protobuf.UInt32Value
+var file_route_v1_route_components_proto_depIdxs = []int32{
+	1, // 0: route.v1.VirtualHost.routes:type_name -> route.v1.Route
+	3, // 1: route.v1.Route.match:type_name -> route.v1.RouteMatch
+	4, // 2: route.v1.Route.route:type_name -> route.v1.RouteAction
+	5, // 3: route.v1.WeightedCluster.clusters:type_name -> route.v1.WeightedCluster.ClusterWeight
+	6, // 4: route.v1.WeightedCluster.total_weight:type_name -> google.protobuf.UInt32Value
+	7, // 5: route.v1.RouteMatch.safe_regex:type_name -> type.matcher.v1.RegexMatcher
+	2, // 6: route.v1.RouteAction.weighted_clusters:type_name -> route.v1.WeightedCluster
+	6, // 7: route.v1.WeightedCluster.ClusterWeight.weight:type_name -> google.protobuf.UInt32Value
 	8, // [8:8] is the sub-list for method output_type
 	8, // [8:8] is the sub-list for method input_type
 	8, // [8:8] is the sub-list for extension type_name
@@ -535,20 +532,20 @@ var file_config_route_v1_route_components_proto_depIdxs = []int32{
 	0, // [0:8] is the sub-list for field type_name
 }
 
-func init() { file_config_route_v1_route_components_proto_init() }
-func file_config_route_v1_route_components_proto_init() {
-	if File_config_route_v1_route_components_proto != nil {
+func init() { file_route_v1_route_components_proto_init() }
+func file_route_v1_route_components_proto_init() {
+	if File_route_v1_route_components_proto != nil {
 		return
 	}
-	file_config_route_v1_route_components_proto_msgTypes[1].OneofWrappers = []any{
+	file_route_v1_route_components_proto_msgTypes[1].OneofWrappers = []any{
 		(*Route_Route)(nil),
 	}
-	file_config_route_v1_route_components_proto_msgTypes[3].OneofWrappers = []any{
+	file_route_v1_route_components_proto_msgTypes[3].OneofWrappers = []any{
 		(*RouteMatch_Prefix)(nil),
 		(*RouteMatch_Path)(nil),
 		(*RouteMatch_SafeRegex)(nil),
 	}
-	file_config_route_v1_route_components_proto_msgTypes[4].OneofWrappers = []any{
+	file_route_v1_route_components_proto_msgTypes[4].OneofWrappers = []any{
 		(*RouteAction_Cluster)(nil),
 		(*RouteAction_WeightedClusters)(nil),
 	}
@@ -556,17 +553,17 @@ func file_config_route_v1_route_components_proto_init() {
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_config_route_v1_route_components_proto_rawDesc), len(file_config_route_v1_route_components_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_route_v1_route_components_proto_rawDesc), len(file_route_v1_route_components_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_config_route_v1_route_components_proto_goTypes,
-		DependencyIndexes: file_config_route_v1_route_components_proto_depIdxs,
-		MessageInfos:      file_config_route_v1_route_components_proto_msgTypes,
+		GoTypes:           file_route_v1_route_components_proto_goTypes,
+		DependencyIndexes: file_route_v1_route_components_proto_depIdxs,
+		MessageInfos:      file_route_v1_route_components_proto_msgTypes,
 	}.Build()
-	File_config_route_v1_route_components_proto = out.File
-	file_config_route_v1_route_components_proto_goTypes = nil
-	file_config_route_v1_route_components_proto_depIdxs = nil
+	File_route_v1_route_components_proto = out.File
+	file_route_v1_route_components_proto_goTypes = nil
+	file_route_v1_route_components_proto_depIdxs = nil
 }

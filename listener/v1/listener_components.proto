@@ -1,12 +1,11 @@
 syntax = "proto3";
 
-package config.listener.v1;
+package listener.v1;
 
 import "google/protobuf/any.proto";
 
-option go_package = "github.com/dubbo-kubernetes/xds-api/config/listener/v1;listenerv1";
+option go_package = "github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1";
 
-// [#next-free-field: 6]
 message Filter {
 
   string name = 1;

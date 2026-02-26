@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package config.endpoint.v1;
+package endpoint.v1;
 
 import "google/protobuf/wrappers.proto";
 
-option go_package = "github.com/dubbo-kubernetes/xds-api/config/endpoint/v1;endpointv1";
+option go_package = "github.com/dubbo-kubernetes/xds-api/endpoint/v1;endpointv1";
 
 message Endpoint {
 }

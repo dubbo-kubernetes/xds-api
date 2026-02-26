@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.36.11
 // 	protoc        v6.33.0
-// source: config/listener/v1/listener.proto
+// source: listener/v1/listener.proto
 
 package listenerv1
 
@@ -21,7 +21,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// The additional address the listener is listening on.
 type AdditionalAddress struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -30,7 +29,7 @@ type AdditionalAddress struct {
 
 func (x *AdditionalAddress) Reset() {
 	*x = AdditionalAddress{}
-	mi := &file_config_listener_v1_listener_proto_msgTypes[0]
+	mi := &file_listener_v1_listener_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -42,7 +41,7 @@ func (x *AdditionalAddress) String() string {
 func (*AdditionalAddress) ProtoMessage() {}
 
 func (x *AdditionalAddress) ProtoReflect() protoreflect.Message {
-	mi := &file_config_listener_v1_listener_proto_msgTypes[0]
+	mi := &file_listener_v1_listener_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -55,7 +54,7 @@ func (x *AdditionalAddress) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdditionalAddress.ProtoReflect.Descriptor instead.
 func (*AdditionalAddress) Descriptor() ([]byte, []int) {
-	return file_config_listener_v1_listener_proto_rawDescGZIP(), []int{0}
+	return file_listener_v1_listener_proto_rawDescGZIP(), []int{0}
 }
 
 type Listener struct {
@@ -68,7 +67,7 @@ type Listener struct {
 
 func (x *Listener) Reset() {
 	*x = Listener{}
-	mi := &file_config_listener_v1_listener_proto_msgTypes[1]
+	mi := &file_listener_v1_listener_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -80,7 +79,7 @@ func (x *Listener) String() string {
 func (*Listener) ProtoMessage() {}
 
 func (x *Listener) ProtoReflect() protoreflect.Message {
-	mi := &file_config_listener_v1_listener_proto_msgTypes[1]
+	mi := &file_listener_v1_listener_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -93,7 +92,7 @@ func (x *Listener) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Listener.ProtoReflect.Descriptor instead.
 func (*Listener) Descriptor() ([]byte, []int) {
-	return file_config_listener_v1_listener_proto_rawDescGZIP(), []int{1}
+	return file_listener_v1_listener_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *Listener) GetName() string {
@@ -110,35 +109,35 @@ func (x *Listener) GetAdditionalAddresses() []*AdditionalAddress {
 	return nil
 }
 
-var File_config_listener_v1_listener_proto protoreflect.FileDescriptor
+var File_listener_v1_listener_proto protoreflect.FileDescriptor
 
-const file_config_listener_v1_listener_proto_rawDesc = "" +
+const file_listener_v1_listener_proto_rawDesc = "" +
 	"\n" +
-	"!config/listener/v1/listener.proto\x12\x12config.listener.v1\"\x13\n" +
-	"\x11AdditionalAddress\"x\n" +
+	"\x1alistener/v1/listener.proto\x12\vlistener.v1\"\x13\n" +
+	"\x11AdditionalAddress\"q\n" +
 	"\bListener\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12X\n" +
-	"\x14additional_addresses\x18! \x03(\v2%.config.listener.v1.AdditionalAddressR\x13additionalAddressesBCZAgithub.com/dubbo-kubernetes/xds-api/config/listener/v1;listenerv1b\x06proto3"
+	"\x04name\x18\x01 \x01(\tR\x04name\x12Q\n" +
+	"\x14additional_addresses\x18! \x03(\v2\x1e.listener.v1.AdditionalAddressR\x13additionalAddressesB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
 
 var (
-	file_config_listener_v1_listener_proto_rawDescOnce sync.Once
-	file_config_listener_v1_listener_proto_rawDescData []byte
+	file_listener_v1_listener_proto_rawDescOnce sync.Once
+	file_listener_v1_listener_proto_rawDescData []byte
 )
 
-func file_config_listener_v1_listener_proto_rawDescGZIP() []byte {
-	file_config_listener_v1_listener_proto_rawDescOnce.Do(func() {
-		file_config_listener_v1_listener_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_config_listener_v1_listener_proto_rawDesc), len(file_config_listener_v1_listener_proto_rawDesc)))
+func file_listener_v1_listener_proto_rawDescGZIP() []byte {
+	file_listener_v1_listener_proto_rawDescOnce.Do(func() {
+		file_listener_v1_listener_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_listener_v1_listener_proto_rawDesc), len(file_listener_v1_listener_proto_rawDesc)))
 	})
-	return file_config_listener_v1_listener_proto_rawDescData
+	return file_listener_v1_listener_proto_rawDescData
 }
 
-var file_config_listener_v1_listener_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
-var file_config_listener_v1_listener_proto_goTypes = []any{
-	(*AdditionalAddress)(nil), // 0: config.listener.v1.AdditionalAddress
-	(*Listener)(nil),          // 1: config.listener.v1.Listener
+var file_listener_v1_listener_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_listener_v1_listener_proto_goTypes = []any{
+	(*AdditionalAddress)(nil), // 0: listener.v1.AdditionalAddress
+	(*Listener)(nil),          // 1: listener.v1.Listener
 }
-var file_config_listener_v1_listener_proto_depIdxs = []int32{
-	0, // 0: config.listener.v1.Listener.additional_addresses:type_name -> config.listener.v1.AdditionalAddress
+var file_listener_v1_listener_proto_depIdxs = []int32{
+	0, // 0: listener.v1.Listener.additional_addresses:type_name -> listener.v1.AdditionalAddress
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -146,26 +145,26 @@ var file_config_listener_v1_listener_proto_depIdxs = []int32{
 	0, // [0:1] is the sub-list for field type_name
 }
 
-func init() { file_config_listener_v1_listener_proto_init() }
-func file_config_listener_v1_listener_proto_init() {
-	if File_config_listener_v1_listener_proto != nil {
+func init() { file_listener_v1_listener_proto_init() }
+func file_listener_v1_listener_proto_init() {
+	if File_listener_v1_listener_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_config_listener_v1_listener_proto_rawDesc), len(file_config_listener_v1_listener_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_listener_v1_listener_proto_rawDesc), len(file_listener_v1_listener_proto_rawDesc)),
 			NumEnums:      0,
 			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_config_listener_v1_listener_proto_goTypes,
-		DependencyIndexes: file_config_listener_v1_listener_proto_depIdxs,
-		MessageInfos:      file_config_listener_v1_listener_proto_msgTypes,
+		GoTypes:           file_listener_v1_listener_proto_goTypes,
+		DependencyIndexes: file_listener_v1_listener_proto_depIdxs,
+		MessageInfos:      file_listener_v1_listener_proto_msgTypes,
 	}.Build()
-	File_config_listener_v1_listener_proto = out.File
-	file_config_listener_v1_listener_proto_goTypes = nil
-	file_config_listener_v1_listener_proto_depIdxs = nil
+	File_listener_v1_listener_proto = out.File
+	file_listener_v1_listener_proto_goTypes = nil
+	file_listener_v1_listener_proto_depIdxs = nil
 }

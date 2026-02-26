@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package listener.v1;
+
+option go_package = "github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1";
+
+message AdditionalAddress {}
+
+message Listener {
+  string name = 1;
+  repeated AdditionalAddress additional_addresses = 33;
+}

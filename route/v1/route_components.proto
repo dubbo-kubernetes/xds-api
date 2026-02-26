@@ -1,15 +1,14 @@
 syntax = "proto3";
 
-package config.route.v1;
+package route.v1;
 
 import "google/protobuf/any.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/wrappers.proto";
 import "type/matcher/v1/regex.proto";
 
-option go_package = "github.com/dubbo-kubernetes/xds-api/config/route/v1;routev1";
+option go_package = "github.com/dubbo-kubernetes/xds-api/route/v1;routev1";
 
-// [#next-free-field: 26]
 message VirtualHost {
   string name = 1;
   repeated string domains = 2;
@@ -34,7 +33,6 @@ message WeightedCluster {
   google.protobuf.UInt32Value total_weight = 2;
 }
 
-// [#next-free-field: 18]
 message RouteMatch {
   oneof path_specifier {
     string prefix = 1;
@@ -44,7 +42,6 @@ message RouteMatch {
 
 }
 
-// [#next-free-field: 42]
 message RouteAction {
   oneof cluster_specifier {
     string cluster = 1;
