@@ -6,5 +6,10 @@ import "google/protobuf/wrappers.proto";
 
 option go_package = "github.com/dubbo-kubernetes/xds-api/core/v1;corev1";
 
+message CidrRange {
+  string address_prefix = 1;
+  google.protobuf.UInt32Value prefix_len = 2;
+}
+
 message Address {}
 

@@ -9,7 +9,7 @@ package corev1
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	_ "google.golang.org/protobuf/types/known/wrapperspb"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -22,6 +22,58 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type CidrRange struct {
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	AddressPrefix string                  `protobuf:"bytes,1,opt,name=address_prefix,json=addressPrefix,proto3" json:"address_prefix,omitempty"`
+	PrefixLen     *wrapperspb.UInt32Value `protobuf:"bytes,2,opt,name=prefix_len,json=prefixLen,proto3" json:"prefix_len,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CidrRange) Reset() {
+	*x = CidrRange{}
+	mi := &file_core_v1_address_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CidrRange) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CidrRange) ProtoMessage() {}
+
+func (x *CidrRange) ProtoReflect() protoreflect.Message {
+	mi := &file_core_v1_address_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CidrRange.ProtoReflect.Descriptor instead.
+func (*CidrRange) Descriptor() ([]byte, []int) {
+	return file_core_v1_address_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *CidrRange) GetAddressPrefix() string {
+	if x != nil {
+		return x.AddressPrefix
+	}
+	return ""
+}
+
+func (x *CidrRange) GetPrefixLen() *wrapperspb.UInt32Value {
+	if x != nil {
+		return x.PrefixLen
+	}
+	return nil
+}
+
 type Address struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -30,7 +82,7 @@ type Address struct {
 
 func (x *Address) Reset() {
 	*x = Address{}
-	mi := &file_core_v1_address_proto_msgTypes[0]
+	mi := &file_core_v1_address_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -42,7 +94,7 @@ func (x *Address) String() string {
 func (*Address) ProtoMessage() {}
 
 func (x *Address) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1_address_proto_msgTypes[0]
+	mi := &file_core_v1_address_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -55,14 +107,18 @@ func (x *Address) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Address.ProtoReflect.Descriptor instead.
 func (*Address) Descriptor() ([]byte, []int) {
-	return file_core_v1_address_proto_rawDescGZIP(), []int{0}
+	return file_core_v1_address_proto_rawDescGZIP(), []int{1}
 }
 
 var File_core_v1_address_proto protoreflect.FileDescriptor
 
 const file_core_v1_address_proto_rawDesc = "" +
 	"\n" +
-	"\x15core/v1/address.proto\x12\acore.v1\x1a\x1egoogle/protobuf/wrappers.proto\"\t\n" +
+	"\x15core/v1/address.proto\x12\acore.v1\x1a\x1egoogle/protobuf/wrappers.proto\"o\n" +
+	"\tCidrRange\x12%\n" +
+	"\x0eaddress_prefix\x18\x01 \x01(\tR\raddressPrefix\x12;\n" +
+	"\n" +
+	"prefix_len\x18\x02 \x01(\v2\x1c.google.protobuf.UInt32ValueR\tprefixLen\"\t\n" +
 	"\aAddressB4Z2github.com/dubbo-kubernetes/xds-api/core/v1;corev1b\x06proto3"
 
 var (
@@ -77,16 +133,19 @@ func file_core_v1_address_proto_rawDescGZIP() []byte {
 	return file_core_v1_address_proto_rawDescData
 }
 
-var file_core_v1_address_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_core_v1_address_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_core_v1_address_proto_goTypes = []any{
-	(*Address)(nil), // 0: core.v1.Address
+	(*CidrRange)(nil),              // 0: core.v1.CidrRange
+	(*Address)(nil),                // 1: core.v1.Address
+	(*wrapperspb.UInt32Value)(nil), // 2: google.protobuf.UInt32Value
 }
 var file_core_v1_address_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2, // 0: core.v1.CidrRange.prefix_len:type_name -> google.protobuf.UInt32Value
+	1, // [1:1] is the sub-list for method output_type
+	1, // [1:1] is the sub-list for method input_type
+	1, // [1:1] is the sub-list for extension type_name
+	1, // [1:1] is the sub-list for extension extendee
+	0, // [0:1] is the sub-list for field type_name
 }
 
 func init() { file_core_v1_address_proto_init() }
@@ -100,7 +159,7 @@ func file_core_v1_address_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_v1_address_proto_rawDesc), len(file_core_v1_address_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

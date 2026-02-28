@@ -7,8 +7,8 @@
 package clusterv1
 
 import (
-	v11 "github.com/dubbo-kubernetes/xds-api/core/v1"
-	v1 "github.com/dubbo-kubernetes/xds-api/endpoint/v1"
+	v1 "github.com/dubbo-kubernetes/xds-api/core/v1"
+	v11 "github.com/dubbo-kubernetes/xds-api/endpoint/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	_ "google.golang.org/protobuf/types/known/anypb"
@@ -143,7 +143,8 @@ type Cluster struct {
 	ConnectTimeout                *durationpb.Duration           `protobuf:"bytes,4,opt,name=connect_timeout,json=connectTimeout,proto3" json:"connect_timeout,omitempty"`
 	PerConnectionBufferLimitBytes *wrapperspb.UInt32Value        `protobuf:"bytes,5,opt,name=per_connection_buffer_limit_bytes,json=perConnectionBufferLimitBytes,proto3" json:"per_connection_buffer_limit_bytes,omitempty"`
 	LbPolicy                      Cluster_LbPolicy               `protobuf:"varint,6,opt,name=lb_policy,json=lbPolicy,proto3,enum=cluster.v1.Cluster_LbPolicy" json:"lb_policy,omitempty"`
-	LoadAssignment                *v1.ClusterLoadAssignment      `protobuf:"bytes,33,opt,name=load_assignment,json=loadAssignment,proto3" json:"load_assignment,omitempty"`
+	HealthChecks                  []*v1.HealthCheck              `protobuf:"bytes,7,rep,name=health_checks,json=healthChecks,proto3" json:"health_checks,omitempty"`
+	LoadAssignment                *v11.ClusterLoadAssignment     `protobuf:"bytes,33,opt,name=load_assignment,json=loadAssignment,proto3" json:"load_assignment,omitempty"`
 	CommonLbConfig                *Cluster_CommonLbConfig        `protobuf:"bytes,27,opt,name=common_lb_config,json=commonLbConfig,proto3" json:"common_lb_config,omitempty"`
 	unknownFields                 protoimpl.UnknownFields
 	sizeCache                     protoimpl.SizeCache
@@ -237,7 +238,14 @@ func (x *Cluster) GetLbPolicy() Cluster_LbPolicy {
 	return Cluster_ROUND_ROBIN
 }
 
-func (x *Cluster) GetLoadAssignment() *v1.ClusterLoadAssignment {
+func (x *Cluster) GetHealthChecks() []*v1.HealthCheck {
+	if x != nil {
+		return x.HealthChecks
+	}
+	return nil
+}
+
+func (x *Cluster) GetLoadAssignment() *v11.ClusterLoadAssignment {
 	if x != nil {
 		return x.LoadAssignment
 	}
@@ -263,7 +271,7 @@ func (*Cluster_Type) isCluster_ClusterDiscoveryType() {}
 
 type Cluster_EdsClusterConfig struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	EdsConfig     *v11.ConfigSource      `protobuf:"bytes,1,opt,name=eds_config,json=edsConfig,proto3" json:"eds_config,omitempty"`
+	EdsConfig     *v1.ConfigSource       `protobuf:"bytes,1,opt,name=eds_config,json=edsConfig,proto3" json:"eds_config,omitempty"`
 	ServiceName   string                 `protobuf:"bytes,2,opt,name=service_name,json=serviceName,proto3" json:"service_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -299,7 +307,7 @@ func (*Cluster_EdsClusterConfig) Descriptor() ([]byte, []int) {
 	return file_cluster_v1_cluster_proto_rawDescGZIP(), []int{0, 0}
 }
 
-func (x *Cluster_EdsClusterConfig) GetEdsConfig() *v11.ConfigSource {
+func (x *Cluster_EdsClusterConfig) GetEdsConfig() *v1.ConfigSource {
 	if x != nil {
 		return x.EdsConfig
 	}
@@ -354,7 +362,7 @@ var File_cluster_v1_cluster_proto protoreflect.FileDescriptor
 const file_cluster_v1_cluster_proto_rawDesc = "" +
 	"\n" +
 	"\x18cluster/v1/cluster.proto\x12\n" +
-	"cluster.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x12core/v1/base.proto\x1a\x1bcore/v1/config_source.proto\x1a\x1aendpoint/v1/endpoint.proto\"\xfb\x06\n" +
+	"cluster.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x1acore/v1/health_check.proto\x1a\x12core/v1/base.proto\x1a\x1bcore/v1/config_source.proto\x1a\x1aendpoint/v1/endpoint.proto\"\xb6\a\n" +
 	"\aCluster\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\"\n" +
 	"\ralt_stat_name\x18\x1c \x01(\tR\valtStatName\x127\n" +
@@ -362,7 +370,8 @@ const file_cluster_v1_cluster_proto_rawDesc = "" +
 	"\x12eds_cluster_config\x18\x03 \x01(\v2$.cluster.v1.Cluster.EdsClusterConfigR\x10edsClusterConfig\x12B\n" +
 	"\x0fconnect_timeout\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\x0econnectTimeout\x12f\n" +
 	"!per_connection_buffer_limit_bytes\x18\x05 \x01(\v2\x1c.google.protobuf.UInt32ValueR\x1dperConnectionBufferLimitBytes\x129\n" +
-	"\tlb_policy\x18\x06 \x01(\x0e2\x1c.cluster.v1.Cluster.LbPolicyR\blbPolicy\x12K\n" +
+	"\tlb_policy\x18\x06 \x01(\x0e2\x1c.cluster.v1.Cluster.LbPolicyR\blbPolicy\x129\n" +
+	"\rhealth_checks\x18\a \x03(\v2\x14.core.v1.HealthCheckR\fhealthChecks\x12K\n" +
 	"\x0fload_assignment\x18! \x01(\v2\".endpoint.v1.ClusterLoadAssignmentR\x0eloadAssignment\x12L\n" +
 	"\x10common_lb_config\x18\x1b \x01(\v2\".cluster.v1.Cluster.CommonLbConfigR\x0ecommonLbConfig\x1ak\n" +
 	"\x10EdsClusterConfig\x124\n" +
@@ -400,15 +409,16 @@ func file_cluster_v1_cluster_proto_rawDescGZIP() []byte {
 var file_cluster_v1_cluster_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_cluster_v1_cluster_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_cluster_v1_cluster_proto_goTypes = []any{
-	(Cluster_DiscoveryType)(0),       // 0: cluster.v1.Cluster.DiscoveryType
-	(Cluster_LbPolicy)(0),            // 1: cluster.v1.Cluster.LbPolicy
-	(*Cluster)(nil),                  // 2: cluster.v1.Cluster
-	(*Cluster_EdsClusterConfig)(nil), // 3: cluster.v1.Cluster.EdsClusterConfig
-	(*Cluster_CommonLbConfig)(nil),   // 4: cluster.v1.Cluster.CommonLbConfig
-	(*durationpb.Duration)(nil),      // 5: google.protobuf.Duration
-	(*wrapperspb.UInt32Value)(nil),   // 6: google.protobuf.UInt32Value
-	(*v1.ClusterLoadAssignment)(nil), // 7: endpoint.v1.ClusterLoadAssignment
-	(*v11.ConfigSource)(nil),         // 8: core.v1.ConfigSource
+	(Cluster_DiscoveryType)(0),        // 0: cluster.v1.Cluster.DiscoveryType
+	(Cluster_LbPolicy)(0),             // 1: cluster.v1.Cluster.LbPolicy
+	(*Cluster)(nil),                   // 2: cluster.v1.Cluster
+	(*Cluster_EdsClusterConfig)(nil),  // 3: cluster.v1.Cluster.EdsClusterConfig
+	(*Cluster_CommonLbConfig)(nil),    // 4: cluster.v1.Cluster.CommonLbConfig
+	(*durationpb.Duration)(nil),       // 5: google.protobuf.Duration
+	(*wrapperspb.UInt32Value)(nil),    // 6: google.protobuf.UInt32Value
+	(*v1.HealthCheck)(nil),            // 7: core.v1.HealthCheck
+	(*v11.ClusterLoadAssignment)(nil), // 8: endpoint.v1.ClusterLoadAssignment
+	(*v1.ConfigSource)(nil),           // 9: core.v1.ConfigSource
 }
 var file_cluster_v1_cluster_proto_depIdxs = []int32{
 	0, // 0: cluster.v1.Cluster.type:type_name -> cluster.v1.Cluster.DiscoveryType
@@ -416,14 +426,15 @@ var file_cluster_v1_cluster_proto_depIdxs = []int32{
 	5, // 2: cluster.v1.Cluster.connect_timeout:type_name -> google.protobuf.Duration
 	6, // 3: cluster.v1.Cluster.per_connection_buffer_limit_bytes:type_name -> google.protobuf.UInt32Value
 	1, // 4: cluster.v1.Cluster.lb_policy:type_name -> cluster.v1.Cluster.LbPolicy
-	7, // 5: cluster.v1.Cluster.load_assignment:type_name -> endpoint.v1.ClusterLoadAssignment
-	4, // 6: cluster.v1.Cluster.common_lb_config:type_name -> cluster.v1.Cluster.CommonLbConfig
-	8, // 7: cluster.v1.Cluster.EdsClusterConfig.eds_config:type_name -> core.v1.ConfigSource
-	8, // [8:8] is the sub-list for method output_type
-	8, // [8:8] is the sub-list for method input_type
-	8, // [8:8] is the sub-list for extension type_name
-	8, // [8:8] is the sub-list for extension extendee
-	0, // [0:8] is the sub-list for field type_name
+	7, // 5: cluster.v1.Cluster.health_checks:type_name -> core.v1.HealthCheck
+	8, // 6: cluster.v1.Cluster.load_assignment:type_name -> endpoint.v1.ClusterLoadAssignment
+	4, // 7: cluster.v1.Cluster.common_lb_config:type_name -> cluster.v1.Cluster.CommonLbConfig
+	9, // 8: cluster.v1.Cluster.EdsClusterConfig.eds_config:type_name -> core.v1.ConfigSource
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	9, // [9:9] is the sub-list for extension type_name
+	9, // [9:9] is the sub-list for extension extendee
+	0, // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_cluster_v1_cluster_proto_init() }

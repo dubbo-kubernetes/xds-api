@@ -2,11 +2,16 @@ syntax = "proto3";
 
 package listener.v1;
 
+import "core/v1/address.proto";
+import "listener/v1/listener_components.proto";
+
 option go_package = "github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1";
 
 message AdditionalAddress {}
 
 message Listener {
   string name = 1;
+  core.v1.Address address = 2;
   repeated AdditionalAddress additional_addresses = 33;
+  repeated FilterChain filter_chains = 3;
 }

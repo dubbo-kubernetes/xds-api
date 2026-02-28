@@ -17,3 +17,11 @@ enum HealthStatus {
   TIMEOUT = 4;
   DEGRADED = 5;
 }
+
+message HealthCheck {
+  google.protobuf.Duration timeout = 1;
+  google.protobuf.Duration interval = 2;
+
+  google.protobuf.UInt32Value unhealthy_threshold = 3;
+  google.protobuf.UInt32Value healthy_threshold = 4;
+}

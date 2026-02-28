@@ -7,6 +7,7 @@
 package listenerv1
 
 import (
+	v1 "github.com/dubbo-kubernetes/xds-api/core/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -60,7 +61,9 @@ func (*AdditionalAddress) Descriptor() ([]byte, []int) {
 type Listener struct {
 	state               protoimpl.MessageState `protogen:"open.v1"`
 	Name                string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Address             *v1.Address            `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
 	AdditionalAddresses []*AdditionalAddress   `protobuf:"bytes,33,rep,name=additional_addresses,json=additionalAddresses,proto3" json:"additional_addresses,omitempty"`
+	FilterChains        []*FilterChain         `protobuf:"bytes,3,rep,name=filter_chains,json=filterChains,proto3" json:"filter_chains,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -102,9 +105,23 @@ func (x *Listener) GetName() string {
 	return ""
 }
 
+func (x *Listener) GetAddress() *v1.Address {
+	if x != nil {
+		return x.Address
+	}
+	return nil
+}
+
 func (x *Listener) GetAdditionalAddresses() []*AdditionalAddress {
 	if x != nil {
 		return x.AdditionalAddresses
+	}
+	return nil
+}
+
+func (x *Listener) GetFilterChains() []*FilterChain {
+	if x != nil {
+		return x.FilterChains
 	}
 	return nil
 }
@@ -113,11 +130,13 @@ var File_listener_v1_listener_proto protoreflect.FileDescriptor
 
 const file_listener_v1_listener_proto_rawDesc = "" +
 	"\n" +
-	"\x1alistener/v1/listener.proto\x12\vlistener.v1\"\x13\n" +
-	"\x11AdditionalAddress\"q\n" +
+	"\x1alistener/v1/listener.proto\x12\vlistener.v1\x1a\x15core/v1/address.proto\x1a%listener/v1/listener_components.proto\"\x13\n" +
+	"\x11AdditionalAddress\"\xdc\x01\n" +
 	"\bListener\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12Q\n" +
-	"\x14additional_addresses\x18! \x03(\v2\x1e.listener.v1.AdditionalAddressR\x13additionalAddressesB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
+	"\x04name\x18\x01 \x01(\tR\x04name\x12*\n" +
+	"\aaddress\x18\x02 \x01(\v2\x10.core.v1.AddressR\aaddress\x12Q\n" +
+	"\x14additional_addresses\x18! \x03(\v2\x1e.listener.v1.AdditionalAddressR\x13additionalAddresses\x12=\n" +
+	"\rfilter_chains\x18\x03 \x03(\v2\x18.listener.v1.FilterChainR\ffilterChainsB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
 
 var (
 	file_listener_v1_listener_proto_rawDescOnce sync.Once
@@ -135,14 +154,18 @@ var file_listener_v1_listener_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_listener_v1_listener_proto_goTypes = []any{
 	(*AdditionalAddress)(nil), // 0: listener.v1.AdditionalAddress
 	(*Listener)(nil),          // 1: listener.v1.Listener
+	(*v1.Address)(nil),        // 2: core.v1.Address
+	(*FilterChain)(nil),       // 3: listener.v1.FilterChain
 }
 var file_listener_v1_listener_proto_depIdxs = []int32{
-	0, // 0: listener.v1.Listener.additional_addresses:type_name -> listener.v1.AdditionalAddress
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	2, // 0: listener.v1.Listener.address:type_name -> core.v1.Address
+	0, // 1: listener.v1.Listener.additional_addresses:type_name -> listener.v1.AdditionalAddress
+	3, // 2: listener.v1.Listener.filter_chains:type_name -> listener.v1.FilterChain
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_listener_v1_listener_proto_init() }
@@ -150,6 +173,7 @@ func file_listener_v1_listener_proto_init() {
 	if File_listener_v1_listener_proto != nil {
 		return
 	}
+	file_listener_v1_listener_components_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

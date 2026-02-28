@@ -7,6 +7,7 @@
 package discoveryv1
 
 import (
+	v1 "github.com/dubbo-kubernetes/xds-api/core/v1"
 	status "google.golang.org/genproto/googleapis/rpc/status"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -27,6 +28,7 @@ const (
 type DiscoveryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	VersionInfo   string                 `protobuf:"bytes,1,opt,name=version_info,json=versionInfo,proto3" json:"version_info,omitempty"`
+	Node          *v1.Node               `protobuf:"bytes,2,opt,name=node,proto3" json:"node,omitempty"`
 	ResourceNames []string               `protobuf:"bytes,3,rep,name=resource_names,json=resourceNames,proto3" json:"resource_names,omitempty"`
 	TypeUrl       string                 `protobuf:"bytes,4,opt,name=type_url,json=typeUrl,proto3" json:"type_url,omitempty"`
 	ResponseNonce string                 `protobuf:"bytes,5,opt,name=response_nonce,json=responseNonce,proto3" json:"response_nonce,omitempty"`
@@ -70,6 +72,13 @@ func (x *DiscoveryRequest) GetVersionInfo() string {
 		return x.VersionInfo
 	}
 	return ""
+}
+
+func (x *DiscoveryRequest) GetNode() *v1.Node {
+	if x != nil {
+		return x.Node
+	}
+	return nil
 }
 
 func (x *DiscoveryRequest) GetResourceNames() []string {
@@ -178,6 +187,7 @@ func (x *DiscoveryResponse) GetNonce() string {
 
 type DeltaDiscoveryRequest struct {
 	state                    protoimpl.MessageState `protogen:"open.v1"`
+	Node                     *v1.Node               `protobuf:"bytes,1,opt,name=node,proto3" json:"node,omitempty"`
 	TypeUrl                  string                 `protobuf:"bytes,2,opt,name=type_url,json=typeUrl,proto3" json:"type_url,omitempty"`
 	ResourceNamesSubscribe   []string               `protobuf:"bytes,3,rep,name=resource_names_subscribe,json=resourceNamesSubscribe,proto3" json:"resource_names_subscribe,omitempty"`
 	ResourceNamesUnsubscribe []string               `protobuf:"bytes,4,rep,name=resource_names_unsubscribe,json=resourceNamesUnsubscribe,proto3" json:"resource_names_unsubscribe,omitempty"`
@@ -215,6 +225,13 @@ func (x *DeltaDiscoveryRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use DeltaDiscoveryRequest.ProtoReflect.Descriptor instead.
 func (*DeltaDiscoveryRequest) Descriptor() ([]byte, []int) {
 	return file_service_discovery_v1_discovery_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *DeltaDiscoveryRequest) GetNode() *v1.Node {
+	if x != nil {
+		return x.Node
+	}
+	return nil
 }
 
 func (x *DeltaDiscoveryRequest) GetTypeUrl() string {
@@ -461,9 +478,10 @@ var File_service_discovery_v1_discovery_proto protoreflect.FileDescriptor
 
 const file_service_discovery_v1_discovery_proto_rawDesc = "" +
 	"\n" +
-	"$service/discovery/v1/discovery.proto\x12\x14service.discovery.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x17google/rpc/status.proto\"\xd5\x01\n" +
+	"$service/discovery/v1/discovery.proto\x12\x14service.discovery.v1\x1a\x12core/v1/base.proto\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x17google/rpc/status.proto\"\xf8\x01\n" +
 	"\x10DiscoveryRequest\x12!\n" +
-	"\fversion_info\x18\x01 \x01(\tR\vversionInfo\x12%\n" +
+	"\fversion_info\x18\x01 \x01(\tR\vversionInfo\x12!\n" +
+	"\x04node\x18\x02 \x01(\v2\r.core.v1.NodeR\x04node\x12%\n" +
 	"\x0eresource_names\x18\x03 \x03(\tR\rresourceNames\x12\x19\n" +
 	"\btype_url\x18\x04 \x01(\tR\atypeUrl\x12%\n" +
 	"\x0eresponse_nonce\x18\x05 \x01(\tR\rresponseNonce\x125\n" +
@@ -473,8 +491,9 @@ const file_service_discovery_v1_discovery_proto_rawDesc = "" +
 	"\tresources\x18\x02 \x03(\v2\x14.google.protobuf.AnyR\tresources\x12\x16\n" +
 	"\x06canary\x18\x03 \x01(\bR\x06canary\x12\x19\n" +
 	"\btype_url\x18\x04 \x01(\tR\atypeUrl\x12\x14\n" +
-	"\x05nonce\x18\x05 \x01(\tR\x05nonce\"\xa4\x03\n" +
-	"\x15DeltaDiscoveryRequest\x12\x19\n" +
+	"\x05nonce\x18\x05 \x01(\tR\x05nonce\"\xc7\x03\n" +
+	"\x15DeltaDiscoveryRequest\x12!\n" +
+	"\x04node\x18\x01 \x01(\v2\r.core.v1.NodeR\x04node\x12\x19\n" +
 	"\btype_url\x18\x02 \x01(\tR\atypeUrl\x128\n" +
 	"\x18resource_names_subscribe\x18\x03 \x03(\tR\x16resourceNamesSubscribe\x12<\n" +
 	"\x1aresource_names_unsubscribe\x18\x04 \x03(\tR\x18resourceNamesUnsubscribe\x12\x84\x01\n" +
@@ -521,23 +540,26 @@ var file_service_discovery_v1_discovery_proto_goTypes = []any{
 	(*Resource)(nil),               // 4: service.discovery.v1.Resource
 	nil,                            // 5: service.discovery.v1.DeltaDiscoveryRequest.InitialResourceVersionsEntry
 	(*Resource_CacheControl)(nil),  // 6: service.discovery.v1.Resource.CacheControl
-	(*status.Status)(nil),          // 7: google.rpc.Status
-	(*anypb.Any)(nil),              // 8: google.protobuf.Any
-	(*durationpb.Duration)(nil),    // 9: google.protobuf.Duration
+	(*v1.Node)(nil),                // 7: core.v1.Node
+	(*status.Status)(nil),          // 8: google.rpc.Status
+	(*anypb.Any)(nil),              // 9: google.protobuf.Any
+	(*durationpb.Duration)(nil),    // 10: google.protobuf.Duration
 }
 var file_service_discovery_v1_discovery_proto_depIdxs = []int32{
-	7, // 0: service.discovery.v1.DiscoveryRequest.error_detail:type_name -> google.rpc.Status
-	8, // 1: service.discovery.v1.DiscoveryResponse.resources:type_name -> google.protobuf.Any
-	5, // 2: service.discovery.v1.DeltaDiscoveryRequest.initial_resource_versions:type_name -> service.discovery.v1.DeltaDiscoveryRequest.InitialResourceVersionsEntry
-	4, // 3: service.discovery.v1.DeltaDiscoveryResponse.resources:type_name -> service.discovery.v1.Resource
-	8, // 4: service.discovery.v1.Resource.resource:type_name -> google.protobuf.Any
-	9, // 5: service.discovery.v1.Resource.ttl:type_name -> google.protobuf.Duration
-	6, // 6: service.discovery.v1.Resource.cache_control:type_name -> service.discovery.v1.Resource.CacheControl
-	7, // [7:7] is the sub-list for method output_type
-	7, // [7:7] is the sub-list for method input_type
-	7, // [7:7] is the sub-list for extension type_name
-	7, // [7:7] is the sub-list for extension extendee
-	0, // [0:7] is the sub-list for field type_name
+	7,  // 0: service.discovery.v1.DiscoveryRequest.node:type_name -> core.v1.Node
+	8,  // 1: service.discovery.v1.DiscoveryRequest.error_detail:type_name -> google.rpc.Status
+	9,  // 2: service.discovery.v1.DiscoveryResponse.resources:type_name -> google.protobuf.Any
+	7,  // 3: service.discovery.v1.DeltaDiscoveryRequest.node:type_name -> core.v1.Node
+	5,  // 4: service.discovery.v1.DeltaDiscoveryRequest.initial_resource_versions:type_name -> service.discovery.v1.DeltaDiscoveryRequest.InitialResourceVersionsEntry
+	4,  // 5: service.discovery.v1.DeltaDiscoveryResponse.resources:type_name -> service.discovery.v1.Resource
+	9,  // 6: service.discovery.v1.Resource.resource:type_name -> google.protobuf.Any
+	10, // 7: service.discovery.v1.Resource.ttl:type_name -> google.protobuf.Duration
+	6,  // 8: service.discovery.v1.Resource.cache_control:type_name -> service.discovery.v1.Resource.CacheControl
+	9,  // [9:9] is the sub-list for method output_type
+	9,  // [9:9] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_service_discovery_v1_discovery_proto_init() }

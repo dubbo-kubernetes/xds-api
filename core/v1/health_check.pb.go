@@ -10,9 +10,9 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	_ "google.golang.org/protobuf/types/known/anypb"
-	_ "google.golang.org/protobuf/types/known/durationpb"
+	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	_ "google.golang.org/protobuf/types/known/structpb"
-	_ "google.golang.org/protobuf/types/known/wrapperspb"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -83,11 +83,84 @@ func (HealthStatus) EnumDescriptor() ([]byte, []int) {
 	return file_core_v1_health_check_proto_rawDescGZIP(), []int{0}
 }
 
+type HealthCheck struct {
+	state              protoimpl.MessageState  `protogen:"open.v1"`
+	Timeout            *durationpb.Duration    `protobuf:"bytes,1,opt,name=timeout,proto3" json:"timeout,omitempty"`
+	Interval           *durationpb.Duration    `protobuf:"bytes,2,opt,name=interval,proto3" json:"interval,omitempty"`
+	UnhealthyThreshold *wrapperspb.UInt32Value `protobuf:"bytes,3,opt,name=unhealthy_threshold,json=unhealthyThreshold,proto3" json:"unhealthy_threshold,omitempty"`
+	HealthyThreshold   *wrapperspb.UInt32Value `protobuf:"bytes,4,opt,name=healthy_threshold,json=healthyThreshold,proto3" json:"healthy_threshold,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *HealthCheck) Reset() {
+	*x = HealthCheck{}
+	mi := &file_core_v1_health_check_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HealthCheck) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HealthCheck) ProtoMessage() {}
+
+func (x *HealthCheck) ProtoReflect() protoreflect.Message {
+	mi := &file_core_v1_health_check_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HealthCheck.ProtoReflect.Descriptor instead.
+func (*HealthCheck) Descriptor() ([]byte, []int) {
+	return file_core_v1_health_check_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *HealthCheck) GetTimeout() *durationpb.Duration {
+	if x != nil {
+		return x.Timeout
+	}
+	return nil
+}
+
+func (x *HealthCheck) GetInterval() *durationpb.Duration {
+	if x != nil {
+		return x.Interval
+	}
+	return nil
+}
+
+func (x *HealthCheck) GetUnhealthyThreshold() *wrapperspb.UInt32Value {
+	if x != nil {
+		return x.UnhealthyThreshold
+	}
+	return nil
+}
+
+func (x *HealthCheck) GetHealthyThreshold() *wrapperspb.UInt32Value {
+	if x != nil {
+		return x.HealthyThreshold
+	}
+	return nil
+}
+
 var File_core_v1_health_check_proto protoreflect.FileDescriptor
 
 const file_core_v1_health_check_proto_rawDesc = "" +
 	"\n" +
-	"\x1acore/v1/health_check.proto\x12\acore.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1egoogle/protobuf/wrappers.proto*`\n" +
+	"\x1acore/v1/health_check.proto\x12\acore.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\x93\x02\n" +
+	"\vHealthCheck\x123\n" +
+	"\atimeout\x18\x01 \x01(\v2\x19.google.protobuf.DurationR\atimeout\x125\n" +
+	"\binterval\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\binterval\x12M\n" +
+	"\x13unhealthy_threshold\x18\x03 \x01(\v2\x1c.google.protobuf.UInt32ValueR\x12unhealthyThreshold\x12I\n" +
+	"\x11healthy_threshold\x18\x04 \x01(\v2\x1c.google.protobuf.UInt32ValueR\x10healthyThreshold*`\n" +
 	"\fHealthStatus\x12\v\n" +
 	"\aUNKNOWN\x10\x00\x12\v\n" +
 	"\aHEALTHY\x10\x01\x12\r\n" +
@@ -109,15 +182,23 @@ func file_core_v1_health_check_proto_rawDescGZIP() []byte {
 }
 
 var file_core_v1_health_check_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_core_v1_health_check_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_core_v1_health_check_proto_goTypes = []any{
-	(HealthStatus)(0), // 0: core.v1.HealthStatus
+	(HealthStatus)(0),              // 0: core.v1.HealthStatus
+	(*HealthCheck)(nil),            // 1: core.v1.HealthCheck
+	(*durationpb.Duration)(nil),    // 2: google.protobuf.Duration
+	(*wrapperspb.UInt32Value)(nil), // 3: google.protobuf.UInt32Value
 }
 var file_core_v1_health_check_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	2, // 0: core.v1.HealthCheck.timeout:type_name -> google.protobuf.Duration
+	2, // 1: core.v1.HealthCheck.interval:type_name -> google.protobuf.Duration
+	3, // 2: core.v1.HealthCheck.unhealthy_threshold:type_name -> google.protobuf.UInt32Value
+	3, // 3: core.v1.HealthCheck.healthy_threshold:type_name -> google.protobuf.UInt32Value
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_core_v1_health_check_proto_init() }
@@ -131,13 +212,14 @@ func file_core_v1_health_check_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_v1_health_check_proto_rawDesc), len(file_core_v1_health_check_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   0,
+			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_core_v1_health_check_proto_goTypes,
 		DependencyIndexes: file_core_v1_health_check_proto_depIdxs,
 		EnumInfos:         file_core_v1_health_check_proto_enumTypes,
+		MessageInfos:      file_core_v1_health_check_proto_msgTypes,
 	}.Build()
 	File_core_v1_health_check_proto = out.File
 	file_core_v1_health_check_proto_goTypes = nil

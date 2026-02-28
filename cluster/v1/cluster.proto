@@ -6,6 +6,7 @@ import "google/protobuf/any.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/wrappers.proto";
+import "core/v1/health_check.proto";
 import "core/v1/base.proto";
 import "core/v1/config_source.proto";
 import "endpoint/v1/endpoint.proto";
@@ -45,6 +46,7 @@ message Cluster {
   google.protobuf.Duration connect_timeout = 4;
   google.protobuf.UInt32Value per_connection_buffer_limit_bytes = 5;
   LbPolicy lb_policy = 6;
+  repeated core.v1.HealthCheck health_checks = 7;
   endpoint.v1.ClusterLoadAssignment load_assignment = 33;
   CommonLbConfig common_lb_config = 27;
 }

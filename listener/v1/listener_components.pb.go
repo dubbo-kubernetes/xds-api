@@ -7,9 +7,11 @@
 package listenerv1
 
 import (
+	v1 "github.com/dubbo-kubernetes/xds-api/core/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	anypb "google.golang.org/protobuf/types/known/anypb"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -21,6 +23,55 @@ const (
 	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
+
+type FilterChainMatch_ConnectionSourceType int32
+
+const (
+	FilterChainMatch_ANY                 FilterChainMatch_ConnectionSourceType = 0
+	FilterChainMatch_SAME_IP_OR_LOOPBACK FilterChainMatch_ConnectionSourceType = 1
+	FilterChainMatch_EXTERNAL            FilterChainMatch_ConnectionSourceType = 2
+)
+
+// Enum value maps for FilterChainMatch_ConnectionSourceType.
+var (
+	FilterChainMatch_ConnectionSourceType_name = map[int32]string{
+		0: "ANY",
+		1: "SAME_IP_OR_LOOPBACK",
+		2: "EXTERNAL",
+	}
+	FilterChainMatch_ConnectionSourceType_value = map[string]int32{
+		"ANY":                 0,
+		"SAME_IP_OR_LOOPBACK": 1,
+		"EXTERNAL":            2,
+	}
+)
+
+func (x FilterChainMatch_ConnectionSourceType) Enum() *FilterChainMatch_ConnectionSourceType {
+	p := new(FilterChainMatch_ConnectionSourceType)
+	*p = x
+	return p
+}
+
+func (x FilterChainMatch_ConnectionSourceType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (FilterChainMatch_ConnectionSourceType) Descriptor() protoreflect.EnumDescriptor {
+	return file_listener_v1_listener_components_proto_enumTypes[0].Descriptor()
+}
+
+func (FilterChainMatch_ConnectionSourceType) Type() protoreflect.EnumType {
+	return &file_listener_v1_listener_components_proto_enumTypes[0]
+}
+
+func (x FilterChainMatch_ConnectionSourceType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use FilterChainMatch_ConnectionSourceType.Descriptor instead.
+func (FilterChainMatch_ConnectionSourceType) EnumDescriptor() ([]byte, []int) {
+	return file_listener_v1_listener_components_proto_rawDescGZIP(), []int{1, 0}
+}
 
 type Filter struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -96,6 +147,130 @@ type Filter_TypedConfig struct {
 
 func (*Filter_TypedConfig) isFilter_ConfigType() {}
 
+type FilterChainMatch struct {
+	state                    protoimpl.MessageState                `protogen:"open.v1"`
+	DestinationPort          *wrapperspb.UInt32Value               `protobuf:"bytes,8,opt,name=destination_port,json=destinationPort,proto3" json:"destination_port,omitempty"`
+	PrefixRanges             []*v1.CidrRange                       `protobuf:"bytes,3,rep,name=prefix_ranges,json=prefixRanges,proto3" json:"prefix_ranges,omitempty"`
+	AddressSuffix            string                                `protobuf:"bytes,4,opt,name=address_suffix,json=addressSuffix,proto3" json:"address_suffix,omitempty"`
+	SuffixLen                *wrapperspb.UInt32Value               `protobuf:"bytes,5,opt,name=suffix_len,json=suffixLen,proto3" json:"suffix_len,omitempty"`
+	DirectSourcePrefixRanges []*v1.CidrRange                       `protobuf:"bytes,13,rep,name=direct_source_prefix_ranges,json=directSourcePrefixRanges,proto3" json:"direct_source_prefix_ranges,omitempty"`
+	SourceType               FilterChainMatch_ConnectionSourceType `protobuf:"varint,12,opt,name=source_type,json=sourceType,proto3,enum=listener.v1.FilterChainMatch_ConnectionSourceType" json:"source_type,omitempty"`
+	SourcePrefixRanges       []*v1.CidrRange                       `protobuf:"bytes,6,rep,name=source_prefix_ranges,json=sourcePrefixRanges,proto3" json:"source_prefix_ranges,omitempty"`
+	SourcePorts              []uint32                              `protobuf:"varint,7,rep,packed,name=source_ports,json=sourcePorts,proto3" json:"source_ports,omitempty"`
+	ServerNames              []string                              `protobuf:"bytes,11,rep,name=server_names,json=serverNames,proto3" json:"server_names,omitempty"`
+	TransportProtocol        string                                `protobuf:"bytes,9,opt,name=transport_protocol,json=transportProtocol,proto3" json:"transport_protocol,omitempty"`
+	ApplicationProtocols     []string                              `protobuf:"bytes,10,rep,name=application_protocols,json=applicationProtocols,proto3" json:"application_protocols,omitempty"`
+	unknownFields            protoimpl.UnknownFields
+	sizeCache                protoimpl.SizeCache
+}
+
+func (x *FilterChainMatch) Reset() {
+	*x = FilterChainMatch{}
+	mi := &file_listener_v1_listener_components_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *FilterChainMatch) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*FilterChainMatch) ProtoMessage() {}
+
+func (x *FilterChainMatch) ProtoReflect() protoreflect.Message {
+	mi := &file_listener_v1_listener_components_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use FilterChainMatch.ProtoReflect.Descriptor instead.
+func (*FilterChainMatch) Descriptor() ([]byte, []int) {
+	return file_listener_v1_listener_components_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *FilterChainMatch) GetDestinationPort() *wrapperspb.UInt32Value {
+	if x != nil {
+		return x.DestinationPort
+	}
+	return nil
+}
+
+func (x *FilterChainMatch) GetPrefixRanges() []*v1.CidrRange {
+	if x != nil {
+		return x.PrefixRanges
+	}
+	return nil
+}
+
+func (x *FilterChainMatch) GetAddressSuffix() string {
+	if x != nil {
+		return x.AddressSuffix
+	}
+	return ""
+}
+
+func (x *FilterChainMatch) GetSuffixLen() *wrapperspb.UInt32Value {
+	if x != nil {
+		return x.SuffixLen
+	}
+	return nil
+}
+
+func (x *FilterChainMatch) GetDirectSourcePrefixRanges() []*v1.CidrRange {
+	if x != nil {
+		return x.DirectSourcePrefixRanges
+	}
+	return nil
+}
+
+func (x *FilterChainMatch) GetSourceType() FilterChainMatch_ConnectionSourceType {
+	if x != nil {
+		return x.SourceType
+	}
+	return FilterChainMatch_ANY
+}
+
+func (x *FilterChainMatch) GetSourcePrefixRanges() []*v1.CidrRange {
+	if x != nil {
+		return x.SourcePrefixRanges
+	}
+	return nil
+}
+
+func (x *FilterChainMatch) GetSourcePorts() []uint32 {
+	if x != nil {
+		return x.SourcePorts
+	}
+	return nil
+}
+
+func (x *FilterChainMatch) GetServerNames() []string {
+	if x != nil {
+		return x.ServerNames
+	}
+	return nil
+}
+
+func (x *FilterChainMatch) GetTransportProtocol() string {
+	if x != nil {
+		return x.TransportProtocol
+	}
+	return ""
+}
+
+func (x *FilterChainMatch) GetApplicationProtocols() []string {
+	if x != nil {
+		return x.ApplicationProtocols
+	}
+	return nil
+}
+
 // [#next-free-field: 10]
 type FilterChain struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -106,7 +281,7 @@ type FilterChain struct {
 
 func (x *FilterChain) Reset() {
 	*x = FilterChain{}
-	mi := &file_listener_v1_listener_components_proto_msgTypes[1]
+	mi := &file_listener_v1_listener_components_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -118,7 +293,7 @@ func (x *FilterChain) String() string {
 func (*FilterChain) ProtoMessage() {}
 
 func (x *FilterChain) ProtoReflect() protoreflect.Message {
-	mi := &file_listener_v1_listener_components_proto_msgTypes[1]
+	mi := &file_listener_v1_listener_components_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -131,7 +306,7 @@ func (x *FilterChain) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FilterChain.ProtoReflect.Descriptor instead.
 func (*FilterChain) Descriptor() ([]byte, []int) {
-	return file_listener_v1_listener_components_proto_rawDescGZIP(), []int{1}
+	return file_listener_v1_listener_components_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *FilterChain) GetFilters() []*Filter {
@@ -145,11 +320,30 @@ var File_listener_v1_listener_components_proto protoreflect.FileDescriptor
 
 const file_listener_v1_listener_components_proto_rawDesc = "" +
 	"\n" +
-	"%listener/v1/listener_components.proto\x12\vlistener.v1\x1a\x19google/protobuf/any.proto\"z\n" +
+	"%listener/v1/listener_components.proto\x12\vlistener.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x15core/v1/address.proto\"z\n" +
 	"\x06Filter\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x129\n" +
 	"\ftyped_config\x18\x04 \x01(\v2\x14.google.protobuf.AnyH\x00R\vtypedConfigB\r\n" +
-	"\vconfig_typeJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04R\x06config\"n\n" +
+	"\vconfig_typeJ\x04\b\x02\x10\x03J\x04\b\x03\x10\x04R\x06config\"\xde\x05\n" +
+	"\x10FilterChainMatch\x12G\n" +
+	"\x10destination_port\x18\b \x01(\v2\x1c.google.protobuf.UInt32ValueR\x0fdestinationPort\x127\n" +
+	"\rprefix_ranges\x18\x03 \x03(\v2\x12.core.v1.CidrRangeR\fprefixRanges\x12%\n" +
+	"\x0eaddress_suffix\x18\x04 \x01(\tR\raddressSuffix\x12;\n" +
+	"\n" +
+	"suffix_len\x18\x05 \x01(\v2\x1c.google.protobuf.UInt32ValueR\tsuffixLen\x12Q\n" +
+	"\x1bdirect_source_prefix_ranges\x18\r \x03(\v2\x12.core.v1.CidrRangeR\x18directSourcePrefixRanges\x12S\n" +
+	"\vsource_type\x18\f \x01(\x0e22.listener.v1.FilterChainMatch.ConnectionSourceTypeR\n" +
+	"sourceType\x12D\n" +
+	"\x14source_prefix_ranges\x18\x06 \x03(\v2\x12.core.v1.CidrRangeR\x12sourcePrefixRanges\x12!\n" +
+	"\fsource_ports\x18\a \x03(\rR\vsourcePorts\x12!\n" +
+	"\fserver_names\x18\v \x03(\tR\vserverNames\x12-\n" +
+	"\x12transport_protocol\x18\t \x01(\tR\x11transportProtocol\x123\n" +
+	"\x15application_protocols\x18\n" +
+	" \x03(\tR\x14applicationProtocols\"F\n" +
+	"\x14ConnectionSourceType\x12\a\n" +
+	"\x03ANY\x10\x00\x12\x17\n" +
+	"\x13SAME_IP_OR_LOOPBACK\x10\x01\x12\f\n" +
+	"\bEXTERNAL\x10\x02J\x04\b\x01\x10\x02\"n\n" +
 	"\vFilterChain\x12-\n" +
 	"\afilters\x18\x03 \x03(\v2\x13.listener.v1.FilterR\afiltersJ\x04\b\x02\x10\x03J\x04\b\b\x10\tR\vtls_contextR\x17on_demand_configurationB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
 
@@ -165,20 +359,31 @@ func file_listener_v1_listener_components_proto_rawDescGZIP() []byte {
 	return file_listener_v1_listener_components_proto_rawDescData
 }
 
-var file_listener_v1_listener_components_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_listener_v1_listener_components_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_listener_v1_listener_components_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_listener_v1_listener_components_proto_goTypes = []any{
-	(*Filter)(nil),      // 0: listener.v1.Filter
-	(*FilterChain)(nil), // 1: listener.v1.FilterChain
-	(*anypb.Any)(nil),   // 2: google.protobuf.Any
+	(FilterChainMatch_ConnectionSourceType)(0), // 0: listener.v1.FilterChainMatch.ConnectionSourceType
+	(*Filter)(nil),                 // 1: listener.v1.Filter
+	(*FilterChainMatch)(nil),       // 2: listener.v1.FilterChainMatch
+	(*FilterChain)(nil),            // 3: listener.v1.FilterChain
+	(*anypb.Any)(nil),              // 4: google.protobuf.Any
+	(*wrapperspb.UInt32Value)(nil), // 5: google.protobuf.UInt32Value
+	(*v1.CidrRange)(nil),           // 6: core.v1.CidrRange
 }
 var file_listener_v1_listener_components_proto_depIdxs = []int32{
-	2, // 0: listener.v1.Filter.typed_config:type_name -> google.protobuf.Any
-	0, // 1: listener.v1.FilterChain.filters:type_name -> listener.v1.Filter
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	4, // 0: listener.v1.Filter.typed_config:type_name -> google.protobuf.Any
+	5, // 1: listener.v1.FilterChainMatch.destination_port:type_name -> google.protobuf.UInt32Value
+	6, // 2: listener.v1.FilterChainMatch.prefix_ranges:type_name -> core.v1.CidrRange
+	5, // 3: listener.v1.FilterChainMatch.suffix_len:type_name -> google.protobuf.UInt32Value
+	6, // 4: listener.v1.FilterChainMatch.direct_source_prefix_ranges:type_name -> core.v1.CidrRange
+	0, // 5: listener.v1.FilterChainMatch.source_type:type_name -> listener.v1.FilterChainMatch.ConnectionSourceType
+	6, // 6: listener.v1.FilterChainMatch.source_prefix_ranges:type_name -> core.v1.CidrRange
+	1, // 7: listener.v1.FilterChain.filters:type_name -> listener.v1.Filter
+	8, // [8:8] is the sub-list for method output_type
+	8, // [8:8] is the sub-list for method input_type
+	8, // [8:8] is the sub-list for extension type_name
+	8, // [8:8] is the sub-list for extension extendee
+	0, // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_listener_v1_listener_components_proto_init() }
@@ -194,13 +399,14 @@ func file_listener_v1_listener_components_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_listener_v1_listener_components_proto_rawDesc), len(file_listener_v1_listener_components_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   2,
+			NumEnums:      1,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_listener_v1_listener_components_proto_goTypes,
 		DependencyIndexes: file_listener_v1_listener_components_proto_depIdxs,
+		EnumInfos:         file_listener_v1_listener_components_proto_enumTypes,
 		MessageInfos:      file_listener_v1_listener_components_proto_msgTypes,
 	}.Build()
 	File_listener_v1_listener_components_proto = out.File

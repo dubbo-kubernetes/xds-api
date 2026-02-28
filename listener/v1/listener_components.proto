@@ -3,6 +3,8 @@ syntax = "proto3";
 package listener.v1;
 
 import "google/protobuf/any.proto";
+import "google/protobuf/wrappers.proto";
+import "core/v1/address.proto";
 
 option go_package = "github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1";
 
@@ -16,6 +18,29 @@ message Filter {
 
   reserved 2, 3;
   reserved "config";
+}
+
+message FilterChainMatch {
+
+  enum ConnectionSourceType {
+    ANY = 0;
+    SAME_IP_OR_LOOPBACK = 1;
+    EXTERNAL = 2;
+  }
+
+  google.protobuf.UInt32Value destination_port = 8;
+  repeated core.v1.CidrRange prefix_ranges = 3;
+  string address_suffix = 4;
+  google.protobuf.UInt32Value suffix_len = 5;
+  repeated core.v1.CidrRange direct_source_prefix_ranges = 13;
+  ConnectionSourceType source_type = 12;
+  repeated core.v1.CidrRange source_prefix_ranges = 6;
+  repeated uint32 source_ports = 7;
+  repeated string server_names = 11;
+  string transport_protocol = 9;
+  repeated string application_protocols = 10;
+
+  reserved 1;
 }
 
 // [#next-free-field: 10]
