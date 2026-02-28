@@ -12,6 +12,8 @@ enum ApiVersion {
   AUTO = 0;
 }
 
+message AggregatedConfigSource {}
+
 message ApiConfigSource {
   enum ApiType {
     REST = 0;
@@ -25,5 +27,6 @@ message ApiConfigSource {
 message ConfigSource {
   oneof config_source_specifier {
     ApiConfigSource api_config_source = 2;
+    AggregatedConfigSource ads = 3;
   }
 }

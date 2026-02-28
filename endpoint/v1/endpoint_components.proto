@@ -5,6 +5,7 @@ package endpoint.v1;
 import "google/protobuf/wrappers.proto";
 import "core/v1/base.proto";
 import "core/v1/address.proto";
+import "core/v1/health_check.proto";
 
 option go_package = "github.com/dubbo-kubernetes/xds-api/endpoint/v1;endpointv1";
 
@@ -18,6 +19,8 @@ message LbEndpoint {
     Endpoint endpoint = 1;
     string endpoint_name = 5;
   }
+  core.v1.HealthStatus health_status = 2;
+  core.v1.Metadata metadata = 3;
   google.protobuf.UInt32Value load_balancing_weight = 4;
 }
 

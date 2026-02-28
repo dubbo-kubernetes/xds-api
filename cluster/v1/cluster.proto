@@ -21,6 +21,7 @@ message Cluster {
   }
 
   message CommonLbConfig {
+    core.v1.HealthStatusSet override_host_status = 8;
   }
 
   enum DiscoveryType {
@@ -49,4 +50,5 @@ message Cluster {
   repeated core.v1.HealthCheck health_checks = 7;
   endpoint.v1.ClusterLoadAssignment load_assignment = 33;
   CommonLbConfig common_lb_config = 27;
+  google.protobuf.Any transport_socket = 24;
 }

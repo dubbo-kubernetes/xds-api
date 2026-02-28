@@ -18,6 +18,10 @@ enum HealthStatus {
   DEGRADED = 5;
 }
 
+message HealthStatusSet {
+  repeated HealthStatus statuses = 1;
+}
+
 message HealthCheck {
   google.protobuf.Duration timeout = 1;
   google.protobuf.Duration interval = 2;

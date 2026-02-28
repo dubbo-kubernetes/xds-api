@@ -2,10 +2,15 @@ syntax = "proto3";
 
 package listener.v1;
 
+import "google/protobuf/any.proto";
 import "core/v1/address.proto";
 import "listener/v1/listener_components.proto";
 
 option go_package = "github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1";
+
+message ApiListener {
+  google.protobuf.Any api_listener = 1;
+}
 
 message AdditionalAddress {
   core.v1.Address address = 1;
@@ -16,4 +21,5 @@ message Listener {
   core.v1.Address address = 2;
   repeated AdditionalAddress additional_addresses = 33;
   repeated FilterChain filter_chains = 3;
+  ApiListener api_listener = 19;
 }

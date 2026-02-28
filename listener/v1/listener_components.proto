@@ -45,8 +45,10 @@ message FilterChainMatch {
 
 // [#next-free-field: 10]
 message FilterChain {
+  string name = 1;
+  FilterChainMatch filter_chain_match = 2;
   repeated Filter filters = 3;
 
-  reserved 2, 8;
-  reserved "tls_context", "on_demand_configuration";
+  reserved 8;
+  reserved "on_demand_configuration";
 }
