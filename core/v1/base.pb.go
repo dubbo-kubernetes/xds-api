@@ -25,6 +25,50 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type Metadata struct {
+	state          protoimpl.MessageState      `protogen:"open.v1"`
+	FilterMetadata map[string]*structpb.Struct `protobuf:"bytes,1,rep,name=filter_metadata,json=filterMetadata,proto3" json:"filter_metadata,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *Metadata) Reset() {
+	*x = Metadata{}
+	mi := &file_core_v1_base_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Metadata) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Metadata) ProtoMessage() {}
+
+func (x *Metadata) ProtoReflect() protoreflect.Message {
+	mi := &file_core_v1_base_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Metadata.ProtoReflect.Descriptor instead.
+func (*Metadata) Descriptor() ([]byte, []int) {
+	return file_core_v1_base_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *Metadata) GetFilterMetadata() map[string]*structpb.Struct {
+	if x != nil {
+		return x.FilterMetadata
+	}
+	return nil
+}
+
 type Locality struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -33,7 +77,7 @@ type Locality struct {
 
 func (x *Locality) Reset() {
 	*x = Locality{}
-	mi := &file_core_v1_base_proto_msgTypes[0]
+	mi := &file_core_v1_base_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -45,7 +89,7 @@ func (x *Locality) String() string {
 func (*Locality) ProtoMessage() {}
 
 func (x *Locality) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1_base_proto_msgTypes[0]
+	mi := &file_core_v1_base_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -58,7 +102,7 @@ func (x *Locality) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Locality.ProtoReflect.Descriptor instead.
 func (*Locality) Descriptor() ([]byte, []int) {
-	return file_core_v1_base_proto_rawDescGZIP(), []int{0}
+	return file_core_v1_base_proto_rawDescGZIP(), []int{1}
 }
 
 type Node struct {
@@ -73,7 +117,7 @@ type Node struct {
 
 func (x *Node) Reset() {
 	*x = Node{}
-	mi := &file_core_v1_base_proto_msgTypes[1]
+	mi := &file_core_v1_base_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -85,7 +129,7 @@ func (x *Node) String() string {
 func (*Node) ProtoMessage() {}
 
 func (x *Node) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1_base_proto_msgTypes[1]
+	mi := &file_core_v1_base_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -98,7 +142,7 @@ func (x *Node) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Node.ProtoReflect.Descriptor instead.
 func (*Node) Descriptor() ([]byte, []int) {
-	return file_core_v1_base_proto_rawDescGZIP(), []int{1}
+	return file_core_v1_base_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Node) GetId() string {
@@ -142,7 +186,7 @@ type TransportSocket struct {
 
 func (x *TransportSocket) Reset() {
 	*x = TransportSocket{}
-	mi := &file_core_v1_base_proto_msgTypes[2]
+	mi := &file_core_v1_base_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -154,7 +198,7 @@ func (x *TransportSocket) String() string {
 func (*TransportSocket) ProtoMessage() {}
 
 func (x *TransportSocket) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1_base_proto_msgTypes[2]
+	mi := &file_core_v1_base_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -167,7 +211,7 @@ func (x *TransportSocket) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TransportSocket.ProtoReflect.Descriptor instead.
 func (*TransportSocket) Descriptor() ([]byte, []int) {
-	return file_core_v1_base_proto_rawDescGZIP(), []int{2}
+	return file_core_v1_base_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *TransportSocket) GetName() string {
@@ -212,7 +256,7 @@ type ControlPlane struct {
 
 func (x *ControlPlane) Reset() {
 	*x = ControlPlane{}
-	mi := &file_core_v1_base_proto_msgTypes[3]
+	mi := &file_core_v1_base_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -224,7 +268,7 @@ func (x *ControlPlane) String() string {
 func (*ControlPlane) ProtoMessage() {}
 
 func (x *ControlPlane) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1_base_proto_msgTypes[3]
+	mi := &file_core_v1_base_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -237,7 +281,7 @@ func (x *ControlPlane) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ControlPlane.ProtoReflect.Descriptor instead.
 func (*ControlPlane) Descriptor() ([]byte, []int) {
-	return file_core_v1_base_proto_rawDescGZIP(), []int{3}
+	return file_core_v1_base_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *ControlPlane) GetIdentifier() string {
@@ -251,7 +295,12 @@ var File_core_v1_base_proto protoreflect.FileDescriptor
 
 const file_core_v1_base_proto_rawDesc = "" +
 	"\n" +
-	"\x12core/v1/base.proto\x12\acore.v1\x1a\x19google/protobuf/any.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x1egoogle/protobuf/duration.proto\"\n" +
+	"\x12core/v1/base.proto\x12\acore.v1\x1a\x19google/protobuf/any.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x1egoogle/protobuf/duration.proto\"\xb6\x01\n" +
+	"\bMetadata\x12N\n" +
+	"\x0ffilter_metadata\x18\x01 \x03(\v2%.core.v1.Metadata.FilterMetadataEntryR\x0efilterMetadata\x1aZ\n" +
+	"\x13FilterMetadataEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12-\n" +
+	"\x05value\x18\x02 \x01(\v2\x17.google.protobuf.StructR\x05value:\x028\x01\"\n" +
 	"\n" +
 	"\bLocality\"\x94\x01\n" +
 	"\x04Node\x12\x0e\n" +
@@ -280,24 +329,28 @@ func file_core_v1_base_proto_rawDescGZIP() []byte {
 	return file_core_v1_base_proto_rawDescData
 }
 
-var file_core_v1_base_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_core_v1_base_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_core_v1_base_proto_goTypes = []any{
-	(*Locality)(nil),        // 0: core.v1.Locality
-	(*Node)(nil),            // 1: core.v1.Node
-	(*TransportSocket)(nil), // 2: core.v1.TransportSocket
-	(*ControlPlane)(nil),    // 3: core.v1.ControlPlane
-	(*structpb.Struct)(nil), // 4: google.protobuf.Struct
-	(*anypb.Any)(nil),       // 5: google.protobuf.Any
+	(*Metadata)(nil),        // 0: core.v1.Metadata
+	(*Locality)(nil),        // 1: core.v1.Locality
+	(*Node)(nil),            // 2: core.v1.Node
+	(*TransportSocket)(nil), // 3: core.v1.TransportSocket
+	(*ControlPlane)(nil),    // 4: core.v1.ControlPlane
+	nil,                     // 5: core.v1.Metadata.FilterMetadataEntry
+	(*structpb.Struct)(nil), // 6: google.protobuf.Struct
+	(*anypb.Any)(nil),       // 7: google.protobuf.Any
 }
 var file_core_v1_base_proto_depIdxs = []int32{
-	4, // 0: core.v1.Node.metadata:type_name -> google.protobuf.Struct
-	0, // 1: core.v1.Node.locality:type_name -> core.v1.Locality
-	5, // 2: core.v1.TransportSocket.typed_config:type_name -> google.protobuf.Any
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	5, // 0: core.v1.Metadata.filter_metadata:type_name -> core.v1.Metadata.FilterMetadataEntry
+	6, // 1: core.v1.Node.metadata:type_name -> google.protobuf.Struct
+	1, // 2: core.v1.Node.locality:type_name -> core.v1.Locality
+	7, // 3: core.v1.TransportSocket.typed_config:type_name -> google.protobuf.Any
+	6, // 4: core.v1.Metadata.FilterMetadataEntry.value:type_name -> google.protobuf.Struct
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_core_v1_base_proto_init() }
@@ -305,7 +358,7 @@ func file_core_v1_base_proto_init() {
 	if File_core_v1_base_proto != nil {
 		return
 	}
-	file_core_v1_base_proto_msgTypes[2].OneofWrappers = []any{
+	file_core_v1_base_proto_msgTypes[3].OneofWrappers = []any{
 		(*TransportSocket_TypedConfig)(nil),
 	}
 	type x struct{}
@@ -314,7 +367,7 @@ func file_core_v1_base_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_v1_base_proto_rawDesc), len(file_core_v1_base_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -83,6 +83,50 @@ func (HealthStatus) EnumDescriptor() ([]byte, []int) {
 	return file_core_v1_health_check_proto_rawDescGZIP(), []int{0}
 }
 
+type HealthStatusSet struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Statuses      []HealthStatus         `protobuf:"varint,1,rep,packed,name=statuses,proto3,enum=core.v1.HealthStatus" json:"statuses,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HealthStatusSet) Reset() {
+	*x = HealthStatusSet{}
+	mi := &file_core_v1_health_check_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HealthStatusSet) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HealthStatusSet) ProtoMessage() {}
+
+func (x *HealthStatusSet) ProtoReflect() protoreflect.Message {
+	mi := &file_core_v1_health_check_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HealthStatusSet.ProtoReflect.Descriptor instead.
+func (*HealthStatusSet) Descriptor() ([]byte, []int) {
+	return file_core_v1_health_check_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *HealthStatusSet) GetStatuses() []HealthStatus {
+	if x != nil {
+		return x.Statuses
+	}
+	return nil
+}
+
 type HealthCheck struct {
 	state              protoimpl.MessageState  `protogen:"open.v1"`
 	Timeout            *durationpb.Duration    `protobuf:"bytes,1,opt,name=timeout,proto3" json:"timeout,omitempty"`
@@ -95,7 +139,7 @@ type HealthCheck struct {
 
 func (x *HealthCheck) Reset() {
 	*x = HealthCheck{}
-	mi := &file_core_v1_health_check_proto_msgTypes[0]
+	mi := &file_core_v1_health_check_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -107,7 +151,7 @@ func (x *HealthCheck) String() string {
 func (*HealthCheck) ProtoMessage() {}
 
 func (x *HealthCheck) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1_health_check_proto_msgTypes[0]
+	mi := &file_core_v1_health_check_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -120,7 +164,7 @@ func (x *HealthCheck) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use HealthCheck.ProtoReflect.Descriptor instead.
 func (*HealthCheck) Descriptor() ([]byte, []int) {
-	return file_core_v1_health_check_proto_rawDescGZIP(), []int{0}
+	return file_core_v1_health_check_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *HealthCheck) GetTimeout() *durationpb.Duration {
@@ -155,7 +199,9 @@ var File_core_v1_health_check_proto protoreflect.FileDescriptor
 
 const file_core_v1_health_check_proto_rawDesc = "" +
 	"\n" +
-	"\x1acore/v1/health_check.proto\x12\acore.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\x93\x02\n" +
+	"\x1acore/v1/health_check.proto\x12\acore.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1egoogle/protobuf/wrappers.proto\"D\n" +
+	"\x0fHealthStatusSet\x121\n" +
+	"\bstatuses\x18\x01 \x03(\x0e2\x15.core.v1.HealthStatusR\bstatuses\"\x93\x02\n" +
 	"\vHealthCheck\x123\n" +
 	"\atimeout\x18\x01 \x01(\v2\x19.google.protobuf.DurationR\atimeout\x125\n" +
 	"\binterval\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\binterval\x12M\n" +
@@ -182,23 +228,25 @@ func file_core_v1_health_check_proto_rawDescGZIP() []byte {
 }
 
 var file_core_v1_health_check_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_core_v1_health_check_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_core_v1_health_check_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_core_v1_health_check_proto_goTypes = []any{
 	(HealthStatus)(0),              // 0: core.v1.HealthStatus
-	(*HealthCheck)(nil),            // 1: core.v1.HealthCheck
-	(*durationpb.Duration)(nil),    // 2: google.protobuf.Duration
-	(*wrapperspb.UInt32Value)(nil), // 3: google.protobuf.UInt32Value
+	(*HealthStatusSet)(nil),        // 1: core.v1.HealthStatusSet
+	(*HealthCheck)(nil),            // 2: core.v1.HealthCheck
+	(*durationpb.Duration)(nil),    // 3: google.protobuf.Duration
+	(*wrapperspb.UInt32Value)(nil), // 4: google.protobuf.UInt32Value
 }
 var file_core_v1_health_check_proto_depIdxs = []int32{
-	2, // 0: core.v1.HealthCheck.timeout:type_name -> google.protobuf.Duration
-	2, // 1: core.v1.HealthCheck.interval:type_name -> google.protobuf.Duration
-	3, // 2: core.v1.HealthCheck.unhealthy_threshold:type_name -> google.protobuf.UInt32Value
-	3, // 3: core.v1.HealthCheck.healthy_threshold:type_name -> google.protobuf.UInt32Value
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	0, // 0: core.v1.HealthStatusSet.statuses:type_name -> core.v1.HealthStatus
+	3, // 1: core.v1.HealthCheck.timeout:type_name -> google.protobuf.Duration
+	3, // 2: core.v1.HealthCheck.interval:type_name -> google.protobuf.Duration
+	4, // 3: core.v1.HealthCheck.unhealthy_threshold:type_name -> google.protobuf.UInt32Value
+	4, // 4: core.v1.HealthCheck.healthy_threshold:type_name -> google.protobuf.UInt32Value
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_core_v1_health_check_proto_init() }
@@ -212,7 +260,7 @@ func file_core_v1_health_check_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_v1_health_check_proto_rawDesc), len(file_core_v1_health_check_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

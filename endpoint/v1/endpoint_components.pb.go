@@ -74,6 +74,8 @@ type LbEndpoint struct {
 	//	*LbEndpoint_Endpoint
 	//	*LbEndpoint_EndpointName
 	HostIdentifier      isLbEndpoint_HostIdentifier `protobuf_oneof:"host_identifier"`
+	HealthStatus        v1.HealthStatus             `protobuf:"varint,2,opt,name=health_status,json=healthStatus,proto3,enum=core.v1.HealthStatus" json:"health_status,omitempty"`
+	Metadata            *v1.Metadata                `protobuf:"bytes,3,opt,name=metadata,proto3" json:"metadata,omitempty"`
 	LoadBalancingWeight *wrapperspb.UInt32Value     `protobuf:"bytes,4,opt,name=load_balancing_weight,json=loadBalancingWeight,proto3" json:"load_balancing_weight,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
@@ -132,6 +134,20 @@ func (x *LbEndpoint) GetEndpointName() string {
 		}
 	}
 	return ""
+}
+
+func (x *LbEndpoint) GetHealthStatus() v1.HealthStatus {
+	if x != nil {
+		return x.HealthStatus
+	}
+	return v1.HealthStatus(0)
+}
+
+func (x *LbEndpoint) GetMetadata() *v1.Metadata {
+	if x != nil {
+		return x.Metadata
+	}
+	return nil
 }
 
 func (x *LbEndpoint) GetLoadBalancingWeight() *wrapperspb.UInt32Value {
@@ -281,13 +297,15 @@ var File_endpoint_v1_endpoint_components_proto protoreflect.FileDescriptor
 
 const file_endpoint_v1_endpoint_components_proto_rawDesc = "" +
 	"\n" +
-	"%endpoint/v1/endpoint_components.proto\x12\vendpoint.v1\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x12core/v1/base.proto\x1a\x15core/v1/address.proto\"6\n" +
+	"%endpoint/v1/endpoint_components.proto\x12\vendpoint.v1\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x12core/v1/base.proto\x1a\x15core/v1/address.proto\x1a\x1acore/v1/health_check.proto\"6\n" +
 	"\bEndpoint\x12*\n" +
-	"\aaddress\x18\x01 \x01(\v2\x10.core.v1.AddressR\aaddress\"\xcd\x01\n" +
+	"\aaddress\x18\x01 \x01(\v2\x10.core.v1.AddressR\aaddress\"\xb8\x02\n" +
 	"\n" +
 	"LbEndpoint\x123\n" +
 	"\bendpoint\x18\x01 \x01(\v2\x15.endpoint.v1.EndpointH\x00R\bendpoint\x12%\n" +
-	"\rendpoint_name\x18\x05 \x01(\tH\x00R\fendpointName\x12P\n" +
+	"\rendpoint_name\x18\x05 \x01(\tH\x00R\fendpointName\x12:\n" +
+	"\rhealth_status\x18\x02 \x01(\x0e2\x15.core.v1.HealthStatusR\fhealthStatus\x12-\n" +
+	"\bmetadata\x18\x03 \x01(\v2\x11.core.v1.MetadataR\bmetadata\x12P\n" +
 	"\x15load_balancing_weight\x18\x04 \x01(\v2\x1c.google.protobuf.UInt32ValueR\x13loadBalancingWeightB\x11\n" +
 	"\x0fhost_identifier\"\xf8\x02\n" +
 	"\x13LocalityLbEndpoints\x12-\n" +
@@ -318,23 +336,27 @@ var file_endpoint_v1_endpoint_components_proto_goTypes = []any{
 	(*LocalityLbEndpoints)(nil),                // 2: endpoint.v1.LocalityLbEndpoints
 	(*LocalityLbEndpoints_LbEndpointList)(nil), // 3: endpoint.v1.LocalityLbEndpoints.LbEndpointList
 	(*v1.Address)(nil),                         // 4: core.v1.Address
-	(*wrapperspb.UInt32Value)(nil),             // 5: google.protobuf.UInt32Value
-	(*v1.Locality)(nil),                        // 6: core.v1.Locality
+	(v1.HealthStatus)(0),                       // 5: core.v1.HealthStatus
+	(*v1.Metadata)(nil),                        // 6: core.v1.Metadata
+	(*wrapperspb.UInt32Value)(nil),             // 7: google.protobuf.UInt32Value
+	(*v1.Locality)(nil),                        // 8: core.v1.Locality
 }
 var file_endpoint_v1_endpoint_components_proto_depIdxs = []int32{
-	4, // 0: endpoint.v1.Endpoint.address:type_name -> core.v1.Address
-	0, // 1: endpoint.v1.LbEndpoint.endpoint:type_name -> endpoint.v1.Endpoint
-	5, // 2: endpoint.v1.LbEndpoint.load_balancing_weight:type_name -> google.protobuf.UInt32Value
-	6, // 3: endpoint.v1.LocalityLbEndpoints.locality:type_name -> core.v1.Locality
-	1, // 4: endpoint.v1.LocalityLbEndpoints.lb_endpoints:type_name -> endpoint.v1.LbEndpoint
-	5, // 5: endpoint.v1.LocalityLbEndpoints.load_balancing_weight:type_name -> google.protobuf.UInt32Value
-	5, // 6: endpoint.v1.LocalityLbEndpoints.proximity:type_name -> google.protobuf.UInt32Value
-	1, // 7: endpoint.v1.LocalityLbEndpoints.LbEndpointList.lb_endpoints:type_name -> endpoint.v1.LbEndpoint
-	8, // [8:8] is the sub-list for method output_type
-	8, // [8:8] is the sub-list for method input_type
-	8, // [8:8] is the sub-list for extension type_name
-	8, // [8:8] is the sub-list for extension extendee
-	0, // [0:8] is the sub-list for field type_name
+	4,  // 0: endpoint.v1.Endpoint.address:type_name -> core.v1.Address
+	0,  // 1: endpoint.v1.LbEndpoint.endpoint:type_name -> endpoint.v1.Endpoint
+	5,  // 2: endpoint.v1.LbEndpoint.health_status:type_name -> core.v1.HealthStatus
+	6,  // 3: endpoint.v1.LbEndpoint.metadata:type_name -> core.v1.Metadata
+	7,  // 4: endpoint.v1.LbEndpoint.load_balancing_weight:type_name -> google.protobuf.UInt32Value
+	8,  // 5: endpoint.v1.LocalityLbEndpoints.locality:type_name -> core.v1.Locality
+	1,  // 6: endpoint.v1.LocalityLbEndpoints.lb_endpoints:type_name -> endpoint.v1.LbEndpoint
+	7,  // 7: endpoint.v1.LocalityLbEndpoints.load_balancing_weight:type_name -> google.protobuf.UInt32Value
+	7,  // 8: endpoint.v1.LocalityLbEndpoints.proximity:type_name -> google.protobuf.UInt32Value
+	1,  // 9: endpoint.v1.LocalityLbEndpoints.LbEndpointList.lb_endpoints:type_name -> endpoint.v1.LbEndpoint
+	10, // [10:10] is the sub-list for method output_type
+	10, // [10:10] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_endpoint_v1_endpoint_components_proto_init() }

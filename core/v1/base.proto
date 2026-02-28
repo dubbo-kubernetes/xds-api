@@ -9,7 +9,12 @@ import "google/protobuf/duration.proto";
 
 option go_package = "github.com/dubbo-kubernetes/xds-api/core/v1;corev1";
 
+message Metadata {
+  map<string, google.protobuf.Struct> filter_metadata = 1;
+}
+
 message Locality {}
+
 message Node {
   string id = 1;
   string cluster = 2;
@@ -27,5 +32,3 @@ message TransportSocket {
 message ControlPlane {
   string identifier = 1;
 }
-
-

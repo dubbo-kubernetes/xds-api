@@ -10,6 +10,7 @@ import (
 	v1 "github.com/dubbo-kubernetes/xds-api/core/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	anypb "google.golang.org/protobuf/types/known/anypb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -22,6 +23,50 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type ApiListener struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	ApiListener   *anypb.Any             `protobuf:"bytes,1,opt,name=api_listener,json=apiListener,proto3" json:"api_listener,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ApiListener) Reset() {
+	*x = ApiListener{}
+	mi := &file_listener_v1_listener_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ApiListener) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ApiListener) ProtoMessage() {}
+
+func (x *ApiListener) ProtoReflect() protoreflect.Message {
+	mi := &file_listener_v1_listener_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ApiListener.ProtoReflect.Descriptor instead.
+func (*ApiListener) Descriptor() ([]byte, []int) {
+	return file_listener_v1_listener_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ApiListener) GetApiListener() *anypb.Any {
+	if x != nil {
+		return x.ApiListener
+	}
+	return nil
+}
+
 type AdditionalAddress struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Address       *v1.Address            `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
@@ -31,7 +76,7 @@ type AdditionalAddress struct {
 
 func (x *AdditionalAddress) Reset() {
 	*x = AdditionalAddress{}
-	mi := &file_listener_v1_listener_proto_msgTypes[0]
+	mi := &file_listener_v1_listener_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -43,7 +88,7 @@ func (x *AdditionalAddress) String() string {
 func (*AdditionalAddress) ProtoMessage() {}
 
 func (x *AdditionalAddress) ProtoReflect() protoreflect.Message {
-	mi := &file_listener_v1_listener_proto_msgTypes[0]
+	mi := &file_listener_v1_listener_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -56,7 +101,7 @@ func (x *AdditionalAddress) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AdditionalAddress.ProtoReflect.Descriptor instead.
 func (*AdditionalAddress) Descriptor() ([]byte, []int) {
-	return file_listener_v1_listener_proto_rawDescGZIP(), []int{0}
+	return file_listener_v1_listener_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *AdditionalAddress) GetAddress() *v1.Address {
@@ -72,13 +117,14 @@ type Listener struct {
 	Address             *v1.Address            `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
 	AdditionalAddresses []*AdditionalAddress   `protobuf:"bytes,33,rep,name=additional_addresses,json=additionalAddresses,proto3" json:"additional_addresses,omitempty"`
 	FilterChains        []*FilterChain         `protobuf:"bytes,3,rep,name=filter_chains,json=filterChains,proto3" json:"filter_chains,omitempty"`
+	ApiListener         *ApiListener           `protobuf:"bytes,19,opt,name=api_listener,json=apiListener,proto3" json:"api_listener,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
 
 func (x *Listener) Reset() {
 	*x = Listener{}
-	mi := &file_listener_v1_listener_proto_msgTypes[1]
+	mi := &file_listener_v1_listener_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -90,7 +136,7 @@ func (x *Listener) String() string {
 func (*Listener) ProtoMessage() {}
 
 func (x *Listener) ProtoReflect() protoreflect.Message {
-	mi := &file_listener_v1_listener_proto_msgTypes[1]
+	mi := &file_listener_v1_listener_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -103,7 +149,7 @@ func (x *Listener) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Listener.ProtoReflect.Descriptor instead.
 func (*Listener) Descriptor() ([]byte, []int) {
-	return file_listener_v1_listener_proto_rawDescGZIP(), []int{1}
+	return file_listener_v1_listener_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *Listener) GetName() string {
@@ -134,18 +180,28 @@ func (x *Listener) GetFilterChains() []*FilterChain {
 	return nil
 }
 
+func (x *Listener) GetApiListener() *ApiListener {
+	if x != nil {
+		return x.ApiListener
+	}
+	return nil
+}
+
 var File_listener_v1_listener_proto protoreflect.FileDescriptor
 
 const file_listener_v1_listener_proto_rawDesc = "" +
 	"\n" +
-	"\x1alistener/v1/listener.proto\x12\vlistener.v1\x1a\x15core/v1/address.proto\x1a%listener/v1/listener_components.proto\"?\n" +
+	"\x1alistener/v1/listener.proto\x12\vlistener.v1\x1a\x19google/protobuf/any.proto\x1a\x15core/v1/address.proto\x1a%listener/v1/listener_components.proto\"F\n" +
+	"\vApiListener\x127\n" +
+	"\fapi_listener\x18\x01 \x01(\v2\x14.google.protobuf.AnyR\vapiListener\"?\n" +
 	"\x11AdditionalAddress\x12*\n" +
-	"\aaddress\x18\x01 \x01(\v2\x10.core.v1.AddressR\aaddress\"\xdc\x01\n" +
+	"\aaddress\x18\x01 \x01(\v2\x10.core.v1.AddressR\aaddress\"\x99\x02\n" +
 	"\bListener\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12*\n" +
 	"\aaddress\x18\x02 \x01(\v2\x10.core.v1.AddressR\aaddress\x12Q\n" +
 	"\x14additional_addresses\x18! \x03(\v2\x1e.listener.v1.AdditionalAddressR\x13additionalAddresses\x12=\n" +
-	"\rfilter_chains\x18\x03 \x03(\v2\x18.listener.v1.FilterChainR\ffilterChainsB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
+	"\rfilter_chains\x18\x03 \x03(\v2\x18.listener.v1.FilterChainR\ffilterChains\x12;\n" +
+	"\fapi_listener\x18\x13 \x01(\v2\x18.listener.v1.ApiListenerR\vapiListenerB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
 
 var (
 	file_listener_v1_listener_proto_rawDescOnce sync.Once
@@ -159,23 +215,27 @@ func file_listener_v1_listener_proto_rawDescGZIP() []byte {
 	return file_listener_v1_listener_proto_rawDescData
 }
 
-var file_listener_v1_listener_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_listener_v1_listener_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_listener_v1_listener_proto_goTypes = []any{
-	(*AdditionalAddress)(nil), // 0: listener.v1.AdditionalAddress
-	(*Listener)(nil),          // 1: listener.v1.Listener
-	(*v1.Address)(nil),        // 2: core.v1.Address
-	(*FilterChain)(nil),       // 3: listener.v1.FilterChain
+	(*ApiListener)(nil),       // 0: listener.v1.ApiListener
+	(*AdditionalAddress)(nil), // 1: listener.v1.AdditionalAddress
+	(*Listener)(nil),          // 2: listener.v1.Listener
+	(*anypb.Any)(nil),         // 3: google.protobuf.Any
+	(*v1.Address)(nil),        // 4: core.v1.Address
+	(*FilterChain)(nil),       // 5: listener.v1.FilterChain
 }
 var file_listener_v1_listener_proto_depIdxs = []int32{
-	2, // 0: listener.v1.AdditionalAddress.address:type_name -> core.v1.Address
-	2, // 1: listener.v1.Listener.address:type_name -> core.v1.Address
-	0, // 2: listener.v1.Listener.additional_addresses:type_name -> listener.v1.AdditionalAddress
-	3, // 3: listener.v1.Listener.filter_chains:type_name -> listener.v1.FilterChain
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	3, // 0: listener.v1.ApiListener.api_listener:type_name -> google.protobuf.Any
+	4, // 1: listener.v1.AdditionalAddress.address:type_name -> core.v1.Address
+	4, // 2: listener.v1.Listener.address:type_name -> core.v1.Address
+	1, // 3: listener.v1.Listener.additional_addresses:type_name -> listener.v1.AdditionalAddress
+	5, // 4: listener.v1.Listener.filter_chains:type_name -> listener.v1.FilterChain
+	0, // 5: listener.v1.Listener.api_listener:type_name -> listener.v1.ApiListener
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_listener_v1_listener_proto_init() }
@@ -190,7 +250,7 @@ func file_listener_v1_listener_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_listener_v1_listener_proto_rawDesc), len(file_listener_v1_listener_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

@@ -273,10 +273,12 @@ func (x *FilterChainMatch) GetApplicationProtocols() []string {
 
 // [#next-free-field: 10]
 type FilterChain struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Filters       []*Filter              `protobuf:"bytes,3,rep,name=filters,proto3" json:"filters,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Name             string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	FilterChainMatch *FilterChainMatch      `protobuf:"bytes,2,opt,name=filter_chain_match,json=filterChainMatch,proto3" json:"filter_chain_match,omitempty"`
+	Filters          []*Filter              `protobuf:"bytes,3,rep,name=filters,proto3" json:"filters,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *FilterChain) Reset() {
@@ -307,6 +309,20 @@ func (x *FilterChain) ProtoReflect() protoreflect.Message {
 // Deprecated: Use FilterChain.ProtoReflect.Descriptor instead.
 func (*FilterChain) Descriptor() ([]byte, []int) {
 	return file_listener_v1_listener_components_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *FilterChain) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *FilterChain) GetFilterChainMatch() *FilterChainMatch {
+	if x != nil {
+		return x.FilterChainMatch
+	}
+	return nil
 }
 
 func (x *FilterChain) GetFilters() []*Filter {
@@ -343,9 +359,11 @@ const file_listener_v1_listener_components_proto_rawDesc = "" +
 	"\x14ConnectionSourceType\x12\a\n" +
 	"\x03ANY\x10\x00\x12\x17\n" +
 	"\x13SAME_IP_OR_LOOPBACK\x10\x01\x12\f\n" +
-	"\bEXTERNAL\x10\x02J\x04\b\x01\x10\x02\"n\n" +
-	"\vFilterChain\x12-\n" +
-	"\afilters\x18\x03 \x03(\v2\x13.listener.v1.FilterR\afiltersJ\x04\b\x02\x10\x03J\x04\b\b\x10\tR\vtls_contextR\x17on_demand_configurationB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
+	"\bEXTERNAL\x10\x02J\x04\b\x01\x10\x02\"\xbc\x01\n" +
+	"\vFilterChain\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12K\n" +
+	"\x12filter_chain_match\x18\x02 \x01(\v2\x1d.listener.v1.FilterChainMatchR\x10filterChainMatch\x12-\n" +
+	"\afilters\x18\x03 \x03(\v2\x13.listener.v1.FilterR\afiltersJ\x04\b\b\x10\tR\x17on_demand_configurationB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
 
 var (
 	file_listener_v1_listener_components_proto_rawDescOnce sync.Once
@@ -378,12 +396,13 @@ var file_listener_v1_listener_components_proto_depIdxs = []int32{
 	6, // 4: listener.v1.FilterChainMatch.direct_source_prefix_ranges:type_name -> core.v1.CidrRange
 	0, // 5: listener.v1.FilterChainMatch.source_type:type_name -> listener.v1.FilterChainMatch.ConnectionSourceType
 	6, // 6: listener.v1.FilterChainMatch.source_prefix_ranges:type_name -> core.v1.CidrRange
-	1, // 7: listener.v1.FilterChain.filters:type_name -> listener.v1.Filter
-	8, // [8:8] is the sub-list for method output_type
-	8, // [8:8] is the sub-list for method input_type
-	8, // [8:8] is the sub-list for extension type_name
-	8, // [8:8] is the sub-list for extension extendee
-	0, // [0:8] is the sub-list for field type_name
+	2, // 7: listener.v1.FilterChain.filter_chain_match:type_name -> listener.v1.FilterChainMatch
+	1, // 8: listener.v1.FilterChain.filters:type_name -> listener.v1.Filter
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	9, // [9:9] is the sub-list for extension type_name
+	9, // [9:9] is the sub-list for extension extendee
+	0, // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_listener_v1_listener_components_proto_init() }

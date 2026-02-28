@@ -11,7 +11,7 @@ import (
 	v11 "github.com/dubbo-kubernetes/xds-api/endpoint/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	_ "google.golang.org/protobuf/types/known/anypb"
+	anypb "google.golang.org/protobuf/types/known/anypb"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	_ "google.golang.org/protobuf/types/known/structpb"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
@@ -146,6 +146,7 @@ type Cluster struct {
 	HealthChecks                  []*v1.HealthCheck              `protobuf:"bytes,7,rep,name=health_checks,json=healthChecks,proto3" json:"health_checks,omitempty"`
 	LoadAssignment                *v11.ClusterLoadAssignment     `protobuf:"bytes,33,opt,name=load_assignment,json=loadAssignment,proto3" json:"load_assignment,omitempty"`
 	CommonLbConfig                *Cluster_CommonLbConfig        `protobuf:"bytes,27,opt,name=common_lb_config,json=commonLbConfig,proto3" json:"common_lb_config,omitempty"`
+	TransportSocket               *anypb.Any                     `protobuf:"bytes,24,opt,name=transport_socket,json=transportSocket,proto3" json:"transport_socket,omitempty"`
 	unknownFields                 protoimpl.UnknownFields
 	sizeCache                     protoimpl.SizeCache
 }
@@ -259,6 +260,13 @@ func (x *Cluster) GetCommonLbConfig() *Cluster_CommonLbConfig {
 	return nil
 }
 
+func (x *Cluster) GetTransportSocket() *anypb.Any {
+	if x != nil {
+		return x.TransportSocket
+	}
+	return nil
+}
+
 type isCluster_ClusterDiscoveryType interface {
 	isCluster_ClusterDiscoveryType()
 }
@@ -322,9 +330,10 @@ func (x *Cluster_EdsClusterConfig) GetServiceName() string {
 }
 
 type Cluster_CommonLbConfig struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state              protoimpl.MessageState `protogen:"open.v1"`
+	OverrideHostStatus *v1.HealthStatusSet    `protobuf:"bytes,8,opt,name=override_host_status,json=overrideHostStatus,proto3" json:"override_host_status,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
 }
 
 func (x *Cluster_CommonLbConfig) Reset() {
@@ -357,12 +366,19 @@ func (*Cluster_CommonLbConfig) Descriptor() ([]byte, []int) {
 	return file_cluster_v1_cluster_proto_rawDescGZIP(), []int{0, 1}
 }
 
+func (x *Cluster_CommonLbConfig) GetOverrideHostStatus() *v1.HealthStatusSet {
+	if x != nil {
+		return x.OverrideHostStatus
+	}
+	return nil
+}
+
 var File_cluster_v1_cluster_proto protoreflect.FileDescriptor
 
 const file_cluster_v1_cluster_proto_rawDesc = "" +
 	"\n" +
 	"\x18cluster/v1/cluster.proto\x12\n" +
-	"cluster.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x1acore/v1/health_check.proto\x1a\x12core/v1/base.proto\x1a\x1bcore/v1/config_source.proto\x1a\x1aendpoint/v1/endpoint.proto\"\xb6\a\n" +
+	"cluster.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x1acore/v1/health_check.proto\x1a\x12core/v1/base.proto\x1a\x1bcore/v1/config_source.proto\x1a\x1aendpoint/v1/endpoint.proto\"\xc3\b\n" +
 	"\aCluster\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\"\n" +
 	"\ralt_stat_name\x18\x1c \x01(\tR\valtStatName\x127\n" +
@@ -373,12 +389,14 @@ const file_cluster_v1_cluster_proto_rawDesc = "" +
 	"\tlb_policy\x18\x06 \x01(\x0e2\x1c.cluster.v1.Cluster.LbPolicyR\blbPolicy\x129\n" +
 	"\rhealth_checks\x18\a \x03(\v2\x14.core.v1.HealthCheckR\fhealthChecks\x12K\n" +
 	"\x0fload_assignment\x18! \x01(\v2\".endpoint.v1.ClusterLoadAssignmentR\x0eloadAssignment\x12L\n" +
-	"\x10common_lb_config\x18\x1b \x01(\v2\".cluster.v1.Cluster.CommonLbConfigR\x0ecommonLbConfig\x1ak\n" +
+	"\x10common_lb_config\x18\x1b \x01(\v2\".cluster.v1.Cluster.CommonLbConfigR\x0ecommonLbConfig\x12?\n" +
+	"\x10transport_socket\x18\x18 \x01(\v2\x14.google.protobuf.AnyR\x0ftransportSocket\x1ak\n" +
 	"\x10EdsClusterConfig\x124\n" +
 	"\n" +
 	"eds_config\x18\x01 \x01(\v2\x15.core.v1.ConfigSourceR\tedsConfig\x12!\n" +
-	"\fservice_name\x18\x02 \x01(\tR\vserviceName\x1a\x10\n" +
-	"\x0eCommonLbConfig\"E\n" +
+	"\fservice_name\x18\x02 \x01(\tR\vserviceName\x1a\\\n" +
+	"\x0eCommonLbConfig\x12J\n" +
+	"\x14override_host_status\x18\b \x01(\v2\x18.core.v1.HealthStatusSetR\x12overrideHostStatus\"E\n" +
 	"\rDiscoveryType\x12\n" +
 	"\n" +
 	"\x06STATIC\x10\x00\x12\x0e\n" +
@@ -418,23 +436,27 @@ var file_cluster_v1_cluster_proto_goTypes = []any{
 	(*wrapperspb.UInt32Value)(nil),    // 6: google.protobuf.UInt32Value
 	(*v1.HealthCheck)(nil),            // 7: core.v1.HealthCheck
 	(*v11.ClusterLoadAssignment)(nil), // 8: endpoint.v1.ClusterLoadAssignment
-	(*v1.ConfigSource)(nil),           // 9: core.v1.ConfigSource
+	(*anypb.Any)(nil),                 // 9: google.protobuf.Any
+	(*v1.ConfigSource)(nil),           // 10: core.v1.ConfigSource
+	(*v1.HealthStatusSet)(nil),        // 11: core.v1.HealthStatusSet
 }
 var file_cluster_v1_cluster_proto_depIdxs = []int32{
-	0, // 0: cluster.v1.Cluster.type:type_name -> cluster.v1.Cluster.DiscoveryType
-	3, // 1: cluster.v1.Cluster.eds_cluster_config:type_name -> cluster.v1.Cluster.EdsClusterConfig
-	5, // 2: cluster.v1.Cluster.connect_timeout:type_name -> google.protobuf.Duration
-	6, // 3: cluster.v1.Cluster.per_connection_buffer_limit_bytes:type_name -> google.protobuf.UInt32Value
-	1, // 4: cluster.v1.Cluster.lb_policy:type_name -> cluster.v1.Cluster.LbPolicy
-	7, // 5: cluster.v1.Cluster.health_checks:type_name -> core.v1.HealthCheck
-	8, // 6: cluster.v1.Cluster.load_assignment:type_name -> endpoint.v1.ClusterLoadAssignment
-	4, // 7: cluster.v1.Cluster.common_lb_config:type_name -> cluster.v1.Cluster.CommonLbConfig
-	9, // 8: cluster.v1.Cluster.EdsClusterConfig.eds_config:type_name -> core.v1.ConfigSource
-	9, // [9:9] is the sub-list for method output_type
-	9, // [9:9] is the sub-list for method input_type
-	9, // [9:9] is the sub-list for extension type_name
-	9, // [9:9] is the sub-list for extension extendee
-	0, // [0:9] is the sub-list for field type_name
+	0,  // 0: cluster.v1.Cluster.type:type_name -> cluster.v1.Cluster.DiscoveryType
+	3,  // 1: cluster.v1.Cluster.eds_cluster_config:type_name -> cluster.v1.Cluster.EdsClusterConfig
+	5,  // 2: cluster.v1.Cluster.connect_timeout:type_name -> google.protobuf.Duration
+	6,  // 3: cluster.v1.Cluster.per_connection_buffer_limit_bytes:type_name -> google.protobuf.UInt32Value
+	1,  // 4: cluster.v1.Cluster.lb_policy:type_name -> cluster.v1.Cluster.LbPolicy
+	7,  // 5: cluster.v1.Cluster.health_checks:type_name -> core.v1.HealthCheck
+	8,  // 6: cluster.v1.Cluster.load_assignment:type_name -> endpoint.v1.ClusterLoadAssignment
+	4,  // 7: cluster.v1.Cluster.common_lb_config:type_name -> cluster.v1.Cluster.CommonLbConfig
+	9,  // 8: cluster.v1.Cluster.transport_socket:type_name -> google.protobuf.Any
+	10, // 9: cluster.v1.Cluster.EdsClusterConfig.eds_config:type_name -> core.v1.ConfigSource
+	11, // 10: cluster.v1.Cluster.CommonLbConfig.override_host_status:type_name -> core.v1.HealthStatusSet
+	11, // [11:11] is the sub-list for method output_type
+	11, // [11:11] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_cluster_v1_cluster_proto_init() }

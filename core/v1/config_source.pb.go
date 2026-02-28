@@ -119,7 +119,43 @@ func (x ApiConfigSource_ApiType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ApiConfigSource_ApiType.Descriptor instead.
 func (ApiConfigSource_ApiType) EnumDescriptor() ([]byte, []int) {
-	return file_core_v1_config_source_proto_rawDescGZIP(), []int{0, 0}
+	return file_core_v1_config_source_proto_rawDescGZIP(), []int{1, 0}
+}
+
+type AggregatedConfigSource struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AggregatedConfigSource) Reset() {
+	*x = AggregatedConfigSource{}
+	mi := &file_core_v1_config_source_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AggregatedConfigSource) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AggregatedConfigSource) ProtoMessage() {}
+
+func (x *AggregatedConfigSource) ProtoReflect() protoreflect.Message {
+	mi := &file_core_v1_config_source_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AggregatedConfigSource.ProtoReflect.Descriptor instead.
+func (*AggregatedConfigSource) Descriptor() ([]byte, []int) {
+	return file_core_v1_config_source_proto_rawDescGZIP(), []int{0}
 }
 
 type ApiConfigSource struct {
@@ -130,7 +166,7 @@ type ApiConfigSource struct {
 
 func (x *ApiConfigSource) Reset() {
 	*x = ApiConfigSource{}
-	mi := &file_core_v1_config_source_proto_msgTypes[0]
+	mi := &file_core_v1_config_source_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -142,7 +178,7 @@ func (x *ApiConfigSource) String() string {
 func (*ApiConfigSource) ProtoMessage() {}
 
 func (x *ApiConfigSource) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1_config_source_proto_msgTypes[0]
+	mi := &file_core_v1_config_source_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -155,7 +191,7 @@ func (x *ApiConfigSource) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ApiConfigSource.ProtoReflect.Descriptor instead.
 func (*ApiConfigSource) Descriptor() ([]byte, []int) {
-	return file_core_v1_config_source_proto_rawDescGZIP(), []int{0}
+	return file_core_v1_config_source_proto_rawDescGZIP(), []int{1}
 }
 
 type ConfigSource struct {
@@ -163,6 +199,7 @@ type ConfigSource struct {
 	// Types that are valid to be assigned to ConfigSourceSpecifier:
 	//
 	//	*ConfigSource_ApiConfigSource
+	//	*ConfigSource_Ads
 	ConfigSourceSpecifier isConfigSource_ConfigSourceSpecifier `protobuf_oneof:"config_source_specifier"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
@@ -170,7 +207,7 @@ type ConfigSource struct {
 
 func (x *ConfigSource) Reset() {
 	*x = ConfigSource{}
-	mi := &file_core_v1_config_source_proto_msgTypes[1]
+	mi := &file_core_v1_config_source_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -182,7 +219,7 @@ func (x *ConfigSource) String() string {
 func (*ConfigSource) ProtoMessage() {}
 
 func (x *ConfigSource) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1_config_source_proto_msgTypes[1]
+	mi := &file_core_v1_config_source_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -195,7 +232,7 @@ func (x *ConfigSource) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ConfigSource.ProtoReflect.Descriptor instead.
 func (*ConfigSource) Descriptor() ([]byte, []int) {
-	return file_core_v1_config_source_proto_rawDescGZIP(), []int{1}
+	return file_core_v1_config_source_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ConfigSource) GetConfigSourceSpecifier() isConfigSource_ConfigSourceSpecifier {
@@ -214,6 +251,15 @@ func (x *ConfigSource) GetApiConfigSource() *ApiConfigSource {
 	return nil
 }
 
+func (x *ConfigSource) GetAds() *AggregatedConfigSource {
+	if x != nil {
+		if x, ok := x.ConfigSourceSpecifier.(*ConfigSource_Ads); ok {
+			return x.Ads
+		}
+	}
+	return nil
+}
+
 type isConfigSource_ConfigSourceSpecifier interface {
 	isConfigSource_ConfigSourceSpecifier()
 }
@@ -222,13 +268,20 @@ type ConfigSource_ApiConfigSource struct {
 	ApiConfigSource *ApiConfigSource `protobuf:"bytes,2,opt,name=api_config_source,json=apiConfigSource,proto3,oneof"`
 }
 
+type ConfigSource_Ads struct {
+	Ads *AggregatedConfigSource `protobuf:"bytes,3,opt,name=ads,proto3,oneof"`
+}
+
 func (*ConfigSource_ApiConfigSource) isConfigSource_ConfigSourceSpecifier() {}
+
+func (*ConfigSource_Ads) isConfigSource_ConfigSourceSpecifier() {}
 
 var File_core_v1_config_source_proto protoreflect.FileDescriptor
 
 const file_core_v1_config_source_proto_rawDesc = "" +
 	"\n" +
-	"\x1bcore/v1/config_source.proto\x12\acore.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1egoogle/protobuf/wrappers.proto\"p\n" +
+	"\x1bcore/v1/config_source.proto\x12\acore.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1egoogle/protobuf/wrappers.proto\"\x18\n" +
+	"\x16AggregatedConfigSource\"p\n" +
 	"\x0fApiConfigSource\"]\n" +
 	"\aApiType\x12\b\n" +
 	"\x04REST\x10\x00\x12\b\n" +
@@ -236,9 +289,10 @@ const file_core_v1_config_source_proto_rawDesc = "" +
 	"\n" +
 	"DELTA_GRPC\x10\x02\x12\x13\n" +
 	"\x0fAGGREGATED_GRPC\x10\x03\x12\x19\n" +
-	"\x15AGGREGATED_DELTA_GRPC\x10\x04\"q\n" +
+	"\x15AGGREGATED_DELTA_GRPC\x10\x04\"\xa6\x01\n" +
 	"\fConfigSource\x12F\n" +
-	"\x11api_config_source\x18\x02 \x01(\v2\x18.core.v1.ApiConfigSourceH\x00R\x0fapiConfigSourceB\x19\n" +
+	"\x11api_config_source\x18\x02 \x01(\v2\x18.core.v1.ApiConfigSourceH\x00R\x0fapiConfigSource\x123\n" +
+	"\x03ads\x18\x03 \x01(\v2\x1f.core.v1.AggregatedConfigSourceH\x00R\x03adsB\x19\n" +
 	"\x17config_source_specifier*\x16\n" +
 	"\n" +
 	"ApiVersion\x12\b\n" +
@@ -257,20 +311,22 @@ func file_core_v1_config_source_proto_rawDescGZIP() []byte {
 }
 
 var file_core_v1_config_source_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_core_v1_config_source_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_core_v1_config_source_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_core_v1_config_source_proto_goTypes = []any{
-	(ApiVersion)(0),              // 0: core.v1.ApiVersion
-	(ApiConfigSource_ApiType)(0), // 1: core.v1.ApiConfigSource.ApiType
-	(*ApiConfigSource)(nil),      // 2: core.v1.ApiConfigSource
-	(*ConfigSource)(nil),         // 3: core.v1.ConfigSource
+	(ApiVersion)(0),                // 0: core.v1.ApiVersion
+	(ApiConfigSource_ApiType)(0),   // 1: core.v1.ApiConfigSource.ApiType
+	(*AggregatedConfigSource)(nil), // 2: core.v1.AggregatedConfigSource
+	(*ApiConfigSource)(nil),        // 3: core.v1.ApiConfigSource
+	(*ConfigSource)(nil),           // 4: core.v1.ConfigSource
 }
 var file_core_v1_config_source_proto_depIdxs = []int32{
-	2, // 0: core.v1.ConfigSource.api_config_source:type_name -> core.v1.ApiConfigSource
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	3, // 0: core.v1.ConfigSource.api_config_source:type_name -> core.v1.ApiConfigSource
+	2, // 1: core.v1.ConfigSource.ads:type_name -> core.v1.AggregatedConfigSource
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_core_v1_config_source_proto_init() }
@@ -278,8 +334,9 @@ func file_core_v1_config_source_proto_init() {
 	if File_core_v1_config_source_proto != nil {
 		return
 	}
-	file_core_v1_config_source_proto_msgTypes[1].OneofWrappers = []any{
+	file_core_v1_config_source_proto_msgTypes[2].OneofWrappers = []any{
 		(*ConfigSource_ApiConfigSource)(nil),
+		(*ConfigSource_Ads)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -287,7 +344,7 @@ func file_core_v1_config_source_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_v1_config_source_proto_rawDesc), len(file_core_v1_config_source_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   2,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
