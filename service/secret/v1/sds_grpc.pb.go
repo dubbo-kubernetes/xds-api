@@ -114,16 +114,15 @@ func (c *secretDiscoveryServiceClient) FetchSecrets(ctx context.Context, in *v1.
 }
 
 // SecretDiscoveryServiceServer is the server API for SecretDiscoveryService service.
-// All implementations must embed UnimplementedSecretDiscoveryServiceServer
+// All implementations should embed UnimplementedSecretDiscoveryServiceServer
 // for forward compatibility
 type SecretDiscoveryServiceServer interface {
 	DeltaSecrets(SecretDiscoveryService_DeltaSecretsServer) error
 	StreamSecrets(SecretDiscoveryService_StreamSecretsServer) error
 	FetchSecrets(context.Context, *v1.DiscoveryRequest) (*v1.DiscoveryResponse, error)
-	mustEmbedUnimplementedSecretDiscoveryServiceServer()
 }
 
-// UnimplementedSecretDiscoveryServiceServer must be embedded to have forward compatible implementations.
+// UnimplementedSecretDiscoveryServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedSecretDiscoveryServiceServer struct {
 }
 
@@ -135,8 +134,6 @@ func (UnimplementedSecretDiscoveryServiceServer) StreamSecrets(SecretDiscoverySe
 }
 func (UnimplementedSecretDiscoveryServiceServer) FetchSecrets(context.Context, *v1.DiscoveryRequest) (*v1.DiscoveryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FetchSecrets not implemented")
-}
-func (UnimplementedSecretDiscoveryServiceServer) mustEmbedUnimplementedSecretDiscoveryServiceServer() {
 }
 
 // UnsafeSecretDiscoveryServiceServer may be embedded to opt out of forward compatibility for this service.

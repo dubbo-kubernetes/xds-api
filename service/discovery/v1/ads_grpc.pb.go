@@ -102,15 +102,14 @@ func (x *aggregatedDiscoveryServiceDeltaAggregatedResourcesClient) Recv() (*Delt
 }
 
 // AggregatedDiscoveryServiceServer is the server API for AggregatedDiscoveryService service.
-// All implementations must embed UnimplementedAggregatedDiscoveryServiceServer
+// All implementations should embed UnimplementedAggregatedDiscoveryServiceServer
 // for forward compatibility
 type AggregatedDiscoveryServiceServer interface {
 	StreamAggregatedResources(AggregatedDiscoveryService_StreamAggregatedResourcesServer) error
 	DeltaAggregatedResources(AggregatedDiscoveryService_DeltaAggregatedResourcesServer) error
-	mustEmbedUnimplementedAggregatedDiscoveryServiceServer()
 }
 
-// UnimplementedAggregatedDiscoveryServiceServer must be embedded to have forward compatible implementations.
+// UnimplementedAggregatedDiscoveryServiceServer should be embedded to have forward compatible implementations.
 type UnimplementedAggregatedDiscoveryServiceServer struct {
 }
 
@@ -119,8 +118,6 @@ func (UnimplementedAggregatedDiscoveryServiceServer) StreamAggregatedResources(A
 }
 func (UnimplementedAggregatedDiscoveryServiceServer) DeltaAggregatedResources(AggregatedDiscoveryService_DeltaAggregatedResourcesServer) error {
 	return status.Errorf(codes.Unimplemented, "method DeltaAggregatedResources not implemented")
-}
-func (UnimplementedAggregatedDiscoveryServiceServer) mustEmbedUnimplementedAggregatedDiscoveryServiceServer() {
 }
 
 // UnsafeAggregatedDiscoveryServiceServer may be embedded to opt out of forward compatibility for this service.
