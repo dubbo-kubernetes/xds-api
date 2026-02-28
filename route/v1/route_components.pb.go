@@ -279,6 +279,7 @@ type RouteMatch struct {
 	//	*RouteMatch_Path
 	//	*RouteMatch_SafeRegex
 	PathSpecifier isRouteMatch_PathSpecifier `protobuf_oneof:"path_specifier"`
+	Headers       []*HeaderMatcher           `protobuf:"bytes,6,rep,name=headers,proto3" json:"headers,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -347,6 +348,13 @@ func (x *RouteMatch) GetSafeRegex() *v1.RegexMatcher {
 	return nil
 }
 
+func (x *RouteMatch) GetHeaders() []*HeaderMatcher {
+	if x != nil {
+		return x.Headers
+	}
+	return nil
+}
+
 type isRouteMatch_PathSpecifier interface {
 	isRouteMatch_PathSpecifier()
 }
@@ -369,6 +377,96 @@ func (*RouteMatch_Path) isRouteMatch_PathSpecifier() {}
 
 func (*RouteMatch_SafeRegex) isRouteMatch_PathSpecifier() {}
 
+type HeaderMatcher struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Name  string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Types that are valid to be assigned to HeaderMatchSpecifier:
+	//
+	//	*HeaderMatcher_ExactMatch
+	//	*HeaderMatcher_SafeRegexMatch
+	HeaderMatchSpecifier isHeaderMatcher_HeaderMatchSpecifier `protobuf_oneof:"header_match_specifier"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *HeaderMatcher) Reset() {
+	*x = HeaderMatcher{}
+	mi := &file_route_v1_route_components_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HeaderMatcher) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HeaderMatcher) ProtoMessage() {}
+
+func (x *HeaderMatcher) ProtoReflect() protoreflect.Message {
+	mi := &file_route_v1_route_components_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HeaderMatcher.ProtoReflect.Descriptor instead.
+func (*HeaderMatcher) Descriptor() ([]byte, []int) {
+	return file_route_v1_route_components_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *HeaderMatcher) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *HeaderMatcher) GetHeaderMatchSpecifier() isHeaderMatcher_HeaderMatchSpecifier {
+	if x != nil {
+		return x.HeaderMatchSpecifier
+	}
+	return nil
+}
+
+func (x *HeaderMatcher) GetExactMatch() string {
+	if x != nil {
+		if x, ok := x.HeaderMatchSpecifier.(*HeaderMatcher_ExactMatch); ok {
+			return x.ExactMatch
+		}
+	}
+	return ""
+}
+
+func (x *HeaderMatcher) GetSafeRegexMatch() *v1.RegexMatcher {
+	if x != nil {
+		if x, ok := x.HeaderMatchSpecifier.(*HeaderMatcher_SafeRegexMatch); ok {
+			return x.SafeRegexMatch
+		}
+	}
+	return nil
+}
+
+type isHeaderMatcher_HeaderMatchSpecifier interface {
+	isHeaderMatcher_HeaderMatchSpecifier()
+}
+
+type HeaderMatcher_ExactMatch struct {
+	ExactMatch string `protobuf:"bytes,4,opt,name=exact_match,json=exactMatch,proto3,oneof"`
+}
+
+type HeaderMatcher_SafeRegexMatch struct {
+	SafeRegexMatch *v1.RegexMatcher `protobuf:"bytes,11,opt,name=safe_regex_match,json=safeRegexMatch,proto3,oneof"`
+}
+
+func (*HeaderMatcher_ExactMatch) isHeaderMatcher_HeaderMatchSpecifier() {}
+
+func (*HeaderMatcher_SafeRegexMatch) isHeaderMatcher_HeaderMatchSpecifier() {}
+
 type RouteAction struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to ClusterSpecifier:
@@ -382,7 +480,7 @@ type RouteAction struct {
 
 func (x *RouteAction) Reset() {
 	*x = RouteAction{}
-	mi := &file_route_v1_route_components_proto_msgTypes[5]
+	mi := &file_route_v1_route_components_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -394,7 +492,7 @@ func (x *RouteAction) String() string {
 func (*RouteAction) ProtoMessage() {}
 
 func (x *RouteAction) ProtoReflect() protoreflect.Message {
-	mi := &file_route_v1_route_components_proto_msgTypes[5]
+	mi := &file_route_v1_route_components_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -407,7 +505,7 @@ func (x *RouteAction) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RouteAction.ProtoReflect.Descriptor instead.
 func (*RouteAction) Descriptor() ([]byte, []int) {
-	return file_route_v1_route_components_proto_rawDescGZIP(), []int{5}
+	return file_route_v1_route_components_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *RouteAction) GetClusterSpecifier() isRouteAction_ClusterSpecifier {
@@ -462,7 +560,7 @@ type WeightedCluster_ClusterWeight struct {
 
 func (x *WeightedCluster_ClusterWeight) Reset() {
 	*x = WeightedCluster_ClusterWeight{}
-	mi := &file_route_v1_route_components_proto_msgTypes[6]
+	mi := &file_route_v1_route_components_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -474,7 +572,7 @@ func (x *WeightedCluster_ClusterWeight) String() string {
 func (*WeightedCluster_ClusterWeight) ProtoMessage() {}
 
 func (x *WeightedCluster_ClusterWeight) ProtoReflect() protoreflect.Message {
-	mi := &file_route_v1_route_components_proto_msgTypes[6]
+	mi := &file_route_v1_route_components_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -533,15 +631,22 @@ const file_route_v1_route_components_proto_rawDesc = "" +
 	"\rClusterWeight\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x124\n" +
 	"\x06weight\x18\x02 \x01(\v2\x1c.google.protobuf.UInt32ValueR\x06weight\x12%\n" +
-	"\x0ecluster_header\x18\f \x01(\tR\rclusterHeader\"\x8e\x01\n" +
+	"\x0ecluster_header\x18\f \x01(\tR\rclusterHeader\"\xc1\x01\n" +
 	"\n" +
 	"RouteMatch\x12\x18\n" +
 	"\x06prefix\x18\x01 \x01(\tH\x00R\x06prefix\x12\x14\n" +
 	"\x04path\x18\x02 \x01(\tH\x00R\x04path\x12>\n" +
 	"\n" +
 	"safe_regex\x18\n" +
-	" \x01(\v2\x1d.type.matcher.v1.RegexMatcherH\x00R\tsafeRegexB\x10\n" +
-	"\x0epath_specifier\"\x88\x01\n" +
+	" \x01(\v2\x1d.type.matcher.v1.RegexMatcherH\x00R\tsafeRegex\x121\n" +
+	"\aheaders\x18\x06 \x03(\v2\x17.route.v1.HeaderMatcherR\aheadersB\x10\n" +
+	"\x0epath_specifier\"\xab\x01\n" +
+	"\rHeaderMatcher\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12!\n" +
+	"\vexact_match\x18\x04 \x01(\tH\x00R\n" +
+	"exactMatch\x12I\n" +
+	"\x10safe_regex_match\x18\v \x01(\v2\x1d.type.matcher.v1.RegexMatcherH\x00R\x0esafeRegexMatchB\x18\n" +
+	"\x16header_match_specifier\"\x88\x01\n" +
 	"\vRouteAction\x12\x1a\n" +
 	"\acluster\x18\x01 \x01(\tH\x00R\acluster\x12H\n" +
 	"\x11weighted_clusters\x18\x03 \x01(\v2\x19.route.v1.WeightedClusterH\x00R\x10weightedClustersB\x13\n" +
@@ -559,33 +664,36 @@ func file_route_v1_route_components_proto_rawDescGZIP() []byte {
 	return file_route_v1_route_components_proto_rawDescData
 }
 
-var file_route_v1_route_components_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_route_v1_route_components_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_route_v1_route_components_proto_goTypes = []any{
 	(*VirtualHost)(nil),                   // 0: route.v1.VirtualHost
 	(*Route)(nil),                         // 1: route.v1.Route
 	(*NonForwardingAction)(nil),           // 2: route.v1.NonForwardingAction
 	(*WeightedCluster)(nil),               // 3: route.v1.WeightedCluster
 	(*RouteMatch)(nil),                    // 4: route.v1.RouteMatch
-	(*RouteAction)(nil),                   // 5: route.v1.RouteAction
-	(*WeightedCluster_ClusterWeight)(nil), // 6: route.v1.WeightedCluster.ClusterWeight
-	(*wrapperspb.UInt32Value)(nil),        // 7: google.protobuf.UInt32Value
-	(*v1.RegexMatcher)(nil),               // 8: type.matcher.v1.RegexMatcher
+	(*HeaderMatcher)(nil),                 // 5: route.v1.HeaderMatcher
+	(*RouteAction)(nil),                   // 6: route.v1.RouteAction
+	(*WeightedCluster_ClusterWeight)(nil), // 7: route.v1.WeightedCluster.ClusterWeight
+	(*wrapperspb.UInt32Value)(nil),        // 8: google.protobuf.UInt32Value
+	(*v1.RegexMatcher)(nil),               // 9: type.matcher.v1.RegexMatcher
 }
 var file_route_v1_route_components_proto_depIdxs = []int32{
-	1, // 0: route.v1.VirtualHost.routes:type_name -> route.v1.Route
-	4, // 1: route.v1.Route.match:type_name -> route.v1.RouteMatch
-	5, // 2: route.v1.Route.route:type_name -> route.v1.RouteAction
-	2, // 3: route.v1.Route.non_forwarding_action:type_name -> route.v1.NonForwardingAction
-	6, // 4: route.v1.WeightedCluster.clusters:type_name -> route.v1.WeightedCluster.ClusterWeight
-	7, // 5: route.v1.WeightedCluster.total_weight:type_name -> google.protobuf.UInt32Value
-	8, // 6: route.v1.RouteMatch.safe_regex:type_name -> type.matcher.v1.RegexMatcher
-	3, // 7: route.v1.RouteAction.weighted_clusters:type_name -> route.v1.WeightedCluster
-	7, // 8: route.v1.WeightedCluster.ClusterWeight.weight:type_name -> google.protobuf.UInt32Value
-	9, // [9:9] is the sub-list for method output_type
-	9, // [9:9] is the sub-list for method input_type
-	9, // [9:9] is the sub-list for extension type_name
-	9, // [9:9] is the sub-list for extension extendee
-	0, // [0:9] is the sub-list for field type_name
+	1,  // 0: route.v1.VirtualHost.routes:type_name -> route.v1.Route
+	4,  // 1: route.v1.Route.match:type_name -> route.v1.RouteMatch
+	6,  // 2: route.v1.Route.route:type_name -> route.v1.RouteAction
+	2,  // 3: route.v1.Route.non_forwarding_action:type_name -> route.v1.NonForwardingAction
+	7,  // 4: route.v1.WeightedCluster.clusters:type_name -> route.v1.WeightedCluster.ClusterWeight
+	8,  // 5: route.v1.WeightedCluster.total_weight:type_name -> google.protobuf.UInt32Value
+	9,  // 6: route.v1.RouteMatch.safe_regex:type_name -> type.matcher.v1.RegexMatcher
+	5,  // 7: route.v1.RouteMatch.headers:type_name -> route.v1.HeaderMatcher
+	9,  // 8: route.v1.HeaderMatcher.safe_regex_match:type_name -> type.matcher.v1.RegexMatcher
+	3,  // 9: route.v1.RouteAction.weighted_clusters:type_name -> route.v1.WeightedCluster
+	8,  // 10: route.v1.WeightedCluster.ClusterWeight.weight:type_name -> google.protobuf.UInt32Value
+	11, // [11:11] is the sub-list for method output_type
+	11, // [11:11] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_route_v1_route_components_proto_init() }
@@ -603,6 +711,10 @@ func file_route_v1_route_components_proto_init() {
 		(*RouteMatch_SafeRegex)(nil),
 	}
 	file_route_v1_route_components_proto_msgTypes[5].OneofWrappers = []any{
+		(*HeaderMatcher_ExactMatch)(nil),
+		(*HeaderMatcher_SafeRegexMatch)(nil),
+	}
+	file_route_v1_route_components_proto_msgTypes[6].OneofWrappers = []any{
 		(*RouteAction_Cluster)(nil),
 		(*RouteAction_WeightedClusters)(nil),
 	}
@@ -612,7 +724,7 @@ func file_route_v1_route_components_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_route_v1_route_components_proto_rawDesc), len(file_route_v1_route_components_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

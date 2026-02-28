@@ -42,7 +42,15 @@ message RouteMatch {
     string path = 2;
     type.matcher.v1.RegexMatcher safe_regex = 10;
   }
+  repeated HeaderMatcher headers = 6;
+}
 
+message HeaderMatcher {
+  string name = 1;
+  oneof header_match_specifier {
+    string exact_match = 4;
+    type.matcher.v1.RegexMatcher safe_regex_match = 11;
+  }
 }
 
 message RouteAction {
