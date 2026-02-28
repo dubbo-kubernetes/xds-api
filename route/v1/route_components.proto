@@ -20,8 +20,11 @@ message Route {
   RouteMatch match = 2;
   oneof action {
     RouteAction route = 3;
+    NonForwardingAction non_forwarding_action = 7;
   }
 }
+
+message NonForwardingAction {}
 
 message WeightedCluster {
   message ClusterWeight {

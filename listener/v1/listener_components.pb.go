@@ -277,6 +277,7 @@ type FilterChain struct {
 	Name             string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	FilterChainMatch *FilterChainMatch      `protobuf:"bytes,2,opt,name=filter_chain_match,json=filterChainMatch,proto3" json:"filter_chain_match,omitempty"`
 	Filters          []*Filter              `protobuf:"bytes,3,rep,name=filters,proto3" json:"filters,omitempty"`
+	TransportSocket  *anypb.Any             `protobuf:"bytes,6,opt,name=transport_socket,json=transportSocket,proto3" json:"transport_socket,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -332,6 +333,13 @@ func (x *FilterChain) GetFilters() []*Filter {
 	return nil
 }
 
+func (x *FilterChain) GetTransportSocket() *anypb.Any {
+	if x != nil {
+		return x.TransportSocket
+	}
+	return nil
+}
+
 var File_listener_v1_listener_components_proto protoreflect.FileDescriptor
 
 const file_listener_v1_listener_components_proto_rawDesc = "" +
@@ -359,11 +367,12 @@ const file_listener_v1_listener_components_proto_rawDesc = "" +
 	"\x14ConnectionSourceType\x12\a\n" +
 	"\x03ANY\x10\x00\x12\x17\n" +
 	"\x13SAME_IP_OR_LOOPBACK\x10\x01\x12\f\n" +
-	"\bEXTERNAL\x10\x02J\x04\b\x01\x10\x02\"\xbc\x01\n" +
+	"\bEXTERNAL\x10\x02J\x04\b\x01\x10\x02\"\xfd\x01\n" +
 	"\vFilterChain\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12K\n" +
 	"\x12filter_chain_match\x18\x02 \x01(\v2\x1d.listener.v1.FilterChainMatchR\x10filterChainMatch\x12-\n" +
-	"\afilters\x18\x03 \x03(\v2\x13.listener.v1.FilterR\afiltersJ\x04\b\b\x10\tR\x17on_demand_configurationB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
+	"\afilters\x18\x03 \x03(\v2\x13.listener.v1.FilterR\afilters\x12?\n" +
+	"\x10transport_socket\x18\x06 \x01(\v2\x14.google.protobuf.AnyR\x0ftransportSocketJ\x04\b\b\x10\tR\x17on_demand_configurationB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
 
 var (
 	file_listener_v1_listener_components_proto_rawDescOnce sync.Once
@@ -389,20 +398,21 @@ var file_listener_v1_listener_components_proto_goTypes = []any{
 	(*v1.CidrRange)(nil),           // 6: core.v1.CidrRange
 }
 var file_listener_v1_listener_components_proto_depIdxs = []int32{
-	4, // 0: listener.v1.Filter.typed_config:type_name -> google.protobuf.Any
-	5, // 1: listener.v1.FilterChainMatch.destination_port:type_name -> google.protobuf.UInt32Value
-	6, // 2: listener.v1.FilterChainMatch.prefix_ranges:type_name -> core.v1.CidrRange
-	5, // 3: listener.v1.FilterChainMatch.suffix_len:type_name -> google.protobuf.UInt32Value
-	6, // 4: listener.v1.FilterChainMatch.direct_source_prefix_ranges:type_name -> core.v1.CidrRange
-	0, // 5: listener.v1.FilterChainMatch.source_type:type_name -> listener.v1.FilterChainMatch.ConnectionSourceType
-	6, // 6: listener.v1.FilterChainMatch.source_prefix_ranges:type_name -> core.v1.CidrRange
-	2, // 7: listener.v1.FilterChain.filter_chain_match:type_name -> listener.v1.FilterChainMatch
-	1, // 8: listener.v1.FilterChain.filters:type_name -> listener.v1.Filter
-	9, // [9:9] is the sub-list for method output_type
-	9, // [9:9] is the sub-list for method input_type
-	9, // [9:9] is the sub-list for extension type_name
-	9, // [9:9] is the sub-list for extension extendee
-	0, // [0:9] is the sub-list for field type_name
+	4,  // 0: listener.v1.Filter.typed_config:type_name -> google.protobuf.Any
+	5,  // 1: listener.v1.FilterChainMatch.destination_port:type_name -> google.protobuf.UInt32Value
+	6,  // 2: listener.v1.FilterChainMatch.prefix_ranges:type_name -> core.v1.CidrRange
+	5,  // 3: listener.v1.FilterChainMatch.suffix_len:type_name -> google.protobuf.UInt32Value
+	6,  // 4: listener.v1.FilterChainMatch.direct_source_prefix_ranges:type_name -> core.v1.CidrRange
+	0,  // 5: listener.v1.FilterChainMatch.source_type:type_name -> listener.v1.FilterChainMatch.ConnectionSourceType
+	6,  // 6: listener.v1.FilterChainMatch.source_prefix_ranges:type_name -> core.v1.CidrRange
+	2,  // 7: listener.v1.FilterChain.filter_chain_match:type_name -> listener.v1.FilterChainMatch
+	1,  // 8: listener.v1.FilterChain.filters:type_name -> listener.v1.Filter
+	4,  // 9: listener.v1.FilterChain.transport_socket:type_name -> google.protobuf.Any
+	10, // [10:10] is the sub-list for method output_type
+	10, // [10:10] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_listener_v1_listener_components_proto_init() }

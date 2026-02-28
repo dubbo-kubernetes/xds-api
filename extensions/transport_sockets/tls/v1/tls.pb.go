@@ -22,6 +22,50 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type CertificateValidationContext struct {
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	MatchSubjectAltNames []string               `protobuf:"bytes,1,rep,name=match_subject_alt_names,json=matchSubjectAltNames,proto3" json:"match_subject_alt_names,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *CertificateValidationContext) Reset() {
+	*x = CertificateValidationContext{}
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CertificateValidationContext) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CertificateValidationContext) ProtoMessage() {}
+
+func (x *CertificateValidationContext) ProtoReflect() protoreflect.Message {
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CertificateValidationContext.ProtoReflect.Descriptor instead.
+func (*CertificateValidationContext) Descriptor() ([]byte, []int) {
+	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *CertificateValidationContext) GetMatchSubjectAltNames() []string {
+	if x != nil {
+		return x.MatchSubjectAltNames
+	}
+	return nil
+}
+
 type UpstreamTlsContext struct {
 	state            protoimpl.MessageState `protogen:"open.v1"`
 	CommonTlsContext *CommonTlsContext      `protobuf:"bytes,1,opt,name=common_tls_context,json=commonTlsContext,proto3" json:"common_tls_context,omitempty"`
@@ -32,7 +76,7 @@ type UpstreamTlsContext struct {
 
 func (x *UpstreamTlsContext) Reset() {
 	*x = UpstreamTlsContext{}
-	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[0]
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[1]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -44,7 +88,7 @@ func (x *UpstreamTlsContext) String() string {
 func (*UpstreamTlsContext) ProtoMessage() {}
 
 func (x *UpstreamTlsContext) ProtoReflect() protoreflect.Message {
-	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[0]
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[1]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +101,7 @@ func (x *UpstreamTlsContext) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpstreamTlsContext.ProtoReflect.Descriptor instead.
 func (*UpstreamTlsContext) Descriptor() ([]byte, []int) {
-	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP(), []int{0}
+	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *UpstreamTlsContext) GetCommonTlsContext() *CommonTlsContext {
@@ -84,7 +128,7 @@ type DownstreamTlsContext struct {
 
 func (x *DownstreamTlsContext) Reset() {
 	*x = DownstreamTlsContext{}
-	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[1]
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -96,7 +140,7 @@ func (x *DownstreamTlsContext) String() string {
 func (*DownstreamTlsContext) ProtoMessage() {}
 
 func (x *DownstreamTlsContext) ProtoReflect() protoreflect.Message {
-	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[1]
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -109,7 +153,7 @@ func (x *DownstreamTlsContext) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DownstreamTlsContext.ProtoReflect.Descriptor instead.
 func (*DownstreamTlsContext) Descriptor() ([]byte, []int) {
-	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP(), []int{1}
+	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *DownstreamTlsContext) GetCommonTlsContext() *CommonTlsContext {
@@ -127,7 +171,9 @@ func (x *DownstreamTlsContext) GetRequireClientCertificate() *wrapperspb.BoolVal
 }
 
 type CommonTlsContext struct {
-	state protoimpl.MessageState `protogen:"open.v1"`
+	state                                     protoimpl.MessageState                        `protogen:"open.v1"`
+	TlsCertificateCertificateProviderInstance *CommonTlsContext_CertificateProviderInstance `protobuf:"bytes,9,opt,name=tls_certificate_certificate_provider_instance,json=tlsCertificateCertificateProviderInstance,proto3" json:"tls_certificate_certificate_provider_instance,omitempty"`
+	AlpnProtocols                             []string                                      `protobuf:"bytes,4,rep,name=alpn_protocols,json=alpnProtocols,proto3" json:"alpn_protocols,omitempty"`
 	// Types that are valid to be assigned to ValidationContextType:
 	//
 	//	*CommonTlsContext_CombinedValidationContext
@@ -138,7 +184,7 @@ type CommonTlsContext struct {
 
 func (x *CommonTlsContext) Reset() {
 	*x = CommonTlsContext{}
-	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[2]
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -150,7 +196,7 @@ func (x *CommonTlsContext) String() string {
 func (*CommonTlsContext) ProtoMessage() {}
 
 func (x *CommonTlsContext) ProtoReflect() protoreflect.Message {
-	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[2]
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -163,7 +209,21 @@ func (x *CommonTlsContext) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CommonTlsContext.ProtoReflect.Descriptor instead.
 func (*CommonTlsContext) Descriptor() ([]byte, []int) {
-	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP(), []int{2}
+	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CommonTlsContext) GetTlsCertificateCertificateProviderInstance() *CommonTlsContext_CertificateProviderInstance {
+	if x != nil {
+		return x.TlsCertificateCertificateProviderInstance
+	}
+	return nil
+}
+
+func (x *CommonTlsContext) GetAlpnProtocols() []string {
+	if x != nil {
+		return x.AlpnProtocols
+	}
+	return nil
 }
 
 func (x *CommonTlsContext) GetValidationContextType() isCommonTlsContext_ValidationContextType {
@@ -202,7 +262,7 @@ type CommonTlsContext_CertificateProviderInstance struct {
 
 func (x *CommonTlsContext_CertificateProviderInstance) Reset() {
 	*x = CommonTlsContext_CertificateProviderInstance{}
-	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[3]
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -214,7 +274,7 @@ func (x *CommonTlsContext_CertificateProviderInstance) String() string {
 func (*CommonTlsContext_CertificateProviderInstance) ProtoMessage() {}
 
 func (x *CommonTlsContext_CertificateProviderInstance) ProtoReflect() protoreflect.Message {
-	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[3]
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -227,7 +287,7 @@ func (x *CommonTlsContext_CertificateProviderInstance) ProtoReflect() protorefle
 
 // Deprecated: Use CommonTlsContext_CertificateProviderInstance.ProtoReflect.Descriptor instead.
 func (*CommonTlsContext_CertificateProviderInstance) Descriptor() ([]byte, []int) {
-	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP(), []int{2, 0}
+	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP(), []int{3, 0}
 }
 
 func (x *CommonTlsContext_CertificateProviderInstance) GetInstanceName() string {
@@ -245,14 +305,16 @@ func (x *CommonTlsContext_CertificateProviderInstance) GetCertificateName() stri
 }
 
 type CommonTlsContext_CombinedCertificateValidationContext struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state                                        protoimpl.MessageState                        `protogen:"open.v1"`
+	ValidationContextCertificateProviderInstance *CommonTlsContext_CertificateProviderInstance `protobuf:"bytes,2,opt,name=validation_context_certificate_provider_instance,json=validationContextCertificateProviderInstance,proto3" json:"validation_context_certificate_provider_instance,omitempty"`
+	DefaultValidationContext                     *CertificateValidationContext                 `protobuf:"bytes,3,opt,name=default_validation_context,json=defaultValidationContext,proto3" json:"default_validation_context,omitempty"`
+	unknownFields                                protoimpl.UnknownFields
+	sizeCache                                    protoimpl.SizeCache
 }
 
 func (x *CommonTlsContext_CombinedCertificateValidationContext) Reset() {
 	*x = CommonTlsContext_CombinedCertificateValidationContext{}
-	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[4]
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -264,7 +326,7 @@ func (x *CommonTlsContext_CombinedCertificateValidationContext) String() string 
 func (*CommonTlsContext_CombinedCertificateValidationContext) ProtoMessage() {}
 
 func (x *CommonTlsContext_CombinedCertificateValidationContext) ProtoReflect() protoreflect.Message {
-	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[4]
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -277,26 +339,46 @@ func (x *CommonTlsContext_CombinedCertificateValidationContext) ProtoReflect() p
 
 // Deprecated: Use CommonTlsContext_CombinedCertificateValidationContext.ProtoReflect.Descriptor instead.
 func (*CommonTlsContext_CombinedCertificateValidationContext) Descriptor() ([]byte, []int) {
-	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP(), []int{2, 1}
+	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP(), []int{3, 1}
+}
+
+func (x *CommonTlsContext_CombinedCertificateValidationContext) GetValidationContextCertificateProviderInstance() *CommonTlsContext_CertificateProviderInstance {
+	if x != nil {
+		return x.ValidationContextCertificateProviderInstance
+	}
+	return nil
+}
+
+func (x *CommonTlsContext_CombinedCertificateValidationContext) GetDefaultValidationContext() *CertificateValidationContext {
+	if x != nil {
+		return x.DefaultValidationContext
+	}
+	return nil
 }
 
 var File_extensions_transport_sockets_tls_v1_tls_proto protoreflect.FileDescriptor
 
 const file_extensions_transport_sockets_tls_v1_tls_proto_rawDesc = "" +
 	"\n" +
-	"-extensions/transport_sockets/tls/v1/tls.proto\x12#extensions.transport_sockets.tls.v1\x1a\x1egoogle/protobuf/wrappers.proto\"\x8b\x01\n" +
+	"-extensions/transport_sockets/tls/v1/tls.proto\x12#extensions.transport_sockets.tls.v1\x1a\x1egoogle/protobuf/wrappers.proto\"U\n" +
+	"\x1cCertificateValidationContext\x125\n" +
+	"\x17match_subject_alt_names\x18\x01 \x03(\tR\x14matchSubjectAltNames\"\x8b\x01\n" +
 	"\x12UpstreamTlsContext\x12c\n" +
 	"\x12common_tls_context\x18\x01 \x01(\v25.extensions.transport_sockets.tls.v1.CommonTlsContextR\x10commonTlsContext\x12\x10\n" +
 	"\x03sni\x18\x02 \x01(\tR\x03sni\"\xd5\x01\n" +
 	"\x14DownstreamTlsContext\x12c\n" +
 	"\x12common_tls_context\x18\x01 \x01(\v25.extensions.transport_sockets.tls.v1.CommonTlsContextR\x10commonTlsContext\x12X\n" +
-	"\x1arequire_client_certificate\x18\x02 \x01(\v2\x1a.google.protobuf.BoolValueR\x18requireClientCertificate\"\xe9\x02\n" +
-	"\x10CommonTlsContext\x12\x9c\x01\n" +
+	"\x1arequire_client_certificate\x18\x02 \x01(\v2\x1a.google.protobuf.BoolValueR\x18requireClientCertificate\"\x84\a\n" +
+	"\x10CommonTlsContext\x12\xb3\x01\n" +
+	"-tls_certificate_certificate_provider_instance\x18\t \x01(\v2Q.extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstanceR)tlsCertificateCertificateProviderInstance\x12%\n" +
+	"\x0ealpn_protocols\x18\x04 \x03(\tR\ralpnProtocols\x12\x9c\x01\n" +
 	"\x1bcombined_validation_context\x18\b \x01(\v2Z.extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContextH\x00R\x19combinedValidationContext\x1am\n" +
 	"\x1bCertificateProviderInstance\x12#\n" +
 	"\rinstance_name\x18\x01 \x01(\tR\finstanceName\x12)\n" +
-	"\x10certificate_name\x18\x02 \x01(\tR\x0fcertificateName\x1a&\n" +
-	"$CombinedCertificateValidationContextB\x19\n" +
+	"\x10certificate_name\x18\x02 \x01(\tR\x0fcertificateName\x1a\xe3\x02\n" +
+	"$CombinedCertificateValidationContext\x12\xb9\x01\n" +
+	"0validation_context_certificate_provider_instance\x18\x02 \x01(\v2Q.extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstanceR,validationContextCertificateProviderInstance\x12\x7f\n" +
+	"\x1adefault_validation_context\x18\x03 \x01(\v2A.extensions.transport_sockets.tls.v1.CertificateValidationContextR\x18defaultValidationContextB\x19\n" +
 	"\x17validation_context_typeJ\x04\b\x05\x10\x06BOZMgithub.com/dubbo-kubernetes/xds-api/extensions/transport_sockets/tls/v1;tlsv1b\x06proto3"
 
 var (
@@ -311,25 +393,29 @@ func file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP() []byte {
 	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescData
 }
 
-var file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_extensions_transport_sockets_tls_v1_tls_proto_goTypes = []any{
-	(*UpstreamTlsContext)(nil),                                    // 0: extensions.transport_sockets.tls.v1.UpstreamTlsContext
-	(*DownstreamTlsContext)(nil),                                  // 1: extensions.transport_sockets.tls.v1.DownstreamTlsContext
-	(*CommonTlsContext)(nil),                                      // 2: extensions.transport_sockets.tls.v1.CommonTlsContext
-	(*CommonTlsContext_CertificateProviderInstance)(nil),          // 3: extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstance
-	(*CommonTlsContext_CombinedCertificateValidationContext)(nil), // 4: extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContext
-	(*wrapperspb.BoolValue)(nil),                                  // 5: google.protobuf.BoolValue
+	(*CertificateValidationContext)(nil),                          // 0: extensions.transport_sockets.tls.v1.CertificateValidationContext
+	(*UpstreamTlsContext)(nil),                                    // 1: extensions.transport_sockets.tls.v1.UpstreamTlsContext
+	(*DownstreamTlsContext)(nil),                                  // 2: extensions.transport_sockets.tls.v1.DownstreamTlsContext
+	(*CommonTlsContext)(nil),                                      // 3: extensions.transport_sockets.tls.v1.CommonTlsContext
+	(*CommonTlsContext_CertificateProviderInstance)(nil),          // 4: extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstance
+	(*CommonTlsContext_CombinedCertificateValidationContext)(nil), // 5: extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContext
+	(*wrapperspb.BoolValue)(nil),                                  // 6: google.protobuf.BoolValue
 }
 var file_extensions_transport_sockets_tls_v1_tls_proto_depIdxs = []int32{
-	2, // 0: extensions.transport_sockets.tls.v1.UpstreamTlsContext.common_tls_context:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext
-	2, // 1: extensions.transport_sockets.tls.v1.DownstreamTlsContext.common_tls_context:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext
-	5, // 2: extensions.transport_sockets.tls.v1.DownstreamTlsContext.require_client_certificate:type_name -> google.protobuf.BoolValue
-	4, // 3: extensions.transport_sockets.tls.v1.CommonTlsContext.combined_validation_context:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContext
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	3, // 0: extensions.transport_sockets.tls.v1.UpstreamTlsContext.common_tls_context:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext
+	3, // 1: extensions.transport_sockets.tls.v1.DownstreamTlsContext.common_tls_context:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext
+	6, // 2: extensions.transport_sockets.tls.v1.DownstreamTlsContext.require_client_certificate:type_name -> google.protobuf.BoolValue
+	4, // 3: extensions.transport_sockets.tls.v1.CommonTlsContext.tls_certificate_certificate_provider_instance:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstance
+	5, // 4: extensions.transport_sockets.tls.v1.CommonTlsContext.combined_validation_context:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContext
+	4, // 5: extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContext.validation_context_certificate_provider_instance:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstance
+	0, // 6: extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContext.default_validation_context:type_name -> extensions.transport_sockets.tls.v1.CertificateValidationContext
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_extensions_transport_sockets_tls_v1_tls_proto_init() }
@@ -337,7 +423,7 @@ func file_extensions_transport_sockets_tls_v1_tls_proto_init() {
 	if File_extensions_transport_sockets_tls_v1_tls_proto != nil {
 		return
 	}
-	file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[2].OneofWrappers = []any{
+	file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[3].OneofWrappers = []any{
 		(*CommonTlsContext_CombinedValidationContext)(nil),
 	}
 	type x struct{}
@@ -346,7 +432,7 @@ func file_extensions_transport_sockets_tls_v1_tls_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_extensions_transport_sockets_tls_v1_tls_proto_rawDesc), len(file_extensions_transport_sockets_tls_v1_tls_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

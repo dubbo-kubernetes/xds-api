@@ -11,6 +11,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	anypb "google.golang.org/protobuf/types/known/anypb"
+	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -118,6 +119,8 @@ type Listener struct {
 	AdditionalAddresses []*AdditionalAddress   `protobuf:"bytes,33,rep,name=additional_addresses,json=additionalAddresses,proto3" json:"additional_addresses,omitempty"`
 	FilterChains        []*FilterChain         `protobuf:"bytes,3,rep,name=filter_chains,json=filterChains,proto3" json:"filter_chains,omitempty"`
 	ApiListener         *ApiListener           `protobuf:"bytes,19,opt,name=api_listener,json=apiListener,proto3" json:"api_listener,omitempty"`
+	ListenerFilters     []*anypb.Any           `protobuf:"bytes,9,rep,name=listener_filters,json=listenerFilters,proto3" json:"listener_filters,omitempty"`
+	UseOriginalDst      *wrapperspb.BoolValue  `protobuf:"bytes,12,opt,name=use_original_dst,json=useOriginalDst,proto3" json:"use_original_dst,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -187,21 +190,37 @@ func (x *Listener) GetApiListener() *ApiListener {
 	return nil
 }
 
+func (x *Listener) GetListenerFilters() []*anypb.Any {
+	if x != nil {
+		return x.ListenerFilters
+	}
+	return nil
+}
+
+func (x *Listener) GetUseOriginalDst() *wrapperspb.BoolValue {
+	if x != nil {
+		return x.UseOriginalDst
+	}
+	return nil
+}
+
 var File_listener_v1_listener_proto protoreflect.FileDescriptor
 
 const file_listener_v1_listener_proto_rawDesc = "" +
 	"\n" +
-	"\x1alistener/v1/listener.proto\x12\vlistener.v1\x1a\x19google/protobuf/any.proto\x1a\x15core/v1/address.proto\x1a%listener/v1/listener_components.proto\"F\n" +
+	"\x1alistener/v1/listener.proto\x12\vlistener.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x15core/v1/address.proto\x1a%listener/v1/listener_components.proto\"F\n" +
 	"\vApiListener\x127\n" +
 	"\fapi_listener\x18\x01 \x01(\v2\x14.google.protobuf.AnyR\vapiListener\"?\n" +
 	"\x11AdditionalAddress\x12*\n" +
-	"\aaddress\x18\x01 \x01(\v2\x10.core.v1.AddressR\aaddress\"\x99\x02\n" +
+	"\aaddress\x18\x01 \x01(\v2\x10.core.v1.AddressR\aaddress\"\xa0\x03\n" +
 	"\bListener\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12*\n" +
 	"\aaddress\x18\x02 \x01(\v2\x10.core.v1.AddressR\aaddress\x12Q\n" +
 	"\x14additional_addresses\x18! \x03(\v2\x1e.listener.v1.AdditionalAddressR\x13additionalAddresses\x12=\n" +
 	"\rfilter_chains\x18\x03 \x03(\v2\x18.listener.v1.FilterChainR\ffilterChains\x12;\n" +
-	"\fapi_listener\x18\x13 \x01(\v2\x18.listener.v1.ApiListenerR\vapiListenerB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
+	"\fapi_listener\x18\x13 \x01(\v2\x18.listener.v1.ApiListenerR\vapiListener\x12?\n" +
+	"\x10listener_filters\x18\t \x03(\v2\x14.google.protobuf.AnyR\x0flistenerFilters\x12D\n" +
+	"\x10use_original_dst\x18\f \x01(\v2\x1a.google.protobuf.BoolValueR\x0euseOriginalDstB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
 
 var (
 	file_listener_v1_listener_proto_rawDescOnce sync.Once
@@ -217,12 +236,13 @@ func file_listener_v1_listener_proto_rawDescGZIP() []byte {
 
 var file_listener_v1_listener_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_listener_v1_listener_proto_goTypes = []any{
-	(*ApiListener)(nil),       // 0: listener.v1.ApiListener
-	(*AdditionalAddress)(nil), // 1: listener.v1.AdditionalAddress
-	(*Listener)(nil),          // 2: listener.v1.Listener
-	(*anypb.Any)(nil),         // 3: google.protobuf.Any
-	(*v1.Address)(nil),        // 4: core.v1.Address
-	(*FilterChain)(nil),       // 5: listener.v1.FilterChain
+	(*ApiListener)(nil),          // 0: listener.v1.ApiListener
+	(*AdditionalAddress)(nil),    // 1: listener.v1.AdditionalAddress
+	(*Listener)(nil),             // 2: listener.v1.Listener
+	(*anypb.Any)(nil),            // 3: google.protobuf.Any
+	(*v1.Address)(nil),           // 4: core.v1.Address
+	(*FilterChain)(nil),          // 5: listener.v1.FilterChain
+	(*wrapperspb.BoolValue)(nil), // 6: google.protobuf.BoolValue
 }
 var file_listener_v1_listener_proto_depIdxs = []int32{
 	3, // 0: listener.v1.ApiListener.api_listener:type_name -> google.protobuf.Any
@@ -231,11 +251,13 @@ var file_listener_v1_listener_proto_depIdxs = []int32{
 	1, // 3: listener.v1.Listener.additional_addresses:type_name -> listener.v1.AdditionalAddress
 	5, // 4: listener.v1.Listener.filter_chains:type_name -> listener.v1.FilterChain
 	0, // 5: listener.v1.Listener.api_listener:type_name -> listener.v1.ApiListener
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	3, // 6: listener.v1.Listener.listener_filters:type_name -> google.protobuf.Any
+	6, // 7: listener.v1.Listener.use_original_dst:type_name -> google.protobuf.BoolValue
+	8, // [8:8] is the sub-list for method output_type
+	8, // [8:8] is the sub-list for method input_type
+	8, // [8:8] is the sub-list for extension type_name
+	8, // [8:8] is the sub-list for extension extendee
+	0, // [0:8] is the sub-list for field type_name
 }
 
 func init() { file_listener_v1_listener_proto_init() }

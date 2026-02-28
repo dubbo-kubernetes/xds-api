@@ -48,6 +48,7 @@ message FilterChain {
   string name = 1;
   FilterChainMatch filter_chain_match = 2;
   repeated Filter filters = 3;
+  google.protobuf.Any transport_socket = 6;
 
   reserved 8;
   reserved "on_demand_configuration";
