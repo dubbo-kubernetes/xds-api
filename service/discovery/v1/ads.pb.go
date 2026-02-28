@@ -10,6 +10,7 @@ import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
+	sync "sync"
 	unsafe "unsafe"
 )
 
@@ -20,26 +21,80 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Workaround for protobuf issue with importing services
+// https://github.com/google/protobuf/issues/4221
+type AdsDummy struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AdsDummy) Reset() {
+	*x = AdsDummy{}
+	mi := &file_service_discovery_v1_ads_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AdsDummy) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AdsDummy) ProtoMessage() {}
+
+func (x *AdsDummy) ProtoReflect() protoreflect.Message {
+	mi := &file_service_discovery_v1_ads_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AdsDummy.ProtoReflect.Descriptor instead.
+func (*AdsDummy) Descriptor() ([]byte, []int) {
+	return file_service_discovery_v1_ads_proto_rawDescGZIP(), []int{0}
+}
+
 var File_service_discovery_v1_ads_proto protoreflect.FileDescriptor
 
 const file_service_discovery_v1_ads_proto_rawDesc = "" +
 	"\n" +
-	"\x1eservice/discovery/v1/ads.proto\x12\x14service.discovery.v1\x1a$service/discovery/v1/discovery.proto2\x89\x02\n" +
+	"\x1eservice/discovery/v1/ads.proto\x12\x14service.discovery.v1\x1a$service/discovery/v1/discovery.proto\"\n" +
+	"\n" +
+	"\bAdsDummy2\x89\x02\n" +
 	"\x1aAggregatedDiscoveryService\x12p\n" +
 	"\x19StreamAggregatedResources\x12&.service.discovery.v1.DiscoveryRequest\x1a'.service.discovery.v1.DiscoveryResponse(\x010\x01\x12y\n" +
 	"\x18DeltaAggregatedResources\x12+.service.discovery.v1.DeltaDiscoveryRequest\x1a,.service.discovery.v1.DeltaDiscoveryResponse(\x010\x01BFZDgithub.com/dubbo-kubernetes/xds-api/service/discovery/v1;discoveryv1b\x06proto3"
 
+var (
+	file_service_discovery_v1_ads_proto_rawDescOnce sync.Once
+	file_service_discovery_v1_ads_proto_rawDescData []byte
+)
+
+func file_service_discovery_v1_ads_proto_rawDescGZIP() []byte {
+	file_service_discovery_v1_ads_proto_rawDescOnce.Do(func() {
+		file_service_discovery_v1_ads_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_service_discovery_v1_ads_proto_rawDesc), len(file_service_discovery_v1_ads_proto_rawDesc)))
+	})
+	return file_service_discovery_v1_ads_proto_rawDescData
+}
+
+var file_service_discovery_v1_ads_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_service_discovery_v1_ads_proto_goTypes = []any{
-	(*DiscoveryRequest)(nil),       // 0: service.discovery.v1.DiscoveryRequest
-	(*DeltaDiscoveryRequest)(nil),  // 1: service.discovery.v1.DeltaDiscoveryRequest
-	(*DiscoveryResponse)(nil),      // 2: service.discovery.v1.DiscoveryResponse
-	(*DeltaDiscoveryResponse)(nil), // 3: service.discovery.v1.DeltaDiscoveryResponse
+	(*AdsDummy)(nil),               // 0: service.discovery.v1.AdsDummy
+	(*DiscoveryRequest)(nil),       // 1: service.discovery.v1.DiscoveryRequest
+	(*DeltaDiscoveryRequest)(nil),  // 2: service.discovery.v1.DeltaDiscoveryRequest
+	(*DiscoveryResponse)(nil),      // 3: service.discovery.v1.DiscoveryResponse
+	(*DeltaDiscoveryResponse)(nil), // 4: service.discovery.v1.DeltaDiscoveryResponse
 }
 var file_service_discovery_v1_ads_proto_depIdxs = []int32{
-	0, // 0: service.discovery.v1.AggregatedDiscoveryService.StreamAggregatedResources:input_type -> service.discovery.v1.DiscoveryRequest
-	1, // 1: service.discovery.v1.AggregatedDiscoveryService.DeltaAggregatedResources:input_type -> service.discovery.v1.DeltaDiscoveryRequest
-	2, // 2: service.discovery.v1.AggregatedDiscoveryService.StreamAggregatedResources:output_type -> service.discovery.v1.DiscoveryResponse
-	3, // 3: service.discovery.v1.AggregatedDiscoveryService.DeltaAggregatedResources:output_type -> service.discovery.v1.DeltaDiscoveryResponse
+	1, // 0: service.discovery.v1.AggregatedDiscoveryService.StreamAggregatedResources:input_type -> service.discovery.v1.DiscoveryRequest
+	2, // 1: service.discovery.v1.AggregatedDiscoveryService.DeltaAggregatedResources:input_type -> service.discovery.v1.DeltaDiscoveryRequest
+	3, // 2: service.discovery.v1.AggregatedDiscoveryService.StreamAggregatedResources:output_type -> service.discovery.v1.DiscoveryResponse
+	4, // 3: service.discovery.v1.AggregatedDiscoveryService.DeltaAggregatedResources:output_type -> service.discovery.v1.DeltaDiscoveryResponse
 	2, // [2:4] is the sub-list for method output_type
 	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -59,12 +114,13 @@ func file_service_discovery_v1_ads_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_service_discovery_v1_ads_proto_rawDesc), len(file_service_discovery_v1_ads_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   0,
+			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_service_discovery_v1_ads_proto_goTypes,
 		DependencyIndexes: file_service_discovery_v1_ads_proto_depIdxs,
+		MessageInfos:      file_service_discovery_v1_ads_proto_msgTypes,
 	}.Build()
 	File_service_discovery_v1_ads_proto = out.File
 	file_service_discovery_v1_ads_proto_goTypes = nil

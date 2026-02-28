@@ -6,10 +6,14 @@ import "service/discovery/v1/discovery.proto";
 
 option go_package = "github.com/dubbo-kubernetes/xds-api/service/discovery/v1;discoveryv1";
 
-service AggregatedDiscoveryService {
-  rpc StreamAggregatedResources(stream service.discovery.v1.DiscoveryRequest)
-      returns (stream service.discovery.v1.DiscoveryResponse);
+// Workaround for protobuf issue with importing services
+// https://github.com/google/protobuf/issues/4221
+message AdsDummy {}
 
-  rpc DeltaAggregatedResources(stream service.discovery.v1.DeltaDiscoveryRequest)
-      returns (stream service.discovery.v1.DeltaDiscoveryResponse);
+service AggregatedDiscoveryService {
+  rpc StreamAggregatedResources(stream DiscoveryRequest)
+      returns (stream DiscoveryResponse);
+
+  rpc DeltaAggregatedResources(stream DeltaDiscoveryRequest)
+      returns (stream DeltaDiscoveryResponse);
 }
