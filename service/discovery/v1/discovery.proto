@@ -4,6 +4,7 @@ package service.discovery.v1;
 
 import "google/protobuf/any.proto";
 import "google/protobuf/duration.proto";
+import "google/rpc/status.proto";
 
 option go_package = "github.com/dubbo-kubernetes/xds-api/service/discovery/v1;discoveryv1";
 
@@ -12,6 +13,7 @@ message DiscoveryRequest {
   repeated string resource_names = 3;
   string type_url = 4;
   string response_nonce = 5;
+  google.rpc.Status error_detail = 6;
 }
 
 message DiscoveryResponse {

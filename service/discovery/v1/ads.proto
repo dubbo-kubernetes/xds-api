@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package service.discovery.v1;
+
+import "service/discovery/v1/discovery.proto";
+
+option go_package = "github.com/dubbo-kubernetes/xds-api/service/discovery/v1;discoveryv1";
+
+service AggregatedDiscoveryService {
+  rpc StreamAggregatedResources(stream service.discovery.v1.DiscoveryRequest)
+      returns (stream service.discovery.v1.DiscoveryResponse);
+
+  rpc DeltaAggregatedResources(stream service.discovery.v1.DeltaDiscoveryRequest)
+      returns (stream service.discovery.v1.DeltaDiscoveryResponse);
+}

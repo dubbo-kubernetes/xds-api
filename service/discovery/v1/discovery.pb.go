@@ -7,6 +7,7 @@
 package discoveryv1
 
 import (
+	status "google.golang.org/genproto/googleapis/rpc/status"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	anypb "google.golang.org/protobuf/types/known/anypb"
@@ -29,6 +30,7 @@ type DiscoveryRequest struct {
 	ResourceNames []string               `protobuf:"bytes,3,rep,name=resource_names,json=resourceNames,proto3" json:"resource_names,omitempty"`
 	TypeUrl       string                 `protobuf:"bytes,4,opt,name=type_url,json=typeUrl,proto3" json:"type_url,omitempty"`
 	ResponseNonce string                 `protobuf:"bytes,5,opt,name=response_nonce,json=responseNonce,proto3" json:"response_nonce,omitempty"`
+	ErrorDetail   *status.Status         `protobuf:"bytes,6,opt,name=error_detail,json=errorDetail,proto3" json:"error_detail,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -89,6 +91,13 @@ func (x *DiscoveryRequest) GetResponseNonce() string {
 		return x.ResponseNonce
 	}
 	return ""
+}
+
+func (x *DiscoveryRequest) GetErrorDetail() *status.Status {
+	if x != nil {
+		return x.ErrorDetail
+	}
+	return nil
 }
 
 type DiscoveryResponse struct {
@@ -452,12 +461,13 @@ var File_service_discovery_v1_discovery_proto protoreflect.FileDescriptor
 
 const file_service_discovery_v1_discovery_proto_rawDesc = "" +
 	"\n" +
-	"$service/discovery/v1/discovery.proto\x12\x14service.discovery.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\"\x9e\x01\n" +
+	"$service/discovery/v1/discovery.proto\x12\x14service.discovery.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x17google/rpc/status.proto\"\xd5\x01\n" +
 	"\x10DiscoveryRequest\x12!\n" +
 	"\fversion_info\x18\x01 \x01(\tR\vversionInfo\x12%\n" +
 	"\x0eresource_names\x18\x03 \x03(\tR\rresourceNames\x12\x19\n" +
 	"\btype_url\x18\x04 \x01(\tR\atypeUrl\x12%\n" +
-	"\x0eresponse_nonce\x18\x05 \x01(\tR\rresponseNonce\"\xb3\x01\n" +
+	"\x0eresponse_nonce\x18\x05 \x01(\tR\rresponseNonce\x125\n" +
+	"\ferror_detail\x18\x06 \x01(\v2\x12.google.rpc.StatusR\verrorDetail\"\xb3\x01\n" +
 	"\x11DiscoveryResponse\x12!\n" +
 	"\fversion_info\x18\x01 \x01(\tR\vversionInfo\x122\n" +
 	"\tresources\x18\x02 \x03(\v2\x14.google.protobuf.AnyR\tresources\x12\x16\n" +
@@ -511,21 +521,23 @@ var file_service_discovery_v1_discovery_proto_goTypes = []any{
 	(*Resource)(nil),               // 4: service.discovery.v1.Resource
 	nil,                            // 5: service.discovery.v1.DeltaDiscoveryRequest.InitialResourceVersionsEntry
 	(*Resource_CacheControl)(nil),  // 6: service.discovery.v1.Resource.CacheControl
-	(*anypb.Any)(nil),              // 7: google.protobuf.Any
-	(*durationpb.Duration)(nil),    // 8: google.protobuf.Duration
+	(*status.Status)(nil),          // 7: google.rpc.Status
+	(*anypb.Any)(nil),              // 8: google.protobuf.Any
+	(*durationpb.Duration)(nil),    // 9: google.protobuf.Duration
 }
 var file_service_discovery_v1_discovery_proto_depIdxs = []int32{
-	7, // 0: service.discovery.v1.DiscoveryResponse.resources:type_name -> google.protobuf.Any
-	5, // 1: service.discovery.v1.DeltaDiscoveryRequest.initial_resource_versions:type_name -> service.discovery.v1.DeltaDiscoveryRequest.InitialResourceVersionsEntry
-	4, // 2: service.discovery.v1.DeltaDiscoveryResponse.resources:type_name -> service.discovery.v1.Resource
-	7, // 3: service.discovery.v1.Resource.resource:type_name -> google.protobuf.Any
-	8, // 4: service.discovery.v1.Resource.ttl:type_name -> google.protobuf.Duration
-	6, // 5: service.discovery.v1.Resource.cache_control:type_name -> service.discovery.v1.Resource.CacheControl
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	7, // 0: service.discovery.v1.DiscoveryRequest.error_detail:type_name -> google.rpc.Status
+	8, // 1: service.discovery.v1.DiscoveryResponse.resources:type_name -> google.protobuf.Any
+	5, // 2: service.discovery.v1.DeltaDiscoveryRequest.initial_resource_versions:type_name -> service.discovery.v1.DeltaDiscoveryRequest.InitialResourceVersionsEntry
+	4, // 3: service.discovery.v1.DeltaDiscoveryResponse.resources:type_name -> service.discovery.v1.Resource
+	8, // 4: service.discovery.v1.Resource.resource:type_name -> google.protobuf.Any
+	9, // 5: service.discovery.v1.Resource.ttl:type_name -> google.protobuf.Duration
+	6, // 6: service.discovery.v1.Resource.cache_control:type_name -> service.discovery.v1.Resource.CacheControl
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_service_discovery_v1_discovery_proto_init() }
