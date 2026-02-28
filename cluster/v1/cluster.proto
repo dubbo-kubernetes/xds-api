@@ -24,6 +24,11 @@ message Cluster {
     core.v1.HealthStatusSet override_host_status = 8;
   }
 
+  message CustomClusterType {
+    string name = 1;
+    google.protobuf.Any typed_config = 2;
+  }
+
   enum DiscoveryType {
     STATIC = 0;
     STRICT_DNS = 1;
@@ -41,6 +46,7 @@ message Cluster {
   string alt_stat_name = 28;
   oneof cluster_discovery_type {
     DiscoveryType type = 2;
+    CustomClusterType cluster_type = 38;
   }
 
   EdsClusterConfig eds_cluster_config = 3;

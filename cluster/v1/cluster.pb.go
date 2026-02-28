@@ -11,7 +11,7 @@ import (
 	v11 "github.com/dubbo-kubernetes/xds-api/endpoint/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
-	_ "google.golang.org/protobuf/types/known/anypb"
+	anypb "google.golang.org/protobuf/types/known/anypb"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
 	_ "google.golang.org/protobuf/types/known/structpb"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
@@ -138,6 +138,7 @@ type Cluster struct {
 	// Types that are valid to be assigned to ClusterDiscoveryType:
 	//
 	//	*Cluster_Type
+	//	*Cluster_ClusterType
 	ClusterDiscoveryType          isCluster_ClusterDiscoveryType `protobuf_oneof:"cluster_discovery_type"`
 	EdsClusterConfig              *Cluster_EdsClusterConfig      `protobuf:"bytes,3,opt,name=eds_cluster_config,json=edsClusterConfig,proto3" json:"eds_cluster_config,omitempty"`
 	ConnectTimeout                *durationpb.Duration           `protobuf:"bytes,4,opt,name=connect_timeout,json=connectTimeout,proto3" json:"connect_timeout,omitempty"`
@@ -211,6 +212,15 @@ func (x *Cluster) GetType() Cluster_DiscoveryType {
 	return Cluster_STATIC
 }
 
+func (x *Cluster) GetClusterType() *Cluster_CustomClusterType {
+	if x != nil {
+		if x, ok := x.ClusterDiscoveryType.(*Cluster_ClusterType); ok {
+			return x.ClusterType
+		}
+	}
+	return nil
+}
+
 func (x *Cluster) GetEdsClusterConfig() *Cluster_EdsClusterConfig {
 	if x != nil {
 		return x.EdsClusterConfig
@@ -275,7 +285,13 @@ type Cluster_Type struct {
 	Type Cluster_DiscoveryType `protobuf:"varint,2,opt,name=type,proto3,enum=cluster.v1.Cluster_DiscoveryType,oneof"`
 }
 
+type Cluster_ClusterType struct {
+	ClusterType *Cluster_CustomClusterType `protobuf:"bytes,38,opt,name=cluster_type,json=clusterType,proto3,oneof"`
+}
+
 func (*Cluster_Type) isCluster_ClusterDiscoveryType() {}
+
+func (*Cluster_ClusterType) isCluster_ClusterDiscoveryType() {}
 
 type Cluster_EdsClusterConfig struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
@@ -373,16 +389,69 @@ func (x *Cluster_CommonLbConfig) GetOverrideHostStatus() *v1.HealthStatusSet {
 	return nil
 }
 
+type Cluster_CustomClusterType struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	TypedConfig   *anypb.Any             `protobuf:"bytes,2,opt,name=typed_config,json=typedConfig,proto3" json:"typed_config,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Cluster_CustomClusterType) Reset() {
+	*x = Cluster_CustomClusterType{}
+	mi := &file_cluster_v1_cluster_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Cluster_CustomClusterType) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Cluster_CustomClusterType) ProtoMessage() {}
+
+func (x *Cluster_CustomClusterType) ProtoReflect() protoreflect.Message {
+	mi := &file_cluster_v1_cluster_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Cluster_CustomClusterType.ProtoReflect.Descriptor instead.
+func (*Cluster_CustomClusterType) Descriptor() ([]byte, []int) {
+	return file_cluster_v1_cluster_proto_rawDescGZIP(), []int{0, 2}
+}
+
+func (x *Cluster_CustomClusterType) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Cluster_CustomClusterType) GetTypedConfig() *anypb.Any {
+	if x != nil {
+		return x.TypedConfig
+	}
+	return nil
+}
+
 var File_cluster_v1_cluster_proto protoreflect.FileDescriptor
 
 const file_cluster_v1_cluster_proto_rawDesc = "" +
 	"\n" +
 	"\x18cluster/v1/cluster.proto\x12\n" +
-	"cluster.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x1acore/v1/health_check.proto\x1a\x12core/v1/base.proto\x1a\x1bcore/v1/config_source.proto\x1a\x1aendpoint/v1/endpoint.proto\"\xc7\b\n" +
+	"cluster.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/duration.proto\x1a\x1cgoogle/protobuf/struct.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x1acore/v1/health_check.proto\x1a\x12core/v1/base.proto\x1a\x1bcore/v1/config_source.proto\x1a\x1aendpoint/v1/endpoint.proto\"\xf5\t\n" +
 	"\aCluster\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\"\n" +
 	"\ralt_stat_name\x18\x1c \x01(\tR\valtStatName\x127\n" +
-	"\x04type\x18\x02 \x01(\x0e2!.cluster.v1.Cluster.DiscoveryTypeH\x00R\x04type\x12R\n" +
+	"\x04type\x18\x02 \x01(\x0e2!.cluster.v1.Cluster.DiscoveryTypeH\x00R\x04type\x12J\n" +
+	"\fcluster_type\x18& \x01(\v2%.cluster.v1.Cluster.CustomClusterTypeH\x00R\vclusterType\x12R\n" +
 	"\x12eds_cluster_config\x18\x03 \x01(\v2$.cluster.v1.Cluster.EdsClusterConfigR\x10edsClusterConfig\x12B\n" +
 	"\x0fconnect_timeout\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\x0econnectTimeout\x12f\n" +
 	"!per_connection_buffer_limit_bytes\x18\x05 \x01(\v2\x1c.google.protobuf.UInt32ValueR\x1dperConnectionBufferLimitBytes\x129\n" +
@@ -396,7 +465,10 @@ const file_cluster_v1_cluster_proto_rawDesc = "" +
 	"eds_config\x18\x01 \x01(\v2\x15.core.v1.ConfigSourceR\tedsConfig\x12!\n" +
 	"\fservice_name\x18\x02 \x01(\tR\vserviceName\x1a\\\n" +
 	"\x0eCommonLbConfig\x12J\n" +
-	"\x14override_host_status\x18\b \x01(\v2\x18.core.v1.HealthStatusSetR\x12overrideHostStatus\"E\n" +
+	"\x14override_host_status\x18\b \x01(\v2\x18.core.v1.HealthStatusSetR\x12overrideHostStatus\x1a`\n" +
+	"\x11CustomClusterType\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x127\n" +
+	"\ftyped_config\x18\x02 \x01(\v2\x14.google.protobuf.AnyR\vtypedConfig\"E\n" +
 	"\rDiscoveryType\x12\n" +
 	"\n" +
 	"\x06STATIC\x10\x00\x12\x0e\n" +
@@ -425,38 +497,42 @@ func file_cluster_v1_cluster_proto_rawDescGZIP() []byte {
 }
 
 var file_cluster_v1_cluster_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_cluster_v1_cluster_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_cluster_v1_cluster_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_cluster_v1_cluster_proto_goTypes = []any{
 	(Cluster_DiscoveryType)(0),        // 0: cluster.v1.Cluster.DiscoveryType
 	(Cluster_LbPolicy)(0),             // 1: cluster.v1.Cluster.LbPolicy
 	(*Cluster)(nil),                   // 2: cluster.v1.Cluster
 	(*Cluster_EdsClusterConfig)(nil),  // 3: cluster.v1.Cluster.EdsClusterConfig
 	(*Cluster_CommonLbConfig)(nil),    // 4: cluster.v1.Cluster.CommonLbConfig
-	(*durationpb.Duration)(nil),       // 5: google.protobuf.Duration
-	(*wrapperspb.UInt32Value)(nil),    // 6: google.protobuf.UInt32Value
-	(*v1.HealthCheck)(nil),            // 7: core.v1.HealthCheck
-	(*v11.ClusterLoadAssignment)(nil), // 8: endpoint.v1.ClusterLoadAssignment
-	(*v1.TransportSocket)(nil),        // 9: core.v1.TransportSocket
-	(*v1.ConfigSource)(nil),           // 10: core.v1.ConfigSource
-	(*v1.HealthStatusSet)(nil),        // 11: core.v1.HealthStatusSet
+	(*Cluster_CustomClusterType)(nil), // 5: cluster.v1.Cluster.CustomClusterType
+	(*durationpb.Duration)(nil),       // 6: google.protobuf.Duration
+	(*wrapperspb.UInt32Value)(nil),    // 7: google.protobuf.UInt32Value
+	(*v1.HealthCheck)(nil),            // 8: core.v1.HealthCheck
+	(*v11.ClusterLoadAssignment)(nil), // 9: endpoint.v1.ClusterLoadAssignment
+	(*v1.TransportSocket)(nil),        // 10: core.v1.TransportSocket
+	(*v1.ConfigSource)(nil),           // 11: core.v1.ConfigSource
+	(*v1.HealthStatusSet)(nil),        // 12: core.v1.HealthStatusSet
+	(*anypb.Any)(nil),                 // 13: google.protobuf.Any
 }
 var file_cluster_v1_cluster_proto_depIdxs = []int32{
 	0,  // 0: cluster.v1.Cluster.type:type_name -> cluster.v1.Cluster.DiscoveryType
-	3,  // 1: cluster.v1.Cluster.eds_cluster_config:type_name -> cluster.v1.Cluster.EdsClusterConfig
-	5,  // 2: cluster.v1.Cluster.connect_timeout:type_name -> google.protobuf.Duration
-	6,  // 3: cluster.v1.Cluster.per_connection_buffer_limit_bytes:type_name -> google.protobuf.UInt32Value
-	1,  // 4: cluster.v1.Cluster.lb_policy:type_name -> cluster.v1.Cluster.LbPolicy
-	7,  // 5: cluster.v1.Cluster.health_checks:type_name -> core.v1.HealthCheck
-	8,  // 6: cluster.v1.Cluster.load_assignment:type_name -> endpoint.v1.ClusterLoadAssignment
-	4,  // 7: cluster.v1.Cluster.common_lb_config:type_name -> cluster.v1.Cluster.CommonLbConfig
-	9,  // 8: cluster.v1.Cluster.transport_socket:type_name -> core.v1.TransportSocket
-	10, // 9: cluster.v1.Cluster.EdsClusterConfig.eds_config:type_name -> core.v1.ConfigSource
-	11, // 10: cluster.v1.Cluster.CommonLbConfig.override_host_status:type_name -> core.v1.HealthStatusSet
-	11, // [11:11] is the sub-list for method output_type
-	11, // [11:11] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	5,  // 1: cluster.v1.Cluster.cluster_type:type_name -> cluster.v1.Cluster.CustomClusterType
+	3,  // 2: cluster.v1.Cluster.eds_cluster_config:type_name -> cluster.v1.Cluster.EdsClusterConfig
+	6,  // 3: cluster.v1.Cluster.connect_timeout:type_name -> google.protobuf.Duration
+	7,  // 4: cluster.v1.Cluster.per_connection_buffer_limit_bytes:type_name -> google.protobuf.UInt32Value
+	1,  // 5: cluster.v1.Cluster.lb_policy:type_name -> cluster.v1.Cluster.LbPolicy
+	8,  // 6: cluster.v1.Cluster.health_checks:type_name -> core.v1.HealthCheck
+	9,  // 7: cluster.v1.Cluster.load_assignment:type_name -> endpoint.v1.ClusterLoadAssignment
+	4,  // 8: cluster.v1.Cluster.common_lb_config:type_name -> cluster.v1.Cluster.CommonLbConfig
+	10, // 9: cluster.v1.Cluster.transport_socket:type_name -> core.v1.TransportSocket
+	11, // 10: cluster.v1.Cluster.EdsClusterConfig.eds_config:type_name -> core.v1.ConfigSource
+	12, // 11: cluster.v1.Cluster.CommonLbConfig.override_host_status:type_name -> core.v1.HealthStatusSet
+	13, // 12: cluster.v1.Cluster.CustomClusterType.typed_config:type_name -> google.protobuf.Any
+	13, // [13:13] is the sub-list for method output_type
+	13, // [13:13] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_cluster_v1_cluster_proto_init() }
@@ -466,6 +542,7 @@ func file_cluster_v1_cluster_proto_init() {
 	}
 	file_cluster_v1_cluster_proto_msgTypes[0].OneofWrappers = []any{
 		(*Cluster_Type)(nil),
+		(*Cluster_ClusterType)(nil),
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -473,7 +550,7 @@ func file_cluster_v1_cluster_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_cluster_v1_cluster_proto_rawDesc), len(file_cluster_v1_cluster_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
