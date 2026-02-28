@@ -74,15 +74,138 @@ func (x *CidrRange) GetPrefixLen() *wrapperspb.UInt32Value {
 	return nil
 }
 
-type Address struct {
+type SocketAddress struct {
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Address string                 `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
+	// Types that are valid to be assigned to PortSpecifier:
+	//
+	//	*SocketAddress_PortValue
+	PortSpecifier isSocketAddress_PortSpecifier `protobuf_oneof:"port_specifier"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SocketAddress) Reset() {
+	*x = SocketAddress{}
+	mi := &file_core_v1_address_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SocketAddress) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SocketAddress) ProtoMessage() {}
+
+func (x *SocketAddress) ProtoReflect() protoreflect.Message {
+	mi := &file_core_v1_address_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SocketAddress.ProtoReflect.Descriptor instead.
+func (*SocketAddress) Descriptor() ([]byte, []int) {
+	return file_core_v1_address_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *SocketAddress) GetAddress() string {
+	if x != nil {
+		return x.Address
+	}
+	return ""
+}
+
+func (x *SocketAddress) GetPortSpecifier() isSocketAddress_PortSpecifier {
+	if x != nil {
+		return x.PortSpecifier
+	}
+	return nil
+}
+
+func (x *SocketAddress) GetPortValue() uint32 {
+	if x != nil {
+		if x, ok := x.PortSpecifier.(*SocketAddress_PortValue); ok {
+			return x.PortValue
+		}
+	}
+	return 0
+}
+
+type isSocketAddress_PortSpecifier interface {
+	isSocketAddress_PortSpecifier()
+}
+
+type SocketAddress_PortValue struct {
+	PortValue uint32 `protobuf:"varint,3,opt,name=port_value,json=portValue,proto3,oneof"`
+}
+
+func (*SocketAddress_PortValue) isSocketAddress_PortSpecifier() {}
+
+type Pipe struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Path          string                 `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Pipe) Reset() {
+	*x = Pipe{}
+	mi := &file_core_v1_address_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Pipe) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Pipe) ProtoMessage() {}
+
+func (x *Pipe) ProtoReflect() protoreflect.Message {
+	mi := &file_core_v1_address_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Pipe.ProtoReflect.Descriptor instead.
+func (*Pipe) Descriptor() ([]byte, []int) {
+	return file_core_v1_address_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *Pipe) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
+type Address struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Types that are valid to be assigned to Address:
+	//
+	//	*Address_SocketAddress
+	//	*Address_Pipe
+	Address       isAddress_Address `protobuf_oneof:"address"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Address) Reset() {
 	*x = Address{}
-	mi := &file_core_v1_address_proto_msgTypes[1]
+	mi := &file_core_v1_address_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -94,7 +217,7 @@ func (x *Address) String() string {
 func (*Address) ProtoMessage() {}
 
 func (x *Address) ProtoReflect() protoreflect.Message {
-	mi := &file_core_v1_address_proto_msgTypes[1]
+	mi := &file_core_v1_address_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -107,8 +230,49 @@ func (x *Address) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Address.ProtoReflect.Descriptor instead.
 func (*Address) Descriptor() ([]byte, []int) {
-	return file_core_v1_address_proto_rawDescGZIP(), []int{1}
+	return file_core_v1_address_proto_rawDescGZIP(), []int{3}
 }
+
+func (x *Address) GetAddress() isAddress_Address {
+	if x != nil {
+		return x.Address
+	}
+	return nil
+}
+
+func (x *Address) GetSocketAddress() *SocketAddress {
+	if x != nil {
+		if x, ok := x.Address.(*Address_SocketAddress); ok {
+			return x.SocketAddress
+		}
+	}
+	return nil
+}
+
+func (x *Address) GetPipe() *Pipe {
+	if x != nil {
+		if x, ok := x.Address.(*Address_Pipe); ok {
+			return x.Pipe
+		}
+	}
+	return nil
+}
+
+type isAddress_Address interface {
+	isAddress_Address()
+}
+
+type Address_SocketAddress struct {
+	SocketAddress *SocketAddress `protobuf:"bytes,1,opt,name=socket_address,json=socketAddress,proto3,oneof"`
+}
+
+type Address_Pipe struct {
+	Pipe *Pipe `protobuf:"bytes,2,opt,name=pipe,proto3,oneof"`
+}
+
+func (*Address_SocketAddress) isAddress_Address() {}
+
+func (*Address_Pipe) isAddress_Address() {}
 
 var File_core_v1_address_proto protoreflect.FileDescriptor
 
@@ -118,8 +282,18 @@ const file_core_v1_address_proto_rawDesc = "" +
 	"\tCidrRange\x12%\n" +
 	"\x0eaddress_prefix\x18\x01 \x01(\tR\raddressPrefix\x12;\n" +
 	"\n" +
-	"prefix_len\x18\x02 \x01(\v2\x1c.google.protobuf.UInt32ValueR\tprefixLen\"\t\n" +
-	"\aAddressB4Z2github.com/dubbo-kubernetes/xds-api/core/v1;corev1b\x06proto3"
+	"prefix_len\x18\x02 \x01(\v2\x1c.google.protobuf.UInt32ValueR\tprefixLen\"\\\n" +
+	"\rSocketAddress\x12\x18\n" +
+	"\aaddress\x18\x02 \x01(\tR\aaddress\x12\x1f\n" +
+	"\n" +
+	"port_value\x18\x03 \x01(\rH\x00R\tportValueB\x10\n" +
+	"\x0eport_specifier\"\x1a\n" +
+	"\x04Pipe\x12\x12\n" +
+	"\x04path\x18\x01 \x01(\tR\x04path\"z\n" +
+	"\aAddress\x12?\n" +
+	"\x0esocket_address\x18\x01 \x01(\v2\x16.core.v1.SocketAddressH\x00R\rsocketAddress\x12#\n" +
+	"\x04pipe\x18\x02 \x01(\v2\r.core.v1.PipeH\x00R\x04pipeB\t\n" +
+	"\aaddressB4Z2github.com/dubbo-kubernetes/xds-api/core/v1;corev1b\x06proto3"
 
 var (
 	file_core_v1_address_proto_rawDescOnce sync.Once
@@ -133,19 +307,23 @@ func file_core_v1_address_proto_rawDescGZIP() []byte {
 	return file_core_v1_address_proto_rawDescData
 }
 
-var file_core_v1_address_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_core_v1_address_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_core_v1_address_proto_goTypes = []any{
 	(*CidrRange)(nil),              // 0: core.v1.CidrRange
-	(*Address)(nil),                // 1: core.v1.Address
-	(*wrapperspb.UInt32Value)(nil), // 2: google.protobuf.UInt32Value
+	(*SocketAddress)(nil),          // 1: core.v1.SocketAddress
+	(*Pipe)(nil),                   // 2: core.v1.Pipe
+	(*Address)(nil),                // 3: core.v1.Address
+	(*wrapperspb.UInt32Value)(nil), // 4: google.protobuf.UInt32Value
 }
 var file_core_v1_address_proto_depIdxs = []int32{
-	2, // 0: core.v1.CidrRange.prefix_len:type_name -> google.protobuf.UInt32Value
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	4, // 0: core.v1.CidrRange.prefix_len:type_name -> google.protobuf.UInt32Value
+	1, // 1: core.v1.Address.socket_address:type_name -> core.v1.SocketAddress
+	2, // 2: core.v1.Address.pipe:type_name -> core.v1.Pipe
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_core_v1_address_proto_init() }
@@ -153,13 +331,20 @@ func file_core_v1_address_proto_init() {
 	if File_core_v1_address_proto != nil {
 		return
 	}
+	file_core_v1_address_proto_msgTypes[1].OneofWrappers = []any{
+		(*SocketAddress_PortValue)(nil),
+	}
+	file_core_v1_address_proto_msgTypes[3].OneofWrappers = []any{
+		(*Address_SocketAddress)(nil),
+		(*Address_Pipe)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_core_v1_address_proto_rawDesc), len(file_core_v1_address_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

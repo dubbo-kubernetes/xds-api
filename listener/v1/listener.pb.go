@@ -24,6 +24,7 @@ const (
 
 type AdditionalAddress struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Address       *v1.Address            `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -56,6 +57,13 @@ func (x *AdditionalAddress) ProtoReflect() protoreflect.Message {
 // Deprecated: Use AdditionalAddress.ProtoReflect.Descriptor instead.
 func (*AdditionalAddress) Descriptor() ([]byte, []int) {
 	return file_listener_v1_listener_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *AdditionalAddress) GetAddress() *v1.Address {
+	if x != nil {
+		return x.Address
+	}
+	return nil
 }
 
 type Listener struct {
@@ -130,8 +138,9 @@ var File_listener_v1_listener_proto protoreflect.FileDescriptor
 
 const file_listener_v1_listener_proto_rawDesc = "" +
 	"\n" +
-	"\x1alistener/v1/listener.proto\x12\vlistener.v1\x1a\x15core/v1/address.proto\x1a%listener/v1/listener_components.proto\"\x13\n" +
-	"\x11AdditionalAddress\"\xdc\x01\n" +
+	"\x1alistener/v1/listener.proto\x12\vlistener.v1\x1a\x15core/v1/address.proto\x1a%listener/v1/listener_components.proto\"?\n" +
+	"\x11AdditionalAddress\x12*\n" +
+	"\aaddress\x18\x01 \x01(\v2\x10.core.v1.AddressR\aaddress\"\xdc\x01\n" +
 	"\bListener\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12*\n" +
 	"\aaddress\x18\x02 \x01(\v2\x10.core.v1.AddressR\aaddress\x12Q\n" +
@@ -158,14 +167,15 @@ var file_listener_v1_listener_proto_goTypes = []any{
 	(*FilterChain)(nil),       // 3: listener.v1.FilterChain
 }
 var file_listener_v1_listener_proto_depIdxs = []int32{
-	2, // 0: listener.v1.Listener.address:type_name -> core.v1.Address
-	0, // 1: listener.v1.Listener.additional_addresses:type_name -> listener.v1.AdditionalAddress
-	3, // 2: listener.v1.Listener.filter_chains:type_name -> listener.v1.FilterChain
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	2, // 0: listener.v1.AdditionalAddress.address:type_name -> core.v1.Address
+	2, // 1: listener.v1.Listener.address:type_name -> core.v1.Address
+	0, // 2: listener.v1.Listener.additional_addresses:type_name -> listener.v1.AdditionalAddress
+	3, // 3: listener.v1.Listener.filter_chains:type_name -> listener.v1.FilterChain
+	4, // [4:4] is the sub-list for method output_type
+	4, // [4:4] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_listener_v1_listener_proto_init() }

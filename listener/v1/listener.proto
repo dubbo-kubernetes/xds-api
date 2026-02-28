@@ -7,7 +7,9 @@ import "listener/v1/listener_components.proto";
 
 option go_package = "github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1";
 
-message AdditionalAddress {}
+message AdditionalAddress {
+  core.v1.Address address = 1;
+}
 
 message Listener {
   string name = 1;
