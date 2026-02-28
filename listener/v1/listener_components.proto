@@ -5,6 +5,7 @@ package listener.v1;
 import "google/protobuf/any.proto";
 import "google/protobuf/wrappers.proto";
 import "core/v1/address.proto";
+import "core/v1/base.proto";
 
 option go_package = "github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1";
 
@@ -48,7 +49,7 @@ message FilterChain {
   string name = 1;
   FilterChainMatch filter_chain_match = 2;
   repeated Filter filters = 3;
-  google.protobuf.Any transport_socket = 6;
+  core.v1.TransportSocket transport_socket = 6;
 
   reserved 8;
   reserved "on_demand_configuration";

@@ -277,7 +277,7 @@ type FilterChain struct {
 	Name             string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	FilterChainMatch *FilterChainMatch      `protobuf:"bytes,2,opt,name=filter_chain_match,json=filterChainMatch,proto3" json:"filter_chain_match,omitempty"`
 	Filters          []*Filter              `protobuf:"bytes,3,rep,name=filters,proto3" json:"filters,omitempty"`
-	TransportSocket  *anypb.Any             `protobuf:"bytes,6,opt,name=transport_socket,json=transportSocket,proto3" json:"transport_socket,omitempty"`
+	TransportSocket  *v1.TransportSocket    `protobuf:"bytes,6,opt,name=transport_socket,json=transportSocket,proto3" json:"transport_socket,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -333,7 +333,7 @@ func (x *FilterChain) GetFilters() []*Filter {
 	return nil
 }
 
-func (x *FilterChain) GetTransportSocket() *anypb.Any {
+func (x *FilterChain) GetTransportSocket() *v1.TransportSocket {
 	if x != nil {
 		return x.TransportSocket
 	}
@@ -344,7 +344,7 @@ var File_listener_v1_listener_components_proto protoreflect.FileDescriptor
 
 const file_listener_v1_listener_components_proto_rawDesc = "" +
 	"\n" +
-	"%listener/v1/listener_components.proto\x12\vlistener.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x15core/v1/address.proto\"z\n" +
+	"%listener/v1/listener_components.proto\x12\vlistener.v1\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/wrappers.proto\x1a\x15core/v1/address.proto\x1a\x12core/v1/base.proto\"z\n" +
 	"\x06Filter\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x129\n" +
 	"\ftyped_config\x18\x04 \x01(\v2\x14.google.protobuf.AnyH\x00R\vtypedConfigB\r\n" +
@@ -367,12 +367,12 @@ const file_listener_v1_listener_components_proto_rawDesc = "" +
 	"\x14ConnectionSourceType\x12\a\n" +
 	"\x03ANY\x10\x00\x12\x17\n" +
 	"\x13SAME_IP_OR_LOOPBACK\x10\x01\x12\f\n" +
-	"\bEXTERNAL\x10\x02J\x04\b\x01\x10\x02\"\xfd\x01\n" +
+	"\bEXTERNAL\x10\x02J\x04\b\x01\x10\x02\"\x81\x02\n" +
 	"\vFilterChain\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12K\n" +
 	"\x12filter_chain_match\x18\x02 \x01(\v2\x1d.listener.v1.FilterChainMatchR\x10filterChainMatch\x12-\n" +
-	"\afilters\x18\x03 \x03(\v2\x13.listener.v1.FilterR\afilters\x12?\n" +
-	"\x10transport_socket\x18\x06 \x01(\v2\x14.google.protobuf.AnyR\x0ftransportSocketJ\x04\b\b\x10\tR\x17on_demand_configurationB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
+	"\afilters\x18\x03 \x03(\v2\x13.listener.v1.FilterR\afilters\x12C\n" +
+	"\x10transport_socket\x18\x06 \x01(\v2\x18.core.v1.TransportSocketR\x0ftransportSocketJ\x04\b\b\x10\tR\x17on_demand_configurationB<Z:github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1b\x06proto3"
 
 var (
 	file_listener_v1_listener_components_proto_rawDescOnce sync.Once
@@ -396,6 +396,7 @@ var file_listener_v1_listener_components_proto_goTypes = []any{
 	(*anypb.Any)(nil),              // 4: google.protobuf.Any
 	(*wrapperspb.UInt32Value)(nil), // 5: google.protobuf.UInt32Value
 	(*v1.CidrRange)(nil),           // 6: core.v1.CidrRange
+	(*v1.TransportSocket)(nil),     // 7: core.v1.TransportSocket
 }
 var file_listener_v1_listener_components_proto_depIdxs = []int32{
 	4,  // 0: listener.v1.Filter.typed_config:type_name -> google.protobuf.Any
@@ -407,7 +408,7 @@ var file_listener_v1_listener_components_proto_depIdxs = []int32{
 	6,  // 6: listener.v1.FilterChainMatch.source_prefix_ranges:type_name -> core.v1.CidrRange
 	2,  // 7: listener.v1.FilterChain.filter_chain_match:type_name -> listener.v1.FilterChainMatch
 	1,  // 8: listener.v1.FilterChain.filters:type_name -> listener.v1.Filter
-	4,  // 9: listener.v1.FilterChain.transport_socket:type_name -> google.protobuf.Any
+	7,  // 9: listener.v1.FilterChain.transport_socket:type_name -> core.v1.TransportSocket
 	10, // [10:10] is the sub-list for method output_type
 	10, // [10:10] is the sub-list for method input_type
 	10, // [10:10] is the sub-list for extension type_name

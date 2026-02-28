@@ -50,5 +50,5 @@ message Cluster {
   repeated core.v1.HealthCheck health_checks = 7;
   endpoint.v1.ClusterLoadAssignment load_assignment = 33;
   CommonLbConfig common_lb_config = 27;
-  google.protobuf.Any transport_socket = 24;
+  core.v1.TransportSocket transport_socket = 24;
 }
