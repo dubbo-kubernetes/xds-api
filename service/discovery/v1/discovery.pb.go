@@ -544,7 +544,10 @@ const file_service_discovery_v1_discovery_proto_rawDesc = "" +
 	"\rcache_control\x18\x06 \x01(\v2+.service.discovery.v1.Resource.CacheControlR\fcacheControl\x1a0\n" +
 	"\fCacheControl\x12 \n" +
 	"\fdo_not_cache\x18\x01 \x01(\bR\n" +
-	"doNotCacheBFZDgithub.com/dubbo-kubernetes/xds-api/service/discovery/v1;discoveryv1b\x06proto3"
+	"doNotCache2\x8d\x02\n" +
+	"\x1aAggregatedDiscoveryService\x12r\n" +
+	"\x19StreamAggregatedResources\x12&.service.discovery.v1.DiscoveryRequest\x1a'.service.discovery.v1.DiscoveryResponse\"\x00(\x010\x01\x12{\n" +
+	"\x18DeltaAggregatedResources\x12+.service.discovery.v1.DeltaDiscoveryRequest\x1a,.service.discovery.v1.DeltaDiscoveryResponse\"\x00(\x010\x01BFZDgithub.com/dubbo-kubernetes/xds-api/service/discovery/v1;discoveryv1b\x06proto3"
 
 var (
 	file_service_discovery_v1_discovery_proto_rawDescOnce sync.Once
@@ -586,8 +589,12 @@ var file_service_discovery_v1_discovery_proto_depIdxs = []int32{
 	9,  // 9: service.discovery.v1.Resource.resource:type_name -> google.protobuf.Any
 	11, // 10: service.discovery.v1.Resource.ttl:type_name -> google.protobuf.Duration
 	6,  // 11: service.discovery.v1.Resource.cache_control:type_name -> service.discovery.v1.Resource.CacheControl
-	12, // [12:12] is the sub-list for method output_type
-	12, // [12:12] is the sub-list for method input_type
+	0,  // 12: service.discovery.v1.AggregatedDiscoveryService.StreamAggregatedResources:input_type -> service.discovery.v1.DiscoveryRequest
+	2,  // 13: service.discovery.v1.AggregatedDiscoveryService.DeltaAggregatedResources:input_type -> service.discovery.v1.DeltaDiscoveryRequest
+	1,  // 14: service.discovery.v1.AggregatedDiscoveryService.StreamAggregatedResources:output_type -> service.discovery.v1.DiscoveryResponse
+	3,  // 15: service.discovery.v1.AggregatedDiscoveryService.DeltaAggregatedResources:output_type -> service.discovery.v1.DeltaDiscoveryResponse
+	14, // [14:16] is the sub-list for method output_type
+	12, // [12:14] is the sub-list for method input_type
 	12, // [12:12] is the sub-list for extension type_name
 	12, // [12:12] is the sub-list for extension extendee
 	0,  // [0:12] is the sub-list for field type_name
@@ -606,7 +613,7 @@ func file_service_discovery_v1_discovery_proto_init() {
 			NumEnums:      0,
 			NumMessages:   7,
 			NumExtensions: 0,
-			NumServices:   0,
+			NumServices:   1,
 		},
 		GoTypes:           file_service_discovery_v1_discovery_proto_goTypes,
 		DependencyIndexes: file_service_discovery_v1_discovery_proto_depIdxs,
