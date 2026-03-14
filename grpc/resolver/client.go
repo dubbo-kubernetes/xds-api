@@ -43,7 +43,7 @@ func NewClient(ctx context.Context, serverURI string) (*Client, error) {
 		return nil, fmt.Errorf("failed to open ADS stream: %w", err)
 	}
 
-	// Build node identity from environment variables (set by Kubernetes downward API)
+	// Build node identity in Istio/Dubbo format: pod_name.namespace.service_account.cluster_id
 	nodeID := os.Getenv("POD_NAME")
 	if nodeID == "" {
 		nodeID = os.Getenv("HOSTNAME")
@@ -57,8 +57,18 @@ func NewClient(ctx context.Context, serverURI string) (*Client, error) {
 		namespace = "default"
 	}
 
+	serviceAccount := os.Getenv("SERVICE_ACCOUNT")
+	if serviceAccount == "" {
+		serviceAccount = "default"
+	}
+
+	clusterID := os.Getenv("CLUSTER_ID")
+	if clusterID == "" {
+		clusterID = "Kubernetes"
+	}
+
 	node := &corev1.Node{
-		Id: fmt.Sprintf("%s.%s", nodeID, namespace),
+		Id: fmt.Sprintf("%s.%s.%s.%s", nodeID, namespace, serviceAccount, clusterID),
 	}
 
 	log.Printf("[xds-client] ADS stream established to %s (node.id=%s)", addr, node.Id)
