@@ -96,14 +96,15 @@ func (r *xdsResolver) watcher() {
 	r.mu.Unlock()
 
 	// Subscribe to cluster and endpoint updates
-	clusterName := r.target
+	// Dubbo proxy expects cluster name in format: outbound|port||hostname
+	clusterName := buildClusterName(r.target)
 	if err := client.Subscribe(clusterType, []string{clusterName}); err != nil {
 		log.Printf("[xds-resolver] Failed to subscribe to clusters: %v", err)
 		r.cc.ReportError(err)
 		return
 	}
 
-	log.Printf("[xds-resolver] Subscribed to cluster: %s", clusterName)
+	log.Printf("[xds-resolver] Subscribed to cluster: %s (original target: %s)", clusterName, r.target)
 
 	// Process xDS responses
 	for {
@@ -152,6 +153,22 @@ func (r *xdsResolver) watcher() {
 			}
 		}
 	}
+}
+
+// buildClusterName converts xds target (host:port) to Dubbo cluster name format.
+// Dubbo proxy expects: outbound|port||hostname
+func buildClusterName(target string) string {
+	// target is like: provider.grpc-app.svc.cluster.local:7070
+	host := target
+	port := ""
+	if idx := strings.LastIndex(target, ":"); idx >= 0 {
+		host = target[:idx]
+		port = target[idx+1:]
+	}
+	if port == "" {
+		return target
+	}
+	return fmt.Sprintf("outbound|%s||%s", port, host)
 }
 
 func (r *xdsResolver) parseEndpoints(resp *discovery.DiscoveryResponse) []resolver.Address {
