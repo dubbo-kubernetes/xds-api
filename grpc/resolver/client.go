@@ -43,13 +43,21 @@ func NewClient(ctx context.Context, serverURI string) (*Client, error) {
 		return nil, fmt.Errorf("failed to open ADS stream: %w", err)
 	}
 
-	// Build node identity in Istio/Dubbo format: pod_name.namespace.service_account.cluster_id
-	nodeID := os.Getenv("POD_NAME")
-	if nodeID == "" {
-		nodeID = os.Getenv("HOSTNAME")
+	// Build node identity in Dubbo/Istio format: type~ip~id~domain
+	// type: "proxyless" for gRPC apps without sidecar proxy
+	nodeType := "proxyless"
+
+	podIP := os.Getenv("POD_IP")
+	if podIP == "" {
+		podIP = "127.0.0.1"
 	}
-	if nodeID == "" {
-		nodeID = "grpc-consumer"
+
+	podName := os.Getenv("POD_NAME")
+	if podName == "" {
+		podName = os.Getenv("HOSTNAME")
+	}
+	if podName == "" {
+		podName = "grpc-consumer"
 	}
 
 	namespace := os.Getenv("POD_NAMESPACE")
@@ -57,18 +65,13 @@ func NewClient(ctx context.Context, serverURI string) (*Client, error) {
 		namespace = "default"
 	}
 
-	serviceAccount := os.Getenv("SERVICE_ACCOUNT")
-	if serviceAccount == "" {
-		serviceAccount = "default"
-	}
-
-	clusterID := os.Getenv("CLUSTER_ID")
-	if clusterID == "" {
-		clusterID = "Kubernetes"
-	}
+	// id format: pod_name.namespace
+	nodeIDStr := fmt.Sprintf("%s.%s", podName, namespace)
+	// domain format: namespace.svc.cluster.local
+	domain := fmt.Sprintf("%s.svc.cluster.local", namespace)
 
 	node := &corev1.Node{
-		Id: fmt.Sprintf("%s.%s.%s.%s", nodeID, namespace, serviceAccount, clusterID),
+		Id: fmt.Sprintf("%s~%s~%s~%s", nodeType, podIP, nodeIDStr, domain),
 	}
 
 	log.Printf("[xds-client] ADS stream established to %s (node.id=%s)", addr, node.Id)
