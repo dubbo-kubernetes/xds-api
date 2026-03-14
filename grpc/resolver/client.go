@@ -22,7 +22,9 @@ type Client struct {
 }
 
 // NewClient dials the xDS management server and opens an ADS stream.
-func NewClient(ctx context.Context, serverURI string) (*Client, error) {
+// node is the Node parsed from the bootstrap file; if nil, a minimal node
+// is built from environment variables.
+func NewClient(ctx context.Context, serverURI string, node *corev1.Node) (*Client, error) {
 	// Strip unix:// prefix for grpc dial
 	addr := serverURI
 	if strings.HasPrefix(addr, "unix://") {
@@ -43,8 +45,22 @@ func NewClient(ctx context.Context, serverURI string) (*Client, error) {
 		return nil, fmt.Errorf("failed to open ADS stream: %w", err)
 	}
 
-	// Build node identity in Dubbo/Istio format: type~ip~id~domain
-	// type: "proxyless" for gRPC apps without sidecar proxy
+	// If no node provided from bootstrap, build a minimal one from env vars
+	if node == nil {
+		node = buildNodeFromEnv()
+	}
+
+	log.Printf("[xds-client] ADS stream established to %s (node.id=%s)", addr, node.Id)
+	return &Client{
+		conn:   conn,
+		stream: stream,
+		client: svcClient,
+		node:   node,
+	}, nil
+}
+
+// buildNodeFromEnv builds a minimal Node from environment variables.
+func buildNodeFromEnv() *corev1.Node {
 	nodeType := "proxyless"
 
 	podIP := os.Getenv("POD_IP")
@@ -65,26 +81,15 @@ func NewClient(ctx context.Context, serverURI string) (*Client, error) {
 		namespace = "default"
 	}
 
-	// id format: pod_name.namespace
 	nodeIDStr := fmt.Sprintf("%s.%s", podName, namespace)
-	// domain format: namespace.svc.cluster.local
 	domain := fmt.Sprintf("%s.svc.cluster.local", namespace)
 
-	node := &corev1.Node{
+	return &corev1.Node{
 		Id: fmt.Sprintf("%s~%s~%s~%s", nodeType, podIP, nodeIDStr, domain),
 	}
-
-	log.Printf("[xds-client] ADS stream established to %s (node.id=%s)", addr, node.Id)
-	return &Client{
-		conn:   conn,
-		stream: stream,
-		client: svcClient,
-		node:   node,
-	}, nil
 }
 
 // Subscribe sends a DiscoveryRequest for the given typeURL and resource names.
-// The Node field is included in every request so the control plane can identify the client.
 func (c *Client) Subscribe(typeURL string, resourceNames []string) error {
 	return c.stream.Send(&discovery.DiscoveryRequest{
 		Node:          c.node,

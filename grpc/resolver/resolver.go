@@ -9,6 +9,7 @@ import (
 	"sync"
 	"time"
 
+	corev1 "github.com/dubbo-kubernetes/xds-api/core/v1"
 	endpointv1 "github.com/dubbo-kubernetes/xds-api/endpoint/v1"
 	discovery "github.com/dubbo-kubernetes/xds-api/service/discovery/v1"
 	"google.golang.org/grpc/resolver"
@@ -54,6 +55,7 @@ func (*xdsResolverBuilder) Build(target resolver.Target, cc resolver.ClientConn,
 		target:    serviceName,
 		cc:        cc,
 		serverURI: bootstrap.ServerURI,
+		node:      bootstrap.Node,
 		closeCh:   make(chan struct{}),
 	}
 
@@ -70,6 +72,7 @@ type xdsResolver struct {
 	target    string
 	cc        resolver.ClientConn
 	serverURI string
+	node      *corev1.Node
 	closeCh   chan struct{}
 	mu        sync.Mutex
 	client    *Client
@@ -80,7 +83,7 @@ func (r *xdsResolver) watcher() {
 	defer cancel()
 
 	// Connect to xDS server
-	client, err := NewClient(ctx, r.serverURI)
+	client, err := NewClient(ctx, r.serverURI, r.node)
 	if err != nil {
 		log.Printf("[xds-resolver] Failed to connect to xDS server: %v", err)
 		r.cc.ReportError(err)
