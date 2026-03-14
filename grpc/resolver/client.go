@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"strings"
 
+	corev1 "github.com/dubbo-kubernetes/xds-api/core/v1"
 	discovery "github.com/dubbo-kubernetes/xds-api/service/discovery/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -16,6 +18,7 @@ type Client struct {
 	conn   *grpc.ClientConn
 	stream discovery.AggregatedDiscoveryService_StreamAggregatedResourcesClient
 	client discovery.AggregatedDiscoveryServiceClient
+	node   *corev1.Node
 }
 
 // NewClient dials the xDS management server and opens an ADS stream.
@@ -40,17 +43,38 @@ func NewClient(ctx context.Context, serverURI string) (*Client, error) {
 		return nil, fmt.Errorf("failed to open ADS stream: %w", err)
 	}
 
-	log.Printf("[xds-client] ADS stream established to %s", addr)
+	// Build node identity from environment variables (set by Kubernetes downward API)
+	nodeID := os.Getenv("POD_NAME")
+	if nodeID == "" {
+		nodeID = os.Getenv("HOSTNAME")
+	}
+	if nodeID == "" {
+		nodeID = "grpc-consumer"
+	}
+
+	namespace := os.Getenv("POD_NAMESPACE")
+	if namespace == "" {
+		namespace = "default"
+	}
+
+	node := &corev1.Node{
+		Id: fmt.Sprintf("%s.%s", nodeID, namespace),
+	}
+
+	log.Printf("[xds-client] ADS stream established to %s (node.id=%s)", addr, node.Id)
 	return &Client{
 		conn:   conn,
 		stream: stream,
 		client: svcClient,
+		node:   node,
 	}, nil
 }
 
-// Subscribe sends an initial DiscoveryRequest for the given typeURL and resource names.
+// Subscribe sends a DiscoveryRequest for the given typeURL and resource names.
+// The Node field is included in every request so the control plane can identify the client.
 func (c *Client) Subscribe(typeURL string, resourceNames []string) error {
 	return c.stream.Send(&discovery.DiscoveryRequest{
+		Node:          c.node,
 		TypeUrl:       typeURL,
 		ResourceNames: resourceNames,
 	})
@@ -64,6 +88,7 @@ func (c *Client) Recv() (*discovery.DiscoveryResponse, error) {
 // Ack acknowledges a received DiscoveryResponse.
 func (c *Client) Ack(resp *discovery.DiscoveryResponse) error {
 	return c.stream.Send(&discovery.DiscoveryRequest{
+		Node:          c.node,
 		TypeUrl:       resp.TypeUrl,
 		VersionInfo:   resp.VersionInfo,
 		ResponseNonce: resp.Nonce,
@@ -74,5 +99,3 @@ func (c *Client) Ack(resp *discovery.DiscoveryResponse) error {
 func (c *Client) Close() {
 	c.conn.Close()
 }
-
-
