@@ -161,12 +161,19 @@ func (r *xdsResolver) watcher() {
 			}
 
 		case clusterType:
-			clusters := r.pendingClusters
-			if len(clusters) == 0 {
-				clusters = []string{buildClusterName(r.target)}
+			// Only subscribe to EDS for the clusters we actually need (from RDS weights)
+			// Do NOT use pendingClusters fallback if we already have weights from RDS
+			var edsClusters []string
+			if len(r.clusterWeights) > 0 {
+				// Use weighted clusters from RDS
+				for c := range r.clusterWeights {
+					edsClusters = append(edsClusters, c)
+				}
+			} else {
+				edsClusters = []string{buildClusterName(r.target)}
 			}
-			log.Printf("[xds-resolver] CDS received, subscribing to EDS for: %v", clusters)
-			if err := client.Subscribe(endpointType, clusters); err != nil {
+			log.Printf("[xds-resolver] CDS received, subscribing to EDS for: %v", edsClusters)
+			if err := client.Subscribe(endpointType, edsClusters); err != nil {
 				log.Printf("[xds-resolver] Failed to subscribe to EDS: %v", err)
 			}
 
