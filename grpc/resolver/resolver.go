@@ -19,9 +19,7 @@ import (
 )
 
 const (
-	// Scheme is the xDS resolver scheme
-	Scheme = "xds"
-	// Dubbo xDS API types
+	Scheme       = "xds"
 	listenerType = "type.googleapis.com/listener.v1.Listener"
 	routeType    = "type.googleapis.com/route.v1.RouteConfiguration"
 	clusterType  = "type.googleapis.com/cluster.v1.Cluster"
@@ -53,11 +51,13 @@ func (*xdsResolverBuilder) Build(target resolver.Target, cc resolver.ClientConn,
 	}
 
 	r := &xdsResolver{
-		target:    serviceName,
-		cc:        cc,
-		serverURI: bootstrap.ServerURI,
-		node:      bootstrap.Node,
-		closeCh:   make(chan struct{}),
+		target:         serviceName,
+		cc:             cc,
+		serverURI:      bootstrap.ServerURI,
+		node:           bootstrap.Node,
+		closeCh:        make(chan struct{}),
+		clusterWeights: make(map[string]uint32),
+		clusterAddrs:   make(map[string][]resolver.Address),
 	}
 
 	go r.watcher()
@@ -67,13 +67,18 @@ func (*xdsResolverBuilder) Build(target resolver.Target, cc resolver.ClientConn,
 func (*xdsResolverBuilder) Scheme() string { return Scheme }
 
 type xdsResolver struct {
-	target    string
-	cc        resolver.ClientConn
-	serverURI string
-	node      *corev1.Node
-	closeCh   chan struct{}
-	mu        sync.Mutex
-	client    *Client
+	target         string
+	cc             resolver.ClientConn
+	serverURI      string
+	node           *corev1.Node
+	closeCh        chan struct{}
+	mu             sync.Mutex
+	client         *Client
+	// cluster weight map from RDS: cluster_name -> weight
+	clusterWeights map[string]uint32
+	// cluster endpoint map from EDS: cluster_name -> []Address
+	clusterAddrs   map[string][]resolver.Address
+	pendingClusters []string
 }
 
 func (r *xdsResolver) watcher() {
@@ -92,7 +97,6 @@ func (r *xdsResolver) watcher() {
 	r.client = client
 	r.mu.Unlock()
 
-	// Step 1: Subscribe to LDS with listener name (host:port format)
 	listenerName := r.target
 	if err := client.Subscribe(listenerType, []string{listenerName}); err != nil {
 		log.Printf("[xds-resolver] Failed to subscribe to LDS: %v", err)
@@ -100,9 +104,6 @@ func (r *xdsResolver) watcher() {
 		return
 	}
 	log.Printf("[xds-resolver] Subscribed to LDS: %s", listenerName)
-
-	// State machine: track which clusters we need endpoints for
-	var pendingClusters []string
 
 	for {
 		select {
@@ -128,7 +129,6 @@ func (r *xdsResolver) watcher() {
 
 		switch resp.TypeUrl {
 		case listenerType:
-			// Extract route name from listener's ApiListener RDS config
 			routeNames := extractRouteNamesFromLDS(resp)
 			if len(routeNames) > 0 {
 				log.Printf("[xds-resolver] LDS gave route names: %v", routeNames)
@@ -136,28 +136,32 @@ func (r *xdsResolver) watcher() {
 					log.Printf("[xds-resolver] Failed to subscribe to RDS: %v", err)
 				}
 			} else {
-				// Fallback: directly subscribe to CDS with outbound cluster name
 				log.Printf("[xds-resolver] LDS gave no route names, falling back to direct CDS")
 				clusterName := buildClusterName(r.target)
+				r.clusterWeights[clusterName] = 1
 				if err := client.Subscribe(clusterType, []string{clusterName}); err != nil {
 					log.Printf("[xds-resolver] Failed to subscribe to CDS: %v", err)
 				}
 			}
 
 		case routeType:
-			// Extract cluster names (including weighted) from route config
-			clusters := extractClustersFromRDS(resp)
-			if len(clusters) > 0 {
-				log.Printf("[xds-resolver] RDS gave clusters: %v", clusters)
-				pendingClusters = clusters
+			// Extract clusters with weights from RDS
+			weights := extractClusterWeightsFromRDS(resp)
+			if len(weights) > 0 {
+				log.Printf("[xds-resolver] RDS gave cluster weights: %v", weights)
+				r.clusterWeights = weights
+				clusters := make([]string, 0, len(weights))
+				for c := range weights {
+					clusters = append(clusters, c)
+				}
+				r.pendingClusters = clusters
 				if err := client.Subscribe(clusterType, clusters); err != nil {
 					log.Printf("[xds-resolver] Failed to subscribe to CDS: %v", err)
 				}
 			}
 
 		case clusterType:
-			// Subscribe to EDS for each cluster
-			clusters := pendingClusters
+			clusters := r.pendingClusters
 			if len(clusters) == 0 {
 				clusters = []string{buildClusterName(r.target)}
 			}
@@ -167,9 +171,12 @@ func (r *xdsResolver) watcher() {
 			}
 
 		case endpointType:
-			addrs := r.parseEndpoints(resp)
+			// Store endpoints per cluster
+			r.updateClusterAddrs(resp)
+			// Build weighted address list
+			addrs := r.buildWeightedAddresses()
 			if len(addrs) > 0 {
-				log.Printf("[xds-resolver] Updating %d endpoints for %s", len(addrs), r.target)
+				log.Printf("[xds-resolver] Updating %d weighted endpoints for %s", len(addrs), r.target)
 				if err := r.cc.UpdateState(resolver.State{Addresses: addrs}); err != nil {
 					log.Printf("[xds-resolver] Failed to update state: %v", err)
 				}
@@ -178,113 +185,15 @@ func (r *xdsResolver) watcher() {
 	}
 }
 
-// extractRouteNamesFromLDS extracts RDS route config names from LDS response.
-func extractRouteNamesFromLDS(resp *discovery.DiscoveryResponse) []string {
-	var routeNames []string
-	for _, resource := range resp.Resources {
-		lis := &listenerv1.Listener{}
-		if err := proto.Unmarshal(resource.Value, lis); err != nil {
-			log.Printf("[xds-resolver] Failed to unmarshal Listener: %v", err)
-			continue
-		}
-		if lis.ApiListener == nil || lis.ApiListener.ApiListener == nil {
-			continue
-		}
-		// ApiListener contains an HttpConnectionManager encoded as Any
-		// The route config name is embedded - we extract it from the raw bytes
-		// by looking for the RDS route_config_name string in the serialized HCM
-		hcmBytes := lis.ApiListener.ApiListener.Value
-		// Parse route name from HCM bytes: find strings that look like outbound|port||hostname
-		if name := extractRouteNameFromHCM(hcmBytes); name != "" {
-			routeNames = append(routeNames, name)
-		}
-	}
-	return routeNames
-}
-
-// extractRouteNameFromHCM scans HCM bytes for the route config name.
-// The route config name in Dubbo format is: outbound|port||hostname
-func extractRouteNameFromHCM(data []byte) string {
-	s := string(data)
-	// Look for outbound|port||hostname pattern
-	const prefix = "outbound|"
-	if idx := strings.Index(s, prefix); idx >= 0 {
-		// Find end of the string (next null byte or non-printable)
-		end := idx
-		for end < len(s) && s[end] >= ' ' && s[end] <= '~' {
-			end++
-		}
-		name := s[idx:end]
-		// Validate format: outbound|port||hostname
-		parts := strings.Split(name, "|")
-		if len(parts) == 4 && parts[0] == "outbound" {
-			return name
-		}
-	}
-	return ""
-}
-
-// extractClustersFromRDS extracts all cluster names from RDS response,
-// including weighted clusters from VirtualService traffic policies.
-func extractClustersFromRDS(resp *discovery.DiscoveryResponse) []string {
-	clusterSet := make(map[string]struct{})
-	for _, resource := range resp.Resources {
-		rc := &routev1.RouteConfiguration{}
-		if err := proto.Unmarshal(resource.Value, rc); err != nil {
-			log.Printf("[xds-resolver] Failed to unmarshal RouteConfiguration: %v", err)
-			continue
-		}
-		log.Printf("[xds-resolver] RouteConfiguration: name=%s, virtual_hosts=%d", rc.Name, len(rc.VirtualHosts))
-		for _, vh := range rc.VirtualHosts {
-			for _, route := range vh.Routes {
-				if route.GetRoute() == nil {
-					continue
-				}
-				action := route.GetRoute()
-				if c := action.GetCluster(); c != "" {
-					clusterSet[c] = struct{}{}
-				}
-				if wc := action.GetWeightedClusters(); wc != nil {
-					for _, cw := range wc.Clusters {
-						if cw.Name != "" {
-							clusterSet[cw.Name] = struct{}{}
-						}
-					}
-				}
-			}
-		}
-	}
-	clusters := make([]string, 0, len(clusterSet))
-	for c := range clusterSet {
-		clusters = append(clusters, c)
-	}
-	return clusters
-}
-
-// buildClusterName converts xds target (host:port) to Dubbo cluster name format.
-func buildClusterName(target string) string {
-	host := target
-	port := ""
-	if idx := strings.LastIndex(target, ":"); idx >= 0 {
-		host = target[:idx]
-		port = target[idx+1:]
-	}
-	if port == "" {
-		return target
-	}
-	return fmt.Sprintf("outbound|%s||%s", port, host)
-}
-
-func (r *xdsResolver) parseEndpoints(resp *discovery.DiscoveryResponse) []resolver.Address {
-	var addrs []resolver.Address
+// updateClusterAddrs stores endpoints for each cluster from EDS response.
+func (r *xdsResolver) updateClusterAddrs(resp *discovery.DiscoveryResponse) {
 	for _, resource := range resp.Resources {
 		cla := &endpointv1.ClusterLoadAssignment{}
 		if err := proto.Unmarshal(resource.Value, cla); err != nil {
 			log.Printf("[xds-resolver] Failed to unmarshal ClusterLoadAssignment: %v", err)
 			continue
 		}
-		log.Printf("[xds-resolver] ClusterLoadAssignment: cluster_name=%s, endpoints=%d",
-			cla.ClusterName, len(cla.Endpoints))
+		var addrs []resolver.Address
 		for _, localityEp := range cla.Endpoints {
 			for _, lbEp := range localityEp.LbEndpoints {
 				if lbEp.GetEndpoint() == nil {
@@ -301,14 +210,149 @@ func (r *xdsResolver) parseEndpoints(resp *discovery.DiscoveryResponse) []resolv
 				addr := socketAddr.Address
 				port := socketAddr.GetPortValue()
 				if addr != "" && port > 0 {
-					target := fmt.Sprintf("%s:%d", addr, port)
-					log.Printf("[xds-resolver] Found endpoint: %s (cluster: %s)", target, cla.ClusterName)
-					addrs = append(addrs, resolver.Address{Addr: target})
+					addrs = append(addrs, resolver.Address{Addr: fmt.Sprintf("%s:%d", addr, port)})
+				}
+			}
+		}
+		log.Printf("[xds-resolver] Cluster %s has %d endpoints", cla.ClusterName, len(addrs))
+		r.clusterAddrs[cla.ClusterName] = addrs
+	}
+}
+
+// buildWeightedAddresses builds a flat address list with each cluster's endpoints
+// repeated proportionally to its weight, so round_robin achieves weighted distribution.
+func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
+	if len(r.clusterWeights) == 0 || len(r.clusterAddrs) == 0 {
+		return nil
+	}
+
+	// Calculate GCD to normalize weights
+	weights := make([]uint32, 0, len(r.clusterWeights))
+	for _, w := range r.clusterWeights {
+		weights = append(weights, w)
+	}
+	g := weights[0]
+	for _, w := range weights[1:] {
+		g = gcd(g, w)
+	}
+	if g == 0 {
+		g = 1
+	}
+
+	var addrs []resolver.Address
+	for cluster, weight := range r.clusterWeights {
+		clusterAddrs, ok := r.clusterAddrs[cluster]
+		if !ok || len(clusterAddrs) == 0 {
+			continue
+		}
+		// Repeat each endpoint weight/gcd times
+		repeat := weight / g
+		if repeat == 0 {
+			repeat = 1
+		}
+		log.Printf("[xds-resolver] cluster=%s weight=%d repeat=%d endpoints=%d",
+			cluster, weight, repeat, len(clusterAddrs))
+		for i := uint32(0); i < repeat; i++ {
+			addrs = append(addrs, clusterAddrs...)
+		}
+	}
+	return addrs
+}
+
+func gcd(a, b uint32) uint32 {
+	for b != 0 {
+		a, b = b, a%b
+	}
+	return a
+}
+
+// extractRouteNamesFromLDS extracts RDS route config names from LDS response.
+func extractRouteNamesFromLDS(resp *discovery.DiscoveryResponse) []string {
+	var routeNames []string
+	for _, resource := range resp.Resources {
+		lis := &listenerv1.Listener{}
+		if err := proto.Unmarshal(resource.Value, lis); err != nil {
+			log.Printf("[xds-resolver] Failed to unmarshal Listener: %v", err)
+			continue
+		}
+		if lis.ApiListener == nil || lis.ApiListener.ApiListener == nil {
+			continue
+		}
+		hcmBytes := lis.ApiListener.ApiListener.Value
+		if name := extractRouteNameFromHCM(hcmBytes); name != "" {
+			routeNames = append(routeNames, name)
+		}
+	}
+	return routeNames
+}
+
+// extractRouteNameFromHCM scans HCM bytes for the route config name.
+func extractRouteNameFromHCM(data []byte) string {
+	s := string(data)
+	const prefix = "outbound|"
+	if idx := strings.Index(s, prefix); idx >= 0 {
+		end := idx
+		for end < len(s) && s[end] >= ' ' && s[end] <= '~' {
+			end++
+		}
+		name := s[idx:end]
+		parts := strings.Split(name, "|")
+		if len(parts) == 4 && parts[0] == "outbound" {
+			return name
+		}
+	}
+	return ""
+}
+
+// extractClusterWeightsFromRDS extracts cluster names and their weights from RDS response.
+func extractClusterWeightsFromRDS(resp *discovery.DiscoveryResponse) map[string]uint32 {
+	weights := make(map[string]uint32)
+	for _, resource := range resp.Resources {
+		rc := &routev1.RouteConfiguration{}
+		if err := proto.Unmarshal(resource.Value, rc); err != nil {
+			log.Printf("[xds-resolver] Failed to unmarshal RouteConfiguration: %v", err)
+			continue
+		}
+		log.Printf("[xds-resolver] RouteConfiguration: name=%s, virtual_hosts=%d", rc.Name, len(rc.VirtualHosts))
+		for _, vh := range rc.VirtualHosts {
+			for _, route := range vh.Routes {
+				if route.GetRoute() == nil {
+					continue
+				}
+				action := route.GetRoute()
+				if c := action.GetCluster(); c != "" {
+					weights[c] = 1
+				}
+				if wc := action.GetWeightedClusters(); wc != nil {
+					for _, cw := range wc.Clusters {
+						if cw.Name != "" {
+							w := uint32(1)
+							if cw.Weight != nil {
+								w = cw.Weight.GetValue()
+							}
+							weights[cw.Name] = w
+							log.Printf("[xds-resolver] cluster=%s weight=%d", cw.Name, w)
+						}
+					}
 				}
 			}
 		}
 	}
-	return addrs
+	return weights
+}
+
+// buildClusterName converts xds target (host:port) to Dubbo cluster name format.
+func buildClusterName(target string) string {
+	host := target
+	port := ""
+	if idx := strings.LastIndex(target, ":"); idx >= 0 {
+		host = target[:idx]
+		port = target[idx+1:]
+	}
+	if port == "" {
+		return target
+	}
+	return fmt.Sprintf("outbound|%s||%s", port, host)
 }
 
 func (r *xdsResolver) ResolveNow(resolver.ResolveNowOptions) {
