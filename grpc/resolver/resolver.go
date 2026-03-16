@@ -157,7 +157,7 @@ func (r *xdsResolver) watcher() {
 				log.Printf("[xds-resolver] RDS gave cluster weights: %v", weights)
 				r.mu.Lock()
 				r.clusterWeights = weights
-				// 路由规则变化时清空 endpoint 缓存，避免旧 subset 数据污染新权重计算
+				// Clear endpoint cache when route rules change to avoid stale subset data
 				r.clusterAddrs = make(map[string][]resolver.Address)
 				r.mu.Unlock()
 				clusters := make([]string, 0, len(weights))
@@ -360,8 +360,8 @@ func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 
 		for i := uint32(0); i < repeat; i++ {
 			for _, a := range clusterAddrs {
-				// 给 Addr 加唯一序号后缀，使 EndpointMap 将每个条目视为不同 endpoint
-				// consumer 的 dialer 会在建连前剥掉 #N 后缀
+				// Append a unique sequence suffix so EndpointMap treats each slot as a distinct endpoint.
+				// The consumer dialer strips the suffix before dialing.
 				a.Addr = fmt.Sprintf("%s#%d", a.Addr, seq)
 				seq++
 				// Attach TLS context so consumer dialer can pick it up
