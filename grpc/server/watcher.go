@@ -15,6 +15,7 @@ import (
 	discovery "github.com/dubbo-kubernetes/xds-api/service/discovery/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 )
@@ -227,6 +228,8 @@ func (w *Watcher) parseTLSFromLDS(resp *discovery.DiscoveryResponse, listenerNam
 }
 
 // parseBootstrap extracts serverURI and Node from the bootstrap file.
+// Node is fully parsed (including metadata) so the control plane can
+// resolve ServiceTargets by pod IP when handling the inbound LDS request.
 func parseBootstrap(path string) (string, *corev1.Node, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -251,12 +254,18 @@ func parseBootstrap(path string) (string, *corev1.Node, error) {
 	}
 	var node *corev1.Node
 	if nodeRaw, ok := raw["node"]; ok {
-		var m map[string]json.RawMessage
-		if err := json.Unmarshal(nodeRaw, &m); err == nil {
-			if idRaw, ok := m["id"]; ok {
-				var id string
-				_ = json.Unmarshal(idRaw, &id)
-				node = &corev1.Node{Id: id}
+		n := &corev1.Node{}
+		if err := protojson.Unmarshal(nodeRaw, n); err == nil {
+			node = n
+		} else {
+			log.Printf("[xds-server-watcher] failed to protojson-unmarshal node: %v, falling back to id-only", err)
+			var m map[string]json.RawMessage
+			if err2 := json.Unmarshal(nodeRaw, &m); err2 == nil {
+				if idRaw, ok := m["id"]; ok {
+					var id string
+					_ = json.Unmarshal(idRaw, &id)
+					node = &corev1.Node{Id: id}
+				}
 			}
 		}
 	}
