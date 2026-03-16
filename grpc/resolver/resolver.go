@@ -10,12 +10,15 @@ import (
 	"time"
 
 	corev1 "github.com/dubbo-kubernetes/xds-api/core/v1"
+	clusterv1 "github.com/dubbo-kubernetes/xds-api/cluster/v1"
 	endpointv1 "github.com/dubbo-kubernetes/xds-api/endpoint/v1"
 	listenerv1 "github.com/dubbo-kubernetes/xds-api/listener/v1"
 	routev1 "github.com/dubbo-kubernetes/xds-api/route/v1"
 	discovery "github.com/dubbo-kubernetes/xds-api/service/discovery/v1"
+	tlsv1 "github.com/dubbo-kubernetes/xds-api/extensions/transport_sockets/tls/v1"
 	"google.golang.org/grpc/resolver"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/anypb"
 )
 
 const (
@@ -58,6 +61,7 @@ func (*xdsResolverBuilder) Build(target resolver.Target, cc resolver.ClientConn,
 		closeCh:        make(chan struct{}),
 		clusterWeights: make(map[string]uint32),
 		clusterAddrs:   make(map[string][]resolver.Address),
+		clusterTLS:     make(map[string]*tlsv1.UpstreamTlsContext),
 	}
 
 	go r.watcher()
@@ -79,6 +83,8 @@ type xdsResolver struct {
 	// cluster endpoint map from EDS: cluster_name -> []Address
 	clusterAddrs   map[string][]resolver.Address
 	pendingClusters []string
+	// cluster TLS context from CDS: cluster_name -> UpstreamTlsContext (nil means plaintext)
+	clusterTLS     map[string]*tlsv1.UpstreamTlsContext
 }
 
 func (r *xdsResolver) watcher() {
@@ -149,7 +155,11 @@ func (r *xdsResolver) watcher() {
 			weights := extractClusterWeightsFromRDS(resp)
 			if len(weights) > 0 {
 				log.Printf("[xds-resolver] RDS gave cluster weights: %v", weights)
+				r.mu.Lock()
 				r.clusterWeights = weights
+				// 路由规则变化时清空 endpoint 缓存，避免旧 subset 数据污染新权重计算
+				r.clusterAddrs = make(map[string][]resolver.Address)
+				r.mu.Unlock()
 				clusters := make([]string, 0, len(weights))
 				for c := range weights {
 					clusters = append(clusters, c)
@@ -161,8 +171,10 @@ func (r *xdsResolver) watcher() {
 			}
 
 		case clusterType:
+			// Parse TransportSocket from CDS to extract TLS configuration
+			r.updateClusterTLS(resp)
+
 			// Only subscribe to EDS for the clusters we actually need (from RDS weights)
-			// Do NOT use pendingClusters fallback if we already have weights from RDS
 			var edsClusters []string
 			if len(r.clusterWeights) > 0 {
 				// Use weighted clusters from RDS
@@ -192,8 +204,86 @@ func (r *xdsResolver) watcher() {
 	}
 }
 
-// updateClusterAddrs stores endpoints for each cluster from EDS response.
+// updateClusterTLS parses TransportSocket from CDS response and stores TLS context per cluster.
+func (r *xdsResolver) updateClusterTLS(resp *discovery.DiscoveryResponse) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	for _, resource := range resp.Resources {
+		c := &clusterv1.Cluster{}
+		if err := proto.Unmarshal(resource.Value, c); err != nil {
+			log.Printf("[xds-resolver] Failed to unmarshal Cluster: %v", err)
+			continue
+		}
+		if c.TransportSocket == nil {
+			log.Printf("[xds-resolver] Cluster %s has no TransportSocket (plaintext)", c.Name)
+			r.clusterTLS[c.Name] = nil
+			continue
+		}
+		typedConfig := c.TransportSocket.GetTypedConfig()
+		if typedConfig == nil {
+			r.clusterTLS[c.Name] = nil
+			continue
+		}
+		upstreamTLS := &tlsv1.UpstreamTlsContext{}
+		if err := anypb.UnmarshalTo(typedConfig, upstreamTLS, proto.UnmarshalOptions{}); err != nil {
+			log.Printf("[xds-resolver] Cluster %s TransportSocket is not UpstreamTlsContext: %v", c.Name, err)
+			r.clusterTLS[c.Name] = nil
+			continue
+		}
+		r.clusterTLS[c.Name] = upstreamTLS
+		log.Printf("[xds-resolver] Cluster %s has mTLS TransportSocket (SNI=%s)", c.Name, upstreamTLS.Sni)
+	}
+
+	// Publish to global index so consumer can query TLS config by target
+	globalTLSMu.Lock()
+	if globalTLSIndex[r.target] == nil {
+		globalTLSIndex[r.target] = make(map[string]*tlsv1.UpstreamTlsContext)
+	}
+	for k, v := range r.clusterTLS {
+		globalTLSIndex[r.target][k] = v
+	}
+	globalTLSMu.Unlock()
+}
+
+// TLSContextKey is the key used to store UpstreamTlsContext in resolver.Address.BalancerAttributes.
+type TLSContextKey struct{}
+
+// globalClusterTLS stores the latest TLS context per target URL for consumer lookup.
+// Key: xds target URL (e.g. "xds:///provider.grpc-app.svc.cluster.local:7070")
+// Value: map[clusterName]*UpstreamTlsContext
+var (
+	globalTLSMu    sync.RWMutex
+	globalTLSIndex = map[string]map[string]*tlsv1.UpstreamTlsContext{}
+)
+
+// GetClusterTLSForTarget returns the UpstreamTlsContext for the given xDS target URL.
+// It returns the first non-nil TLS context found across all clusters for that target.
+// Returns nil if no TLS context is configured (plaintext mode).
+func GetClusterTLSForTarget(targetURL string) *tlsv1.UpstreamTlsContext {
+	// Normalise: strip scheme prefix to get the service name used as resolver target
+	service := targetURL
+	if idx := strings.Index(targetURL, ":///"); idx >= 0 {
+		service = targetURL[idx+4:]
+	}
+
+	globalTLSMu.RLock()
+	defer globalTLSMu.RUnlock()
+	for target, clusters := range globalTLSIndex {
+		if target == service || strings.HasSuffix(target, service) || strings.HasSuffix(service, target) {
+			for _, ctx := range clusters {
+				if ctx != nil {
+					return ctx
+				}
+			}
+		}
+	}
+	return nil
+}
+
+
 func (r *xdsResolver) updateClusterAddrs(resp *discovery.DiscoveryResponse) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	for _, resource := range resp.Resources {
 		cla := &endpointv1.ClusterLoadAssignment{}
 		if err := proto.Unmarshal(resource.Value, cla); err != nil {
@@ -228,6 +318,10 @@ func (r *xdsResolver) updateClusterAddrs(resp *discovery.DiscoveryResponse) {
 
 // buildWeightedAddresses builds a flat address list with each cluster's endpoints
 // repeated proportionally to its weight, so round_robin achieves weighted distribution.
+// Each repeated entry gets a unique "#N" suffix appended to Addr so that
+// EndpointMap (which keys only on addr.Addr) treats them as distinct endpoints.
+// The consumer must strip this suffix in its dialer before connecting.
+// TLS context from CDS is stored in BalancerAttributes under TLSContextKey{}.
 func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 	if len(r.clusterWeights) == 0 || len(r.clusterAddrs) == 0 {
 		return nil
@@ -247,6 +341,7 @@ func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 	}
 
 	var addrs []resolver.Address
+	seq := 0
 	for cluster, weight := range r.clusterWeights {
 		clusterAddrs, ok := r.clusterAddrs[cluster]
 		if !ok || len(clusterAddrs) == 0 {
@@ -259,8 +354,22 @@ func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 		}
 		log.Printf("[xds-resolver] cluster=%s weight=%d repeat=%d endpoints=%d",
 			cluster, weight, repeat, len(clusterAddrs))
+
+		// Look up TLS context for this cluster
+		tlsCtx := r.clusterTLS[cluster]
+
 		for i := uint32(0); i < repeat; i++ {
-			addrs = append(addrs, clusterAddrs...)
+			for _, a := range clusterAddrs {
+				// 给 Addr 加唯一序号后缀，使 EndpointMap 将每个条目视为不同 endpoint
+				// consumer 的 dialer 会在建连前剥掉 #N 后缀
+				a.Addr = fmt.Sprintf("%s#%d", a.Addr, seq)
+				seq++
+				// Attach TLS context so consumer dialer can pick it up
+				if tlsCtx != nil {
+					a.BalancerAttributes = a.BalancerAttributes.WithValue(TLSContextKey{}, tlsCtx)
+				}
+				addrs = append(addrs, a)
+			}
 		}
 	}
 	return addrs
