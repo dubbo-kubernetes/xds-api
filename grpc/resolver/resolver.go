@@ -16,6 +16,7 @@ import (
 	routev1 "github.com/dubbo-kubernetes/xds-api/route/v1"
 	discovery "github.com/dubbo-kubernetes/xds-api/service/discovery/v1"
 	tlsv1 "github.com/dubbo-kubernetes/xds-api/extensions/transport_sockets/tls/v1"
+	"google.golang.org/grpc/attributes"
 	"google.golang.org/grpc/resolver"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
@@ -71,20 +72,20 @@ func (*xdsResolverBuilder) Build(target resolver.Target, cc resolver.ClientConn,
 func (*xdsResolverBuilder) Scheme() string { return Scheme }
 
 type xdsResolver struct {
-	target         string
-	cc             resolver.ClientConn
-	serverURI      string
-	node           *corev1.Node
-	closeCh        chan struct{}
-	mu             sync.Mutex
-	client         *Client
+	target          string
+	cc              resolver.ClientConn
+	serverURI       string
+	node            *corev1.Node
+	closeCh         chan struct{}
+	mu              sync.Mutex
+	client          *Client
 	// cluster weight map from RDS: cluster_name -> weight
-	clusterWeights map[string]uint32
+	clusterWeights  map[string]uint32
 	// cluster endpoint map from EDS: cluster_name -> []Address
-	clusterAddrs   map[string][]resolver.Address
+	clusterAddrs    map[string][]resolver.Address
 	pendingClusters []string
 	// cluster TLS context from CDS: cluster_name -> UpstreamTlsContext (nil means plaintext)
-	clusterTLS     map[string]*tlsv1.UpstreamTlsContext
+	clusterTLS      map[string]*tlsv1.UpstreamTlsContext
 }
 
 func (r *xdsResolver) watcher() {
@@ -151,38 +152,54 @@ func (r *xdsResolver) watcher() {
 			}
 
 		case routeType:
-			// Extract clusters with weights from RDS
+			// Extract clusters with weights from RDS.
 			weights := extractClusterWeightsFromRDS(resp)
 			if len(weights) > 0 {
 				log.Printf("[xds-resolver] RDS gave cluster weights: %v", weights)
 				r.mu.Lock()
+				weightsChanged := !mapsEqual(r.clusterWeights, weights)
 				r.clusterWeights = weights
-				// Clear endpoint cache when route rules change to avoid stale subset data
-				r.clusterAddrs = make(map[string][]resolver.Address)
+				if weightsChanged {
+					// Flush stale endpoint cache so old subset addresses are not reused.
+					r.clusterAddrs = make(map[string][]resolver.Address)
+				}
 				r.mu.Unlock()
 				clusters := make([]string, 0, len(weights))
 				for c := range weights {
 					clusters = append(clusters, c)
 				}
 				r.pendingClusters = clusters
+				// Always re-subscribe to CDS. If DestinationRule was absent when
+				// VirtualService was first applied, the subset clusters would have
+				// been silently dropped by the control plane. Re-subscribing here
+				// ensures we pick them up once the DestinationRule is created.
 				if err := client.Subscribe(clusterType, clusters); err != nil {
 					log.Printf("[xds-resolver] Failed to subscribe to CDS: %v", err)
 				}
 			}
 
 		case clusterType:
-			// Parse TransportSocket from CDS to extract TLS configuration
-			r.updateClusterTLS(resp)
+			// Parse TransportSocket from CDS and collect names of clusters that
+			// were actually returned. An empty slice means the control plane sent
+			// 0 resources (DestinationRule not yet created).
+			resolvedClusters := r.updateClusterTLS(resp)
 
-			// Only subscribe to EDS for the clusters we actually need (from RDS weights)
 			var edsClusters []string
-			if len(r.clusterWeights) > 0 {
-				// Use weighted clusters from RDS
-				for c := range r.clusterWeights {
-					edsClusters = append(edsClusters, c)
-				}
-			} else {
+			switch {
+			case len(resolvedClusters) > 0:
+				// Normal path: CDS returned the requested subset clusters.
+				edsClusters = resolvedClusters
+			case len(r.clusterWeights) == 0:
+				// No RDS weights at all — fall back to the plain default cluster.
 				edsClusters = []string{buildClusterName(r.target)}
+			default:
+				// CDS returned 0 resources for the requested subsets. This happens
+				// when VirtualService exists but DestinationRule has not been applied
+				// yet. Skip the EDS subscribe to avoid the control-plane push-loop
+				// warning. The next RDS push will re-trigger CDS subscription.
+				log.Printf("[xds-resolver] CDS returned 0 matching subset clusters; "+
+					"waiting for DestinationRule (pending: %v)", r.pendingClusters)
+				continue
 			}
 			log.Printf("[xds-resolver] CDS received, subscribing to EDS for: %v", edsClusters)
 			if err := client.Subscribe(endpointType, edsClusters); err != nil {
@@ -190,16 +207,18 @@ func (r *xdsResolver) watcher() {
 			}
 
 		case endpointType:
-			// Store endpoints per cluster
+			// Store endpoints per cluster.
 			r.updateClusterAddrs(resp)
-			// Build address list and push with round_robin service config
+			// Build weighted address list and push with xds_weighted service config.
+			// xds_weighted uses base.Balancer which deduplicates via AddressMapV2
+			// using (Addr, Attributes) equality — so unique Attributes per slot
+			// forces one SubConn per weighted slot even for repeated Addr values.
 			addrs := r.buildWeightedAddresses()
 			if len(addrs) > 0 {
-				log.Printf("[xds-resolver] Updating %d weighted endpoints for %s", len(addrs), r.target)
+				log.Printf("[xds-resolver] Updating %d weighted addresses for %s", len(addrs), r.target)
 				state := resolver.State{
-					Addresses: addrs,
-					// Inject round_robin so gRPC cycles through all endpoints.
-					ServiceConfig: r.cc.ParseServiceConfig(`{"loadBalancingConfig":[{"round_robin":{}}]}`),
+					Addresses:     addrs,
+					ServiceConfig: r.cc.ParseServiceConfig(`{"loadBalancingConfig":[{"xds_weighted":{}}]}`),
 				}
 				if err := r.cc.UpdateState(state); err != nil {
 					log.Printf("[xds-resolver] Failed to update state: %v", err)
@@ -209,8 +228,25 @@ func (r *xdsResolver) watcher() {
 	}
 }
 
-// updateClusterTLS parses TransportSocket from CDS response and stores TLS context per cluster.
-func (r *xdsResolver) updateClusterTLS(resp *discovery.DiscoveryResponse) {
+// mapsEqual returns true when two weight maps have identical keys and values.
+func mapsEqual(a, b map[string]uint32) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for k, v := range a {
+		if b[k] != v {
+			return false
+		}
+	}
+	return true
+}
+
+// updateClusterTLS parses TransportSocket from a CDS response, stores the TLS
+// context per cluster, and returns the list of cluster names present in the
+// response. An empty return slice means the control plane sent 0 resources
+// (e.g. DestinationRule not yet created).
+func (r *xdsResolver) updateClusterTLS(resp *discovery.DiscoveryResponse) []string {
+	var resolved []string
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	for _, resource := range resp.Resources {
@@ -219,6 +255,7 @@ func (r *xdsResolver) updateClusterTLS(resp *discovery.DiscoveryResponse) {
 			log.Printf("[xds-resolver] Failed to unmarshal Cluster: %v", err)
 			continue
 		}
+		resolved = append(resolved, c.Name)
 		if c.TransportSocket == nil {
 			log.Printf("[xds-resolver] Cluster %s has no TransportSocket (plaintext)", c.Name)
 			r.clusterTLS[c.Name] = nil
@@ -239,7 +276,7 @@ func (r *xdsResolver) updateClusterTLS(resp *discovery.DiscoveryResponse) {
 		log.Printf("[xds-resolver] Cluster %s has mTLS TransportSocket (SNI=%s)", c.Name, upstreamTLS.Sni)
 	}
 
-	// Publish to global index so consumer can query TLS config by target
+	// Publish to global index so consumer can query TLS config by target.
 	globalTLSMu.Lock()
 	if globalTLSIndex[r.target] == nil {
 		globalTLSIndex[r.target] = make(map[string]*tlsv1.UpstreamTlsContext)
@@ -248,13 +285,15 @@ func (r *xdsResolver) updateClusterTLS(resp *discovery.DiscoveryResponse) {
 		globalTLSIndex[r.target][k] = v
 	}
 	globalTLSMu.Unlock()
+
+	return resolved
 }
 
 // TLSContextKey is the key used to store UpstreamTlsContext in resolver.Address.BalancerAttributes.
 type TLSContextKey struct{}
 
-// globalClusterTLS stores the latest TLS context per target URL for consumer lookup.
-// Key: xds target URL (e.g. "xds:///provider.grpc-app.svc.cluster.local:7070")
+// globalTLSIndex stores the latest TLS context per target URL for consumer lookup.
+// Key: xds target service name (e.g. "provider.grpc-app.svc.cluster.local:7070")
 // Value: map[clusterName]*UpstreamTlsContext
 var (
 	globalTLSMu    sync.RWMutex
@@ -262,10 +301,10 @@ var (
 )
 
 // GetClusterTLSForTarget returns the UpstreamTlsContext for the given xDS target URL.
-// It returns the first non-nil TLS context found across all clusters for that target.
-// Returns nil if no TLS context is configured (plaintext mode).
+// Returns the first non-nil TLS context found across all clusters for that target,
+// or nil if plaintext mode.
 func GetClusterTLSForTarget(targetURL string) *tlsv1.UpstreamTlsContext {
-	// Normalise: strip scheme prefix to get the service name used as resolver target
+	// Normalise: strip scheme prefix to get the service name used as resolver target.
 	service := targetURL
 	if idx := strings.Index(targetURL, ":///"); idx >= 0 {
 		service = targetURL[idx+4:]
@@ -284,7 +323,6 @@ func GetClusterTLSForTarget(targetURL string) *tlsv1.UpstreamTlsContext {
 	}
 	return nil
 }
-
 
 func (r *xdsResolver) updateClusterAddrs(resp *discovery.DiscoveryResponse) {
 	r.mu.Lock()
@@ -321,27 +359,37 @@ func (r *xdsResolver) updateClusterAddrs(resp *discovery.DiscoveryResponse) {
 	}
 }
 
-// buildWeightedAddresses builds a flat address list with each cluster's endpoints
-// repeated proportionally to its weight. Each slot gets a unique "#N" suffix so
-// gRPC's round_robin balancer treats them as distinct sub-connections and cycles
-// through them in proportion to their weight.
-// Callers must strip the suffix before dialing (see ContextDialer in consumer).
-// TLS context from CDS is stored in BalancerAttributes under TLSContextKey{}.
+// slotSeqKey is combined with weightAttrKey in Attributes to give each
+// weighted slot a unique identity so AddressMapV2 creates distinct SubConns.
+type slotSeqKey struct{}
+
+// buildWeightedAddresses builds a flat address list where each cluster's
+// physical address appears once per slot, with Attributes carrying the
+// normalised weight AND a unique sequence number.
+//
+// base.Balancer (used by xds_weighted) deduplicates via AddressMapV2 which
+// keys on {Addr, ServerName} then checks Attributes.Equal(). The unique
+// slotSeqKey ensures every slot is treated as a distinct SubConn even when
+// multiple slots share the same Addr.  The picker reads weightAttrKey to
+// expand picks proportionally.
 func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 	if len(r.clusterAddrs) == 0 {
 		return nil
 	}
 
-	// No weight info — return all addresses as-is.
+	// No weight info — return all addresses with weight=1.
 	if len(r.clusterWeights) == 0 {
 		var addrs []resolver.Address
 		for _, clusterAddrs := range r.clusterAddrs {
-			addrs = append(addrs, clusterAddrs...)
+			for i, a := range clusterAddrs {
+				a.Attributes = attributes.New(weightAttrKey{}, uint32(1)).WithValue(slotSeqKey{}, uint32(i))
+				addrs = append(addrs, a)
+			}
 		}
 		return addrs
 	}
 
-	// Normalise weights via GCD.
+	// Normalise weights via GCD so we don't create excessive picker slots.
 	weightSlice := make([]uint32, 0, len(r.clusterWeights))
 	for _, w := range r.clusterWeights {
 		weightSlice = append(weightSlice, w)
@@ -354,35 +402,29 @@ func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 		g = 1
 	}
 
-	seq := 0
+	seq := uint32(0)
 	var addrs []resolver.Address
 	for cluster, weight := range r.clusterWeights {
 		clusterAddrs, ok := r.clusterAddrs[cluster]
 		if !ok || len(clusterAddrs) == 0 {
 			continue
 		}
-		repeat := weight / g
-		if repeat == 0 {
-			repeat = 1
+		normWeight := weight / g
+		if normWeight == 0 {
+			normWeight = 1
 		}
-		log.Printf("[xds-resolver] cluster=%s weight=%d repeat=%d endpoints=%d",
-			cluster, weight, repeat, len(clusterAddrs))
+		log.Printf("[xds-resolver] cluster=%s weight=%d normWeight=%d endpoints=%d",
+			cluster, weight, normWeight, len(clusterAddrs))
 
-		tlsCtx := r.clusterTLS[cluster]
-
-		for i := uint32(0); i < repeat; i++ {
-			for _, a := range clusterAddrs {
-				// Append #N so round_robin sees each weighted slot as a
-				// distinct address and creates a separate sub-connection.
-				// The consumer's ContextDialer strips this suffix before
-				// the actual TCP dial.
-				a.Addr = fmt.Sprintf("%s#%d", a.Addr, seq)
-				seq++
-				if tlsCtx != nil {
-					a.BalancerAttributes = a.BalancerAttributes.WithValue(TLSContextKey{}, tlsCtx)
-				}
-				addrs = append(addrs, a)
+		for _, a := range clusterAddrs {
+			// Unique Attributes per slot: weight for the picker, seq for
+			// AddressMapV2 dedup so each slot gets its own SubConn.
+			a.Attributes = attributes.New(weightAttrKey{}, normWeight).WithValue(slotSeqKey{}, seq)
+			seq++
+			if tlsCtx := r.clusterTLS[cluster]; tlsCtx != nil {
+				a.BalancerAttributes = a.BalancerAttributes.WithValue(TLSContextKey{}, tlsCtx)
 			}
+			addrs = append(addrs, a)
 		}
 	}
 	return addrs
@@ -492,3 +534,4 @@ func (r *xdsResolver) Close() {
 	log.Printf("[xds-resolver] Closing resolver for %s", r.target)
 	close(r.closeCh)
 }
+ 
