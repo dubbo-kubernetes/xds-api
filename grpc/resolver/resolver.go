@@ -384,9 +384,13 @@ func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 	// No weight info — return all addresses with weight=1.
 	if len(r.clusterWeights) == 0 {
 		var addrs []resolver.Address
-		for _, clusterAddrs := range r.clusterAddrs {
+		for cluster, clusterAddrs := range r.clusterAddrs {
 			for i, a := range clusterAddrs {
-				a.Attributes = attributes.New(weightAttrKey{}, uint32(1)).WithValue(slotSeqKey{}, uint32(i))
+				attrs := attributes.New(weightAttrKey{}, uint32(1)).WithValue(slotSeqKey{}, uint32(i))
+				if tlsCtx := r.clusterTLS[cluster]; tlsCtx != nil {
+					attrs = attrs.WithValue(xdscreds.TLSContextKey{}, tlsCtx)
+				}
+				a.Attributes = attrs
 				addrs = append(addrs, a)
 			}
 		}
@@ -423,11 +427,15 @@ func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 		for _, a := range clusterAddrs {
 			// Unique Attributes per slot: weight for the picker, seq for
 			// AddressMapV2 dedup so each slot gets its own SubConn.
-			a.Attributes = attributes.New(weightAttrKey{}, normWeight).WithValue(slotSeqKey{}, seq)
-			seq++
+			// TLSContextKey is also stored in Attributes (NOT BalancerAttributes)
+			// because gRPC transport only passes addr.Attributes into the
+			// ClientHandshakeInfo context (see internal/transport/http2_client.go).
+			attrs := attributes.New(weightAttrKey{}, normWeight).WithValue(slotSeqKey{}, seq)
 			if tlsCtx := r.clusterTLS[cluster]; tlsCtx != nil {
-				a.BalancerAttributes = a.BalancerAttributes.WithValue(TLSContextKey{}, tlsCtx)
+				attrs = attrs.WithValue(xdscreds.TLSContextKey{}, tlsCtx)
 			}
+			a.Attributes = attrs
+			seq++
 			addrs = append(addrs, a)
 		}
 	}

@@ -53,8 +53,11 @@ func NewXDSDialCredentials(certFile, keyFile, caFile, serverName string) credent
 }
 
 func (c *xdsDialCreds) ClientHandshake(ctx context.Context, authority string, rawConn net.Conn) (net.Conn, credentials.AuthInfo, error) {
-	// xDS balancer passes the resolved Address via the context using the
-	// standard gRPC mechanism: credentials.ClientHandshakeInfoFromContext.
+	// gRPC transport layer puts addr.Attributes (NOT addr.BalancerAttributes)
+	// into ClientHandshakeInfo — see internal/transport/http2_client.go:
+	//   connectCtx = icredentials.NewClientHandshakeInfoContext(connectCtx,
+	//       credentials.ClientHandshakeInfo{Attributes: addr.Attributes})
+	// So the xDS resolver must store TLSContextKey in addr.Attributes.
 	hi := credentials.ClientHandshakeInfoFromContext(ctx)
 	var tlsCtx *tlsv1.UpstreamTlsContext
 	if hi.Attributes != nil {
