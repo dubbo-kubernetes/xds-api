@@ -372,8 +372,10 @@ func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 
 		for i := uint32(0); i < repeat; i++ {
 			for _, a := range clusterAddrs {
-				key := fmt.Sprintf("%s/%d/%d", a.Addr, i, cluster)
-				if _, dup := seen[key]; dup && repeat == 1 {
+				// Key includes cluster name and repeat index so the same physical
+				// address can appear multiple times when repeat > 1 (weighted).
+				key := fmt.Sprintf("%s|%s|%d", cluster, a.Addr, i)
+				if _, dup := seen[key]; dup {
 					continue
 				}
 				seen[key] = struct{}{}
