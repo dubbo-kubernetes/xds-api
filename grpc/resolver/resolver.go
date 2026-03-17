@@ -322,15 +322,17 @@ func (r *xdsResolver) updateClusterAddrs(resp *discovery.DiscoveryResponse) {
 }
 
 // buildWeightedAddresses builds a flat address list with each cluster's endpoints
-// repeated proportionally to its weight. round_robin balancer (injected via
-// ServiceConfig) cycles through the list to achieve weighted distribution.
+// repeated proportionally to its weight. Each slot gets a unique "#N" suffix so
+// gRPC's round_robin balancer treats them as distinct sub-connections and cycles
+// through them in proportion to their weight.
+// Callers must strip the suffix before dialing (see ContextDialer in consumer).
 // TLS context from CDS is stored in BalancerAttributes under TLSContextKey{}.
 func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 	if len(r.clusterAddrs) == 0 {
 		return nil
 	}
 
-	// Collect all unique addresses when no weight info available
+	// No weight info — return all addresses as-is.
 	if len(r.clusterWeights) == 0 {
 		var addrs []resolver.Address
 		for _, clusterAddrs := range r.clusterAddrs {
@@ -339,22 +341,20 @@ func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 		return addrs
 	}
 
-	// Calculate GCD to normalize weights
-	weights := make([]uint32, 0, len(r.clusterWeights))
+	// Normalise weights via GCD.
+	weightSlice := make([]uint32, 0, len(r.clusterWeights))
 	for _, w := range r.clusterWeights {
-		weights = append(weights, w)
+		weightSlice = append(weightSlice, w)
 	}
-	g := weights[0]
-	for _, w := range weights[1:] {
+	g := weightSlice[0]
+	for _, w := range weightSlice[1:] {
 		g = gcd(g, w)
 	}
 	if g == 0 {
 		g = 1
 	}
 
-	// Use a map to deduplicate addresses with the same Addr string.
-	// round_robin balancer handles the actual load distribution.
-	seen := make(map[string]struct{})
+	seq := 0
 	var addrs []resolver.Address
 	for cluster, weight := range r.clusterWeights {
 		clusterAddrs, ok := r.clusterAddrs[cluster]
@@ -372,13 +372,12 @@ func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 
 		for i := uint32(0); i < repeat; i++ {
 			for _, a := range clusterAddrs {
-				// Key includes cluster name and repeat index so the same physical
-				// address can appear multiple times when repeat > 1 (weighted).
-				key := fmt.Sprintf("%s|%s|%d", cluster, a.Addr, i)
-				if _, dup := seen[key]; dup {
-					continue
-				}
-				seen[key] = struct{}{}
+				// Append #N so round_robin sees each weighted slot as a
+				// distinct address and creates a separate sub-connection.
+				// The consumer's ContextDialer strips this suffix before
+				// the actual TCP dial.
+				a.Addr = fmt.Sprintf("%s#%d", a.Addr, seq)
+				seq++
 				if tlsCtx != nil {
 					a.BalancerAttributes = a.BalancerAttributes.WithValue(TLSContextKey{}, tlsCtx)
 				}
