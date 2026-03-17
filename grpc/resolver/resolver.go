@@ -192,11 +192,16 @@ func (r *xdsResolver) watcher() {
 		case endpointType:
 			// Store endpoints per cluster
 			r.updateClusterAddrs(resp)
-			// Build weighted address list
+			// Build address list and push with round_robin service config
 			addrs := r.buildWeightedAddresses()
 			if len(addrs) > 0 {
 				log.Printf("[xds-resolver] Updating %d weighted endpoints for %s", len(addrs), r.target)
-				if err := r.cc.UpdateState(resolver.State{Addresses: addrs}); err != nil {
+				state := resolver.State{
+					Addresses: addrs,
+					// Inject round_robin so gRPC cycles through all endpoints.
+					ServiceConfig: r.cc.ParseServiceConfig(`{"loadBalancingConfig":[{"round_robin":{}}]}`),
+				}
+				if err := r.cc.UpdateState(state); err != nil {
 					log.Printf("[xds-resolver] Failed to update state: %v", err)
 				}
 			}
@@ -317,14 +322,21 @@ func (r *xdsResolver) updateClusterAddrs(resp *discovery.DiscoveryResponse) {
 }
 
 // buildWeightedAddresses builds a flat address list with each cluster's endpoints
-// repeated proportionally to its weight, so round_robin achieves weighted distribution.
-// Each repeated entry gets a unique "#N" suffix appended to Addr so that
-// EndpointMap (which keys only on addr.Addr) treats them as distinct endpoints.
-// The consumer must strip this suffix in its dialer before connecting.
+// repeated proportionally to its weight. round_robin balancer (injected via
+// ServiceConfig) cycles through the list to achieve weighted distribution.
 // TLS context from CDS is stored in BalancerAttributes under TLSContextKey{}.
 func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
-	if len(r.clusterWeights) == 0 || len(r.clusterAddrs) == 0 {
+	if len(r.clusterAddrs) == 0 {
 		return nil
+	}
+
+	// Collect all unique addresses when no weight info available
+	if len(r.clusterWeights) == 0 {
+		var addrs []resolver.Address
+		for _, clusterAddrs := range r.clusterAddrs {
+			addrs = append(addrs, clusterAddrs...)
+		}
+		return addrs
 	}
 
 	// Calculate GCD to normalize weights
@@ -340,14 +352,15 @@ func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 		g = 1
 	}
 
+	// Use a map to deduplicate addresses with the same Addr string.
+	// round_robin balancer handles the actual load distribution.
+	seen := make(map[string]struct{})
 	var addrs []resolver.Address
-	seq := 0
 	for cluster, weight := range r.clusterWeights {
 		clusterAddrs, ok := r.clusterAddrs[cluster]
 		if !ok || len(clusterAddrs) == 0 {
 			continue
 		}
-		// Repeat each endpoint weight/gcd times
 		repeat := weight / g
 		if repeat == 0 {
 			repeat = 1
@@ -355,16 +368,15 @@ func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 		log.Printf("[xds-resolver] cluster=%s weight=%d repeat=%d endpoints=%d",
 			cluster, weight, repeat, len(clusterAddrs))
 
-		// Look up TLS context for this cluster
 		tlsCtx := r.clusterTLS[cluster]
 
 		for i := uint32(0); i < repeat; i++ {
 			for _, a := range clusterAddrs {
-				// Append a unique sequence suffix so EndpointMap treats each slot as a distinct endpoint.
-				// The consumer dialer strips the suffix before dialing.
-				a.Addr = fmt.Sprintf("%s#%d", a.Addr, seq)
-				seq++
-				// Attach TLS context so consumer dialer can pick it up
+				key := fmt.Sprintf("%s/%d/%d", a.Addr, i, cluster)
+				if _, dup := seen[key]; dup && repeat == 1 {
+					continue
+				}
+				seen[key] = struct{}{}
 				if tlsCtx != nil {
 					a.BalancerAttributes = a.BalancerAttributes.WithValue(TLSContextKey{}, tlsCtx)
 				}
