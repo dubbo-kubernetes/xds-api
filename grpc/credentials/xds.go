@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/json"
 	"fmt"
 	"net"
 	"os"
@@ -28,21 +29,27 @@ type TLSContextKey struct{}
 // the control plane pushes TLS configuration via CDS; the client
 // credentials implementation inspects it per-connection.
 type xdsDialCreds struct {
-	certFile   string
-	keyFile    string
-	caFile     string
-	serverName string
+	certFile      string
+	keyFile       string
+	caFile        string
+	serverName    string
+	// fromBootstrap instructs ClientHandshake to resolve cert paths from
+	// the GRPC_XDS_BOOTSTRAP file rather than using fixed file paths.
+	fromBootstrap bool
 }
 
 // NewXDSDialCredentials returns a credentials.TransportCredentials that:
-//   - Uses mTLS (cert/key/ca files) when the resolved address carries an
-//     UpstreamTlsContext in its BalancerAttributes (set by the xDS resolver
-//     when CDS reports a TransportSocket with mTLS).
+//   - Uses mTLS when the resolved address carries an UpstreamTlsContext in
+//     its Attributes (set by the xDS resolver when CDS reports DUBBO_MUTUAL).
 //   - Falls back to plaintext when no TLS context is present.
 //
-// certFile, keyFile — client certificate and private key for mTLS.
-// caFile            — CA bundle used to verify the server certificate.
-// serverName        — optional TLS SNI override (empty = use address host).
+// If certFile/keyFile/caFile are empty, the credentials will attempt to read
+// cert paths from the GRPC_XDS_BOOTSTRAP file's certificate_providers section
+// at handshake time, using the provider instance referenced by the
+// UpstreamTlsContext. This is the correct behaviour for Dubbo proxyless mTLS
+// where dubbod injects cert paths into the bootstrap file.
+//
+// serverName — optional TLS SNI override (empty = use address host from xDS).
 func NewXDSDialCredentials(certFile, keyFile, caFile, serverName string) credentials.TransportCredentials {
 	return &xdsDialCreds{
 		certFile:   certFile,
@@ -50,6 +57,15 @@ func NewXDSDialCredentials(certFile, keyFile, caFile, serverName string) credent
 		caFile:     caFile,
 		serverName: serverName,
 	}
+}
+
+// NewXDSDialCredentialsFromBootstrap returns credentials that automatically
+// resolve certificate file paths from the GRPC_XDS_BOOTSTRAP file.
+// This is the recommended constructor for Dubbo proxyless mTLS: dubbod writes
+// cert paths into bootstrap.certificate_providers["default"] and the
+// xDS resolver references them via UpstreamTlsContext.certificate_provider_instance.
+func NewXDSDialCredentialsFromBootstrap() credentials.TransportCredentials {
+	return &xdsDialCreds{fromBootstrap: true}
 }
 
 func (c *xdsDialCreds) ClientHandshake(ctx context.Context, authority string, rawConn net.Conn) (net.Conn, credentials.AuthInfo, error) {
@@ -97,13 +113,88 @@ func (c *xdsDialCreds) ClientHandshake(ctx context.Context, authority string, ra
 	}, nil
 }
 
-func (c *xdsDialCreds) buildTLSConfig(authority string, _ *tlsv1.UpstreamTlsContext) (*tls.Config, error) {
+// certFilesForContext resolves cert/key/ca file paths either from the struct
+// fields or (when fromBootstrap=true) from the GRPC_XDS_BOOTSTRAP file using
+// the certificate_provider_instance referenced in tlsCtx.
+func (c *xdsDialCreds) certFilesForContext(tlsCtx *tlsv1.UpstreamTlsContext) (certFile, keyFile, caFile string, err error) {
+	if !c.fromBootstrap {
+		return c.certFile, c.keyFile, c.caFile, nil
+	}
+
+	bootstrapPath := os.Getenv("GRPC_XDS_BOOTSTRAP")
+	if bootstrapPath == "" {
+		return "", "", "", fmt.Errorf("GRPC_XDS_BOOTSTRAP not set; cannot resolve cert paths")
+	}
+	data, err := os.ReadFile(bootstrapPath)
+	if err != nil {
+		return "", "", "", fmt.Errorf("read bootstrap: %w", err)
+	}
+	var bootstrap struct {
+		CertProviders map[string]struct {
+			PluginName string `json:"plugin_name"`
+			Config     struct {
+				CertificateFile   string `json:"certificate_file"`
+				PrivateKeyFile    string `json:"private_key_file"`
+				CACertificateFile string `json:"ca_certificate_file"`
+			} `json:"config"`
+		} `json:"certificate_providers"`
+	}
+	if err := json.Unmarshal(data, &bootstrap); err != nil {
+		return "", "", "", fmt.Errorf("parse bootstrap: %w", err)
+	}
+
+	// Determine the provider instance name from the TLS context.
+	// Default to "default" if not specified.
+	instanceName := "default"
+	if tlsCtx != nil && tlsCtx.CommonTlsContext != nil &&
+		tlsCtx.CommonTlsContext.TlsCertificateCertificateProviderInstance != nil {
+		instanceName = tlsCtx.CommonTlsContext.TlsCertificateCertificateProviderInstance.InstanceName
+	}
+
+	provider, ok := bootstrap.CertProviders[instanceName]
+	if !ok {
+		// Fall back to "default" provider.
+		provider, ok = bootstrap.CertProviders["default"]
+		if !ok {
+			return "", "", "", fmt.Errorf("no certificate_providers[%q] in bootstrap", instanceName)
+		}
+	}
+
+	certFile = provider.Config.CertificateFile
+	keyFile = provider.Config.PrivateKeyFile
+
+	// For the CA, use the ROOTCA provider instance if referenced, else same provider.
+	caInstanceName := "default"
+	if tlsCtx != nil && tlsCtx.CommonTlsContext != nil {
+		if vc := tlsCtx.CommonTlsContext.GetCombinedValidationContext(); vc != nil &&
+			vc.ValidationContextCertificateProviderInstance != nil {
+			caInstanceName = vc.ValidationContextCertificateProviderInstance.InstanceName
+		}
+	}
+	caProvider, ok := bootstrap.CertProviders[caInstanceName]
+	if !ok {
+		caProvider = provider
+	}
+	caFile = caProvider.Config.CACertificateFile
+
+	return certFile, keyFile, caFile, nil
+}
+
+func (c *xdsDialCreds) buildTLSConfig(authority string, tlsCtx *tlsv1.UpstreamTlsContext) (*tls.Config, error) {
+	certFile, keyFile, caFile, err := c.certFilesForContext(tlsCtx)
+	if err != nil {
+		return nil, err
+	}
+
 	cfg := &tls.Config{}
 
-	// Server name: explicit override > authority host.
-	if c.serverName != "" {
+	// Server name priority: explicit override > SNI from xDS UpstreamTlsContext > authority host.
+	switch {
+	case c.serverName != "":
 		cfg.ServerName = c.serverName
-	} else {
+	case tlsCtx != nil && tlsCtx.Sni != "":
+		cfg.ServerName = tlsCtx.Sni
+	default:
 		host, _, err := net.SplitHostPort(authority)
 		if err != nil {
 			host = authority
@@ -112,8 +203,8 @@ func (c *xdsDialCreds) buildTLSConfig(authority string, _ *tlsv1.UpstreamTlsCont
 	}
 
 	// Load client certificate (mTLS).
-	if c.certFile != "" && c.keyFile != "" {
-		cert, err := tls.LoadX509KeyPair(c.certFile, c.keyFile)
+	if certFile != "" && keyFile != "" {
+		cert, err := tls.LoadX509KeyPair(certFile, keyFile)
 		if err != nil {
 			return nil, fmt.Errorf("load client cert: %w", err)
 		}
@@ -121,14 +212,14 @@ func (c *xdsDialCreds) buildTLSConfig(authority string, _ *tlsv1.UpstreamTlsCont
 	}
 
 	// Load CA pool for server verification.
-	if c.caFile != "" {
-		pem, err := readFile(c.caFile)
+	if caFile != "" {
+		pem, err := readFile(caFile)
 		if err != nil {
 			return nil, fmt.Errorf("read CA file: %w", err)
 		}
 		pool := x509.NewCertPool()
 		if !pool.AppendCertsFromPEM(pem) {
-			return nil, fmt.Errorf("no valid CA certificate in %s", c.caFile)
+			return nil, fmt.Errorf("no valid CA certificate in %s", caFile)
 		}
 		cfg.RootCAs = pool
 	} else {
