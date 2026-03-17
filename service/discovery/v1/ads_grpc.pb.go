@@ -19,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	AggregatedDiscoveryService_StreamAggregatedResources_FullMethodName = "/service.discovery.v1.AggregatedDiscoveryService/StreamAggregatedResources"
-	AggregatedDiscoveryService_DeltaAggregatedResources_FullMethodName  = "/service.discovery.v1.AggregatedDiscoveryService/DeltaAggregatedResources"
+	AggregatedDiscoveryService_StreamAggregatedResources_FullMethodName = "/envoy.service.discovery.v3.AggregatedDiscoveryService/StreamAggregatedResources"
+	AggregatedDiscoveryService_DeltaAggregatedResources_FullMethodName  = "/envoy.service.discovery.v3.AggregatedDiscoveryService/DeltaAggregatedResources"
 )
 
 // AggregatedDiscoveryServiceClient is the client API for AggregatedDiscoveryService service.
@@ -187,7 +187,7 @@ func (x *aggregatedDiscoveryServiceDeltaAggregatedResourcesServer) Recv() (*Delt
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AggregatedDiscoveryService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "service.discovery.v1.AggregatedDiscoveryService",
+	ServiceName: "envoy.service.discovery.v3.AggregatedDiscoveryService",
 	HandlerType: (*AggregatedDiscoveryServiceServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
