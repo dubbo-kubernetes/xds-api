@@ -18,6 +18,8 @@ import (
 	tlsv1 "github.com/dubbo-kubernetes/xds-api/extensions/transport_sockets/tls/v1"
 	"google.golang.org/grpc/attributes"
 	"google.golang.org/grpc/resolver"
+
+	xdscreds "github.com/dubbo-kubernetes/xds-api/grpc/credentials"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 )
@@ -289,8 +291,10 @@ func (r *xdsResolver) updateClusterTLS(resp *discovery.DiscoveryResponse) []stri
 	return resolved
 }
 
-// TLSContextKey is the key used to store UpstreamTlsContext in resolver.Address.BalancerAttributes.
-type TLSContextKey struct{}
+// TLSContextKey re-exports credentials.TLSContextKey so callers that only
+// import the resolver package can reference the same key type that
+// xdsDialCreds reads during ClientHandshake.
+type TLSContextKey = xdscreds.TLSContextKey
 
 // globalTLSIndex stores the latest TLS context per target URL for consumer lookup.
 // Key: xds target service name (e.g. "provider.grpc-app.svc.cluster.local:7070")
