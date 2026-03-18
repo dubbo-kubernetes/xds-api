@@ -57,14 +57,15 @@ func (*xdsResolverBuilder) Build(target resolver.Target, cc resolver.ClientConn,
 	}
 
 	r := &xdsResolver{
-		target:         serviceName,
-		cc:             cc,
-		serverURI:      bootstrap.ServerURI,
-		node:           bootstrap.Node,
-		closeCh:        make(chan struct{}),
-		clusterWeights: make(map[string]uint32),
-		clusterAddrs:   make(map[string][]resolver.Address),
-		clusterTLS:     make(map[string]*tlsv1.UpstreamTlsContext),
+		target:                serviceName,
+		cc:                    cc,
+		serverURI:             bootstrap.ServerURI,
+		node:                  bootstrap.Node,
+		closeCh:               make(chan struct{}),
+		clusterWeights:        make(map[string]uint32),
+		clusterAddrs:          make(map[string][]resolver.Address),
+		clusterTLS:            make(map[string]*tlsv1.UpstreamTlsContext),
+		clusterTLSFingerprint: make(map[string]string),
 	}
 
 	go r.watcher()
@@ -88,6 +89,9 @@ type xdsResolver struct {
 	pendingClusters []string
 	// cluster TLS context from CDS: cluster_name -> UpstreamTlsContext (nil means plaintext)
 	clusterTLS      map[string]*tlsv1.UpstreamTlsContext
+	// clusterTLSFingerprint tracks a stable string fingerprint of each cluster's TLS state.
+	// Used to detect real TLS mode changes and avoid spurious EDS re-subscriptions.
+	clusterTLSFingerprint map[string]string
 }
 
 func (r *xdsResolver) watcher() {
@@ -184,7 +188,7 @@ func (r *xdsResolver) watcher() {
 			// Parse TransportSocket from CDS and collect names of clusters that
 			// were actually returned. An empty slice means the control plane sent
 			// 0 resources (DestinationRule not yet created).
-			resolvedClusters := r.updateClusterTLS(resp)
+			resolvedClusters, tlsChanged := r.updateClusterTLS(resp)
 
 			var edsClusters []string
 			switch {
@@ -203,9 +207,18 @@ func (r *xdsResolver) watcher() {
 					"waiting for DestinationRule (pending: %v)", r.pendingClusters)
 				continue
 			}
-			log.Printf("[xds-resolver] CDS received, subscribing to EDS for: %v", edsClusters)
-			if err := client.Subscribe(endpointType, edsClusters); err != nil {
-				log.Printf("[xds-resolver] Failed to subscribe to EDS: %v", err)
+			// Only re-subscribe to EDS when TLS state actually changed.
+			// Spurious CDS pushes (same TLS mode) must not trigger a new EDS
+			// subscribe, which would cause the control plane to re-push EDS,
+			// triggering UpdateState with a new *UpstreamTlsContext pointer and
+			// unnecessary SubConn churn.
+			if tlsChanged {
+				log.Printf("[xds-resolver] CDS TLS state changed, re-subscribing to EDS for: %v", edsClusters)
+				if err := client.Subscribe(endpointType, edsClusters); err != nil {
+					log.Printf("[xds-resolver] Failed to subscribe to EDS: %v", err)
+				}
+			} else {
+				log.Printf("[xds-resolver] CDS received, TLS state unchanged, skipping EDS re-subscribe")
 			}
 
 		case endpointType:
@@ -243,12 +256,30 @@ func mapsEqual(a, b map[string]uint32) bool {
 	return true
 }
 
+// tlsFingerprint returns a stable string that uniquely identifies the TLS
+// mode of an UpstreamTlsContext.  Two contexts with the same SNI and the same
+// presence/absence of client-cert material are considered identical for the
+// purpose of SubConn deduplication.
+// Returns "" for plaintext (nil context).
+func tlsFingerprint(ctx *tlsv1.UpstreamTlsContext) string {
+	if ctx == nil {
+		return ""
+	}
+	sni := ctx.Sni
+	hasCert := ""
+	if ctx.CommonTlsContext != nil && ctx.CommonTlsContext.TlsCertificateCertificateProviderInstance != nil {
+		hasCert = ctx.CommonTlsContext.TlsCertificateCertificateProviderInstance.InstanceName
+	}
+	return fmt.Sprintf("mtls:sni=%s:cert=%s", sni, hasCert)
+}
+
 // updateClusterTLS parses TransportSocket from a CDS response, stores the TLS
-// context per cluster, and returns the list of cluster names present in the
-// response. An empty return slice means the control plane sent 0 resources
-// (e.g. DestinationRule not yet created).
-func (r *xdsResolver) updateClusterTLS(resp *discovery.DiscoveryResponse) []string {
+// context per cluster, and returns:
+//   - the list of cluster names present in the response (empty = DR not yet created)
+//   - whether any cluster's TLS state actually changed
+func (r *xdsResolver) updateClusterTLS(resp *discovery.DiscoveryResponse) ([]string, bool) {
 	var resolved []string
+	tlsChanged := false
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	for _, resource := range resp.Resources {
@@ -258,24 +289,29 @@ func (r *xdsResolver) updateClusterTLS(resp *discovery.DiscoveryResponse) []stri
 			continue
 		}
 		resolved = append(resolved, c.Name)
-		if c.TransportSocket == nil {
+		var newTLS *tlsv1.UpstreamTlsContext
+		if c.TransportSocket != nil {
+			if typedConfig := c.TransportSocket.GetTypedConfig(); typedConfig != nil {
+				upstreamTLS := &tlsv1.UpstreamTlsContext{}
+				if err := anypb.UnmarshalTo(typedConfig, upstreamTLS, proto.UnmarshalOptions{}); err != nil {
+					log.Printf("[xds-resolver] Cluster %s TransportSocket is not UpstreamTlsContext: %v", c.Name, err)
+				} else {
+					newTLS = upstreamTLS
+					log.Printf("[xds-resolver] Cluster %s has mTLS TransportSocket (SNI=%s)", c.Name, upstreamTLS.Sni)
+				}
+			}
+		}
+		if newTLS == nil {
 			log.Printf("[xds-resolver] Cluster %s has no TransportSocket (plaintext)", c.Name)
-			r.clusterTLS[c.Name] = nil
-			continue
 		}
-		typedConfig := c.TransportSocket.GetTypedConfig()
-		if typedConfig == nil {
-			r.clusterTLS[c.Name] = nil
-			continue
+
+		newFP := tlsFingerprint(newTLS)
+		if r.clusterTLSFingerprint[c.Name] != newFP {
+			log.Printf("[xds-resolver] Cluster %s TLS fingerprint changed: %q -> %q", c.Name, r.clusterTLSFingerprint[c.Name], newFP)
+			r.clusterTLSFingerprint[c.Name] = newFP
+			r.clusterTLS[c.Name] = newTLS
+			tlsChanged = true
 		}
-		upstreamTLS := &tlsv1.UpstreamTlsContext{}
-		if err := anypb.UnmarshalTo(typedConfig, upstreamTLS, proto.UnmarshalOptions{}); err != nil {
-			log.Printf("[xds-resolver] Cluster %s TransportSocket is not UpstreamTlsContext: %v", c.Name, err)
-			r.clusterTLS[c.Name] = nil
-			continue
-		}
-		r.clusterTLS[c.Name] = upstreamTLS
-		log.Printf("[xds-resolver] Cluster %s has mTLS TransportSocket (SNI=%s)", c.Name, upstreamTLS.Sni)
 	}
 
 	// Publish to global index so consumer can query TLS config by target.
@@ -288,7 +324,7 @@ func (r *xdsResolver) updateClusterTLS(resp *discovery.DiscoveryResponse) []stri
 	}
 	globalTLSMu.Unlock()
 
-	return resolved
+	return resolved, tlsChanged
 }
 
 // TLSContextKey re-exports credentials.TLSContextKey so callers that only
@@ -367,6 +403,13 @@ func (r *xdsResolver) updateClusterAddrs(resp *discovery.DiscoveryResponse) {
 // weighted slot a unique identity so AddressMapV2 creates distinct SubConns.
 type slotSeqKey struct{}
 
+// tlsFingerprintKey stores a stable string fingerprint of the TLS mode in
+// Attributes so AddressMapV2 can compare addresses without pointer equality.
+// Using a string (not *UpstreamTlsContext pointer) means the same TLS config
+// produces the same Attributes.Equal() result across multiple CDS pushes,
+// preventing spurious SubConn churn.
+type tlsFingerprintKey struct{}
+
 // buildWeightedAddresses builds a flat address list where each cluster's
 // physical address appears once per slot, with Attributes carrying the
 // normalised weight AND a unique sequence number.
@@ -387,8 +430,11 @@ func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 		for cluster, clusterAddrs := range r.clusterAddrs {
 			for i, a := range clusterAddrs {
 				attrs := attributes.New(weightAttrKey{}, uint32(1)).WithValue(slotSeqKey{}, uint32(i))
-				if tlsCtx := r.clusterTLS[cluster]; tlsCtx != nil {
-					attrs = attrs.WithValue(xdscreds.TLSContextKey{}, tlsCtx)
+				tlsCtx := r.clusterTLS[cluster]
+				if tlsCtx != nil {
+					attrs = attrs.
+						WithValue(xdscreds.TLSContextKey{}, tlsCtx).
+						WithValue(tlsFingerprintKey{}, r.clusterTLSFingerprint[cluster])
 				}
 				a.Attributes = attrs
 				addrs = append(addrs, a)
@@ -430,9 +476,15 @@ func (r *xdsResolver) buildWeightedAddresses() []resolver.Address {
 			// TLSContextKey is also stored in Attributes (NOT BalancerAttributes)
 			// because gRPC transport only passes addr.Attributes into the
 			// ClientHandshakeInfo context (see internal/transport/http2_client.go).
+			// tlsFingerprintKey stores a stable string so Attributes.Equal()
+			// returns true across CDS pushes with the same TLS mode, preventing
+			// spurious SubConn recreation.
 			attrs := attributes.New(weightAttrKey{}, normWeight).WithValue(slotSeqKey{}, seq)
-			if tlsCtx := r.clusterTLS[cluster]; tlsCtx != nil {
-				attrs = attrs.WithValue(xdscreds.TLSContextKey{}, tlsCtx)
+			tlsCtx := r.clusterTLS[cluster]
+			if tlsCtx != nil {
+				attrs = attrs.
+					WithValue(xdscreds.TLSContextKey{}, tlsCtx).
+					WithValue(tlsFingerprintKey{}, r.clusterTLSFingerprint[cluster])
 			}
 			a.Attributes = attrs
 			seq++

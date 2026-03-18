@@ -8,6 +8,7 @@ import (
 	"os"
 	"strings"
 	"sync"
+	"time"
 
 	corev1 "github.com/dubbo-kubernetes/xds-api/core/v1"
 	tlsv1 "github.com/dubbo-kubernetes/xds-api/extensions/transport_sockets/tls/v1"
@@ -97,6 +98,8 @@ func (w *Watcher) WaitForInitial(ctx context.Context) (*InboundTLSConfig, error)
 }
 
 func (w *Watcher) run() {
+	backoff := 500 * time.Millisecond
+	const maxBackoff = 30 * time.Second
 	for {
 		select {
 		case <-w.closeCh:
@@ -104,6 +107,17 @@ func (w *Watcher) run() {
 		default:
 		}
 		w.connect()
+		// connect() returns only on error or close. Apply backoff before
+		// reconnecting so we don't hammer the control plane on transient failures.
+		select {
+		case <-w.closeCh:
+			return
+		case <-time.After(backoff):
+		}
+		backoff *= 2
+		if backoff > maxBackoff {
+			backoff = maxBackoff
+		}
 	}
 }
 
