@@ -195,6 +195,14 @@ func (w *Watcher) connect() {
 		}
 
 		cfg := w.parseTLSFromLDS(resp, listenerName)
+		if cfg == nil {
+			// Listener was not present in this response — this is a full push
+			// that doesn't include our inbound listener (e.g. a push triggered
+			// by another resource type).  Do NOT update the channel: keeping
+			// the current mode avoids erroneously flipping back to plaintext
+			// during a PeerAuthentication-triggered full push.
+			continue
+		}
 		w.mu.Lock()
 		w.current = cfg
 		w.mu.Unlock()
@@ -212,6 +220,10 @@ func (w *Watcher) connect() {
 	}
 }
 
+// parseTLSFromLDS scans the LDS response for the named listener and returns
+// its TLS configuration.  Returns nil if the listener is not present in the
+// response (caller should retain the current mode rather than defaulting to
+// plaintext).
 func (w *Watcher) parseTLSFromLDS(resp *discovery.DiscoveryResponse, listenerName string) *InboundTLSConfig {
 	for _, resource := range resp.Resources {
 		lis := &listenerv1.Listener{}
@@ -241,8 +253,10 @@ func (w *Watcher) parseTLSFromLDS(resp *discovery.DiscoveryResponse, listenerNam
 		log.Printf("[xds-server-watcher] listener %s has no DownstreamTlsContext (plaintext)", listenerName)
 		return &InboundTLSConfig{Mode: TLSModePlaintext}
 	}
-	// Listener not found in response — treat as plaintext.
-	return &InboundTLSConfig{Mode: TLSModePlaintext}
+	// Listener not found in this response — return nil to signal "no change".
+	log.Printf("[xds-server-watcher] listener %s not found in LDS response (%d resources), retaining current mode",
+		listenerName, len(resp.Resources))
+	return nil
 }
 
 // parseBootstrap extracts serverURI and Node from the bootstrap file.
