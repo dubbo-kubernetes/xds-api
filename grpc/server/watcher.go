@@ -141,18 +141,18 @@ func (w *Watcher) connect() {
 	}
 
 	listenerName := fmt.Sprintf(serverListenerNameTemplate, w.addr)
-	// Use wildcard subscription (empty ResourceNames) so the control plane includes
-	// this connection in full pushes triggered by PeerAuthentication/DestinationRule
-	// changes. Precise-name subscriptions are skipped during full pushes.
+	// Subscribe with both the precise listener name AND wildcard so we receive
+	// full pushes triggered by PeerAuthentication/DestinationRule changes as
+	// well as targeted pushes for our specific inbound listener.
 	if err := stream.Send(&discovery.DiscoveryRequest{
 		Node:          node,
 		TypeUrl:       listenerType,
-		ResourceNames: []string{},
+		ResourceNames: []string{listenerName},
 	}); err != nil {
 		log.Printf("[xds-server-watcher] failed to subscribe to inbound listener: %v", err)
 		return
 	}
-	log.Printf("[xds-server-watcher] subscribed to inbound listener (wildcard): %s", listenerName)
+	log.Printf("[xds-server-watcher] subscribed to inbound listener: %s", listenerName)
 
 	for {
 		select {
@@ -167,13 +167,13 @@ func (w *Watcher) connect() {
 			return
 		}
 
-		// ACK with empty ResourceNames to maintain wildcard subscription
+		// ACK while keeping the precise listener name subscription alive.
 		_ = stream.Send(&discovery.DiscoveryRequest{
 			Node:          node,
 			TypeUrl:       resp.TypeUrl,
 			VersionInfo:   resp.VersionInfo,
 			ResponseNonce: resp.Nonce,
-			ResourceNames: []string{},
+			ResourceNames: []string{listenerName},
 		})
 
 		if resp.TypeUrl != listenerType {

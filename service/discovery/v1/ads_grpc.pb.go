@@ -183,16 +183,6 @@ func (x *aggregatedDiscoveryServiceDeltaAggregatedResourcesServer) Recv() (*Delt
 	return m, nil
 }
 
-// StreamAggregatedResourcesHandler is the exported gRPC stream handler for
-// StreamAggregatedResources. It can be embedded in a custom grpc.ServiceDesc
-// to register the same implementation under a different service name.
-var StreamAggregatedResourcesHandler = _AggregatedDiscoveryService_StreamAggregatedResources_Handler
-
-// DeltaAggregatedResourcesHandler is the exported gRPC stream handler for
-// DeltaAggregatedResources. It can be embedded in a custom grpc.ServiceDesc
-// to register the same implementation under a different service name.
-var DeltaAggregatedResourcesHandler = _AggregatedDiscoveryService_DeltaAggregatedResources_Handler
-
 // AggregatedDiscoveryService_ServiceDesc is the grpc.ServiceDesc for AggregatedDiscoveryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)

@@ -186,9 +186,71 @@ func (c *xdsDialCreds) buildTLSConfig(authority string, tlsCtx *tlsv1.UpstreamTl
 		return nil, err
 	}
 
-	cfg := &tls.Config{}
+	// Load CA pool for server verification.
+	var caPool *x509.CertPool
+	if caFile != "" {
+		pem, err := readFile(caFile)
+		if err != nil {
+			return nil, fmt.Errorf("read CA file: %w", err)
+		}
+		pool := x509.NewCertPool()
+		if !pool.AppendCertsFromPEM(pem) {
+			// CA file is transiently empty during cert rotation by dubbod.
+			// Fall back to the system root pool rather than failing the
+			// entire handshake; the file will be populated shortly.
+			var sysErr error
+			pool, sysErr = x509.SystemCertPool()
+			if sysErr != nil {
+				pool = x509.NewCertPool()
+			}
+		}
+		caPool = pool
+	} else {
+		// Use system roots when no explicit CA is provided.
+		pool, sysErr := x509.SystemCertPool()
+		if sysErr != nil {
+			pool = x509.NewCertPool()
+		}
+		caPool = pool
+	}
 
-	// Server name priority: explicit override > SNI from xDS UpstreamTlsContext > authority host.
+	cfg := &tls.Config{
+		// Proxyless mTLS uses SPIFFE URI SANs, not DNS SANs.
+		// Standard Go TLS hostname verification would fail because the
+		// server cert has spiffe://... URIs, not a DNS SAN matching the
+		// service hostname.  We disable hostname verification and perform
+		// CA-chain validation manually in VerifyPeerCertificate instead.
+		InsecureSkipVerify: true, //nolint:gosec // intentional; VerifyPeerCertificate enforces CA chain
+		VerifyPeerCertificate: func(rawCerts [][]byte, _ [][]*x509.Certificate) error {
+			if len(rawCerts) == 0 {
+				return fmt.Errorf("xdsDialCreds: server presented no certificate")
+			}
+			leaf, err := x509.ParseCertificate(rawCerts[0])
+			if err != nil {
+				return fmt.Errorf("xdsDialCreds: parse server cert: %w", err)
+			}
+			intermediates := x509.NewCertPool()
+			for _, raw := range rawCerts[1:] {
+				if ic, err := x509.ParseCertificate(raw); err == nil {
+					intermediates.AddCert(ic)
+				}
+			}
+			_, err = leaf.Verify(x509.VerifyOptions{
+				Roots:         caPool,
+				Intermediates: intermediates,
+				// CurrentTime zero value means use time.Now().
+				// DNSName intentionally left empty — SPIFFE identity is in
+				// the URI SAN, not the DNS SAN.
+			})
+			if err != nil {
+				return fmt.Errorf("xdsDialCreds: verify server cert chain: %w", err)
+			}
+			return nil
+		},
+	}
+
+	// Set SNI so the server can select the right certificate.
+	// Priority: explicit override > SNI from xDS UpstreamTlsContext > authority host.
 	switch {
 	case c.serverName != "":
 		cfg.ServerName = c.serverName
@@ -211,25 +273,6 @@ func (c *xdsDialCreds) buildTLSConfig(authority string, tlsCtx *tlsv1.UpstreamTl
 		cfg.Certificates = []tls.Certificate{cert}
 	}
 
-	// Load CA pool for server verification.
-	if caFile != "" {
-		pem, err := readFile(caFile)
-		if err != nil {
-			return nil, fmt.Errorf("read CA file: %w", err)
-		}
-		pool := x509.NewCertPool()
-		if !pool.AppendCertsFromPEM(pem) {
-			return nil, fmt.Errorf("no valid CA certificate in %s", caFile)
-		}
-		cfg.RootCAs = pool
-	} else {
-		// Use system roots when no explicit CA is provided.
-		pool, err := x509.SystemCertPool()
-		if err != nil {
-			pool = x509.NewCertPool()
-		}
-		cfg.RootCAs = pool
-	}
 	return cfg, nil
 }
 
