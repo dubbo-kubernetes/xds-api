@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	xdscreds "github.com/dubbo-kubernetes/xds-api/grpc/credentials"
+	xdscreds "github.com/dubbo-inherent/xds-api/grpc/credentials"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -28,9 +28,9 @@ import (
 //	pb.RegisterMyServiceServer(srv, &myImpl{})
 //	if err := srv.Serve(); err != nil { log.Fatal(err) }
 type ManagedServer struct {
-	addr          string
-	boostrapPath  string
-	extraOpts     []grpc.ServerOption
+	addr         string
+	boostrapPath string
+	extraOpts    []grpc.ServerOption
 
 	// registrations holds service registration callbacks collected before
 	// Serve() is called.  Each callback receives a freshly-created *grpc.Server.
@@ -226,4 +226,3 @@ func DialContext(ctx context.Context, target string, opts ...grpc.DialOption) (*
 func Dial(target string, opts ...grpc.DialOption) (*grpc.ClientConn, error) {
 	return DialContext(context.Background(), target, opts...)
 }
-

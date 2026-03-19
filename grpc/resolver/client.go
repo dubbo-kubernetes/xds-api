@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	corev1 "github.com/dubbo-kubernetes/xds-api/core/v1"
-	discovery "github.com/dubbo-kubernetes/xds-api/service/discovery/v1"
+	corev1 "github.com/dubbo-inherent/xds-api/core/v1"
+	discovery "github.com/dubbo-inherent/xds-api/service/discovery/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

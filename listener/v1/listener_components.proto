@@ -7,7 +7,7 @@ import "google/protobuf/wrappers.proto";
 import "core/v1/address.proto";
 import "core/v1/base.proto";
 
-option go_package = "github.com/dubbo-kubernetes/xds-api/listener/v1;listenerv1";
+option go_package = "github.com/dubbo-inherent/xds-api/listener/v1;listenerv1";
 
 message Filter {
 

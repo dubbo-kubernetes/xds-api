@@ -7,8 +7,8 @@
 package clusterv1
 
 import (
-	v1 "github.com/dubbo-kubernetes/xds-api/core/v1"
-	v11 "github.com/dubbo-kubernetes/xds-api/endpoint/v1"
+	v1 "github.com/dubbo-inherent/xds-api/core/v1"
+	v11 "github.com/dubbo-inherent/xds-api/endpoint/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	anypb "google.golang.org/protobuf/types/known/anypb"
@@ -482,7 +482,7 @@ const file_cluster_v1_cluster_proto_rawDesc = "" +
 	"\tRING_HASH\x10\x02\x12\n" +
 	"\n" +
 	"\x06RANDOM\x10\x03B\x18\n" +
-	"\x16cluster_discovery_typeB:Z8github.com/dubbo-kubernetes/xds-api/cluster/v1;clusterv1b\x06proto3"
+	"\x16cluster_discovery_typeB8Z6github.com/dubbo-inherent/xds-api/cluster/v1;clusterv1b\x06proto3"
 
 var (
 	file_cluster_v1_cluster_proto_rawDescOnce sync.Once

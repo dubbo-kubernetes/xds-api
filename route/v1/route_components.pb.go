@@ -7,7 +7,7 @@
 package routev1
 
 import (
-	v1 "github.com/dubbo-kubernetes/xds-api/type/matcher/v1"
+	v1 "github.com/dubbo-inherent/xds-api/type/matcher/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	_ "google.golang.org/protobuf/types/known/anypb"
@@ -650,7 +650,7 @@ const file_route_v1_route_components_proto_rawDesc = "" +
 	"\vRouteAction\x12\x1a\n" +
 	"\acluster\x18\x01 \x01(\tH\x00R\acluster\x12H\n" +
 	"\x11weighted_clusters\x18\x03 \x01(\v2\x19.route.v1.WeightedClusterH\x00R\x10weightedClustersB\x13\n" +
-	"\x11cluster_specifierB6Z4github.com/dubbo-kubernetes/xds-api/route/v1;routev1b\x06proto3"
+	"\x11cluster_specifierB4Z2github.com/dubbo-inherent/xds-api/route/v1;routev1b\x06proto3"
 
 var (
 	file_route_v1_route_components_proto_rawDescOnce sync.Once

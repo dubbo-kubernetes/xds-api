@@ -81,7 +81,7 @@ const file_endpoint_v1_endpoint_proto_rawDesc = "" +
 	"\x1aendpoint/v1/endpoint.proto\x12\vendpoint.v1\x1a\x1egoogle/protobuf/wrappers.proto\x1a%endpoint/v1/endpoint_components.proto\"z\n" +
 	"\x15ClusterLoadAssignment\x12!\n" +
 	"\fcluster_name\x18\x01 \x01(\tR\vclusterName\x12>\n" +
-	"\tendpoints\x18\x02 \x03(\v2 .endpoint.v1.LocalityLbEndpointsR\tendpointsB<Z:github.com/dubbo-kubernetes/xds-api/endpoint/v1;endpointv1b\x06proto3"
+	"\tendpoints\x18\x02 \x03(\v2 .endpoint.v1.LocalityLbEndpointsR\tendpointsB:Z8github.com/dubbo-inherent/xds-api/endpoint/v1;endpointv1b\x06proto3"
 
 var (
 	file_endpoint_v1_endpoint_proto_rawDescOnce sync.Once

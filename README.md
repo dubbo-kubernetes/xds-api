@@ -1,6 +1,6 @@
 # xDS API
 
-[![GoDoc](https://pkg.go.dev/badge/github.com/dubbo-kubernetes/xds-api.svg)](https://pkg.go.dev/github.com/dubbo-kubernetes/xds-api)
+[![GoDoc](https://pkg.go.dev/badge/github.com/dubbo-inherent/xds-api.svg)](https://pkg.go.dev/github.com/dubbo-inherent/xds-api)
 
 This repository contains the xDS API defined for the Dubbo control plane implementation.
 

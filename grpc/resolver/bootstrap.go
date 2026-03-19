@@ -5,14 +5,14 @@ import (
 	"fmt"
 	"os"
 
-	corev1 "github.com/dubbo-kubernetes/xds-api/core/v1"
+	corev1 "github.com/dubbo-inherent/xds-api/core/v1"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
 // BootstrapConfig holds parsed xDS bootstrap configuration.
 type BootstrapConfig struct {
-	ServerURI     string
-	Node          *corev1.Node
+	ServerURI string
+	Node      *corev1.Node
 	// CertProviders maps provider instance name to file-watcher cert config.
 	// Key matches the instance_name in UpstreamTlsContext certificate_provider_instance.
 	CertProviders map[string]FileWatcherCertConfig

@@ -7,7 +7,7 @@
 package discoveryv1
 
 import (
-	v1 "github.com/dubbo-kubernetes/xds-api/core/v1"
+	v1 "github.com/dubbo-inherent/xds-api/core/v1"
 	status "google.golang.org/genproto/googleapis/rpc/status"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -544,7 +544,7 @@ const file_service_discovery_v1_discovery_proto_rawDesc = "" +
 	"\rcache_control\x18\x06 \x01(\v2+.service.discovery.v1.Resource.CacheControlR\fcacheControl\x1a0\n" +
 	"\fCacheControl\x12 \n" +
 	"\fdo_not_cache\x18\x01 \x01(\bR\n" +
-	"doNotCacheBFZDgithub.com/dubbo-kubernetes/xds-api/service/discovery/v1;discoveryv1b\x06proto3"
+	"doNotCacheBDZBgithub.com/dubbo-inherent/xds-api/service/discovery/v1;discoveryv1b\x06proto3"
 
 var (
 	file_service_discovery_v1_discovery_proto_rawDescOnce sync.Once

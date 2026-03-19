@@ -7,7 +7,7 @@
 package secretv1
 
 import (
-	v1 "github.com/dubbo-kubernetes/xds-api/service/discovery/v1"
+	v1 "github.com/dubbo-inherent/xds-api/service/discovery/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -29,7 +29,7 @@ const file_service_secret_v1_sds_proto_rawDesc = "" +
 	"\x16SecretDiscoveryService\x12m\n" +
 	"\fDeltaSecrets\x12+.service.discovery.v1.DeltaDiscoveryRequest\x1a,.service.discovery.v1.DeltaDiscoveryResponse(\x010\x01\x12d\n" +
 	"\rStreamSecrets\x12&.service.discovery.v1.DiscoveryRequest\x1a'.service.discovery.v1.DiscoveryResponse(\x010\x01\x12a\n" +
-	"\fFetchSecrets\x12&.service.discovery.v1.DiscoveryRequest\x1a'.service.discovery.v1.DiscoveryResponse\"\x00B@Z>github.com/dubbo-kubernetes/xds-api/service/secret/v1;secretv1b\x06proto3"
+	"\fFetchSecrets\x12&.service.discovery.v1.DiscoveryRequest\x1a'.service.discovery.v1.DiscoveryResponse\"\x00B>Z<github.com/dubbo-inherent/xds-api/service/secret/v1;secretv1b\x06proto3"
 
 var file_service_secret_v1_sds_proto_goTypes = []any{
 	(*v1.DeltaDiscoveryRequest)(nil),  // 0: service.discovery.v1.DeltaDiscoveryRequest

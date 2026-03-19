@@ -62,7 +62,7 @@ var File_extensions_filters_v1_http_router_router_proto protoreflect.FileDescrip
 const file_extensions_filters_v1_http_router_router_proto_rawDesc = "" +
 	"\n" +
 	".extensions/filters/v1/http/router/router.proto\x12!extensions.filters.http.router.v1\"\b\n" +
-	"\x06RouterBPZNgithub.com/dubbo-kubernetes/xds-api/extensions/filters/http/router/v1;routerv1b\x06proto3"
+	"\x06RouterBNZLgithub.com/dubbo-inherent/xds-api/extensions/filters/http/router/v1;routerv1b\x06proto3"
 
 var (
 	file_extensions_filters_v1_http_router_router_proto_rawDescOnce sync.Once

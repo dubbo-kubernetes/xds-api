@@ -7,8 +7,8 @@
 package http_connection_managerv1
 
 import (
-	v11 "github.com/dubbo-kubernetes/xds-api/core/v1"
-	v1 "github.com/dubbo-kubernetes/xds-api/route/v1"
+	v11 "github.com/dubbo-inherent/xds-api/core/v1"
+	v1 "github.com/dubbo-inherent/xds-api/route/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	anypb "google.golang.org/protobuf/types/known/anypb"
@@ -324,7 +324,7 @@ const file_extensions_filters_v1_network_http_connection_manager_http_connection
 	"HttpFilter\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x129\n" +
 	"\ftyped_config\x18\x04 \x01(\v2\x14.google.protobuf.AnyH\x00R\vtypedConfigB\r\n" +
-	"\vconfig_typeBuZsgithub.com/dubbo-kubernetes/xds-api/extensions/filters/network/http_connection_manager/v1;http_connection_managerv1b\x06proto3"
+	"\vconfig_typeBsZqgithub.com/dubbo-inherent/xds-api/extensions/filters/network/http_connection_manager/v1;http_connection_managerv1b\x06proto3"
 
 var (
 	file_extensions_filters_v1_network_http_connection_manager_http_connection_manager_proto_rawDescOnce sync.Once

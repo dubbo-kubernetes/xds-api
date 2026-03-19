@@ -293,7 +293,7 @@ const file_core_v1_address_proto_rawDesc = "" +
 	"\aAddress\x12?\n" +
 	"\x0esocket_address\x18\x01 \x01(\v2\x16.core.v1.SocketAddressH\x00R\rsocketAddress\x12#\n" +
 	"\x04pipe\x18\x02 \x01(\v2\r.core.v1.PipeH\x00R\x04pipeB\t\n" +
-	"\aaddressB4Z2github.com/dubbo-kubernetes/xds-api/core/v1;corev1b\x06proto3"
+	"\aaddressB2Z0github.com/dubbo-inherent/xds-api/core/v1;corev1b\x06proto3"
 
 var (
 	file_core_v1_address_proto_rawDescOnce sync.Once

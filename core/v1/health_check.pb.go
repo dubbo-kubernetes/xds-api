@@ -213,7 +213,7 @@ const file_core_v1_health_check_proto_rawDesc = "" +
 	"\tUNHEALTHY\x10\x02\x12\f\n" +
 	"\bDRAINING\x10\x03\x12\v\n" +
 	"\aTIMEOUT\x10\x04\x12\f\n" +
-	"\bDEGRADED\x10\x05B4Z2github.com/dubbo-kubernetes/xds-api/core/v1;corev1b\x06proto3"
+	"\bDEGRADED\x10\x05B2Z0github.com/dubbo-inherent/xds-api/core/v1;corev1b\x06proto3"
 
 var (
 	file_core_v1_health_check_proto_rawDescOnce sync.Once

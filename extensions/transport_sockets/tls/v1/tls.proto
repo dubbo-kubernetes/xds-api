@@ -4,7 +4,7 @@ package extensions.transport_sockets.tls.v1;
 
 import "google/protobuf/wrappers.proto";
 
-option go_package = "github.com/dubbo-kubernetes/xds-api/extensions/transport_sockets/tls/v1;tlsv1";
+option go_package = "github.com/dubbo-inherent/xds-api/extensions/transport_sockets/tls/v1;tlsv1";
 
 message CertificateValidationContext {
   repeated string match_subject_alt_names = 1;

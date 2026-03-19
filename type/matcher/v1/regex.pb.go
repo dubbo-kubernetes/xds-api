@@ -72,7 +72,7 @@ const file_type_matcher_v1_regex_proto_rawDesc = "" +
 	"\n" +
 	"\x1btype/matcher/v1/regex.proto\x12\x0ftype.matcher.v1\x1a\x1egoogle/protobuf/wrappers.proto\"$\n" +
 	"\fRegexMatcher\x12\x14\n" +
-	"\x05regex\x18\x02 \x01(\tR\x05regexB?Z=github.com/dubbo-kubernetes/xds-api/type/matcher/v1;matcherv1b\x06proto3"
+	"\x05regex\x18\x02 \x01(\tR\x05regexB=Z;github.com/dubbo-inherent/xds-api/type/matcher/v1;matcherv1b\x06proto3"
 
 var (
 	file_type_matcher_v1_regex_proto_rawDescOnce sync.Once

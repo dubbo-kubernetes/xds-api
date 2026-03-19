@@ -82,7 +82,7 @@ const file_route_v1_route_proto_rawDesc = "" +
 	"\x14route/v1/route.proto\x12\broute.v1\x1a\x1froute/v1/route_components.proto\x1a\x19google/protobuf/any.proto\x1a\x1egoogle/protobuf/wrappers.proto\"d\n" +
 	"\x12RouteConfiguration\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12:\n" +
-	"\rvirtual_hosts\x18\x02 \x03(\v2\x15.route.v1.VirtualHostR\fvirtualHostsB6Z4github.com/dubbo-kubernetes/xds-api/route/v1;routev1b\x06proto3"
+	"\rvirtual_hosts\x18\x02 \x03(\v2\x15.route.v1.VirtualHostR\fvirtualHostsB4Z2github.com/dubbo-inherent/xds-api/route/v1;routev1b\x06proto3"
 
 var (
 	file_route_v1_route_proto_rawDescOnce sync.Once
