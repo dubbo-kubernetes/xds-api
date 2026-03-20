@@ -68,7 +68,7 @@ const file_service_discovery_v1_ads_proto_rawDesc = "" +
 	"\bAdsDummy2\x89\x02\n" +
 	"\x1aAggregatedDiscoveryService\x12p\n" +
 	"\x19StreamAggregatedResources\x12&.service.discovery.v1.DiscoveryRequest\x1a'.service.discovery.v1.DiscoveryResponse(\x010\x01\x12y\n" +
-	"\x18DeltaAggregatedResources\x12+.service.discovery.v1.DeltaDiscoveryRequest\x1a,.service.discovery.v1.DeltaDiscoveryResponse(\x010\x01BDZBgithub.com/dubbo-inherent/xds-api/service/discovery/v1;discoveryv1b\x06proto3"
+	"\x18DeltaAggregatedResources\x12+.service.discovery.v1.DeltaDiscoveryRequest\x1a,.service.discovery.v1.DeltaDiscoveryResponse(\x010\x01B<Z:github.com/kdubbo/xds-api/service/discovery/v1;discoveryv1b\x06proto3"
 
 var (
 	file_service_discovery_v1_ads_proto_rawDescOnce sync.Once

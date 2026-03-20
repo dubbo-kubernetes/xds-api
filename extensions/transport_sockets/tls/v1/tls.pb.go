@@ -379,7 +379,7 @@ const file_extensions_transport_sockets_tls_v1_tls_proto_rawDesc = "" +
 	"$CombinedCertificateValidationContext\x12\xb9\x01\n" +
 	"0validation_context_certificate_provider_instance\x18\x02 \x01(\v2Q.extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstanceR,validationContextCertificateProviderInstance\x12\x7f\n" +
 	"\x1adefault_validation_context\x18\x03 \x01(\v2A.extensions.transport_sockets.tls.v1.CertificateValidationContextR\x18defaultValidationContextB\x19\n" +
-	"\x17validation_context_typeJ\x04\b\x05\x10\x06BMZKgithub.com/dubbo-inherent/xds-api/extensions/transport_sockets/tls/v1;tlsv1b\x06proto3"
+	"\x17validation_context_typeJ\x04\b\x05\x10\x06BEZCgithub.com/kdubbo/xds-api/extensions/transport_sockets/tls/v1;tlsv1b\x06proto3"
 
 var (
 	file_extensions_transport_sockets_tls_v1_tls_proto_rawDescOnce sync.Once

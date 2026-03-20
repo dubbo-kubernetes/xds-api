@@ -1,3 +1,3 @@
-module github.com/dubbo-inherent/xds-api
+module github.com/kdubbo/xds-api
 
 go 1.25.0

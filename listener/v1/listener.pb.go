@@ -7,7 +7,7 @@
 package listenerv1
 
 import (
-	v1 "github.com/dubbo-inherent/xds-api/core/v1"
+	v1 "github.com/kdubbo/xds-api/core/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	anypb "google.golang.org/protobuf/types/known/anypb"
@@ -220,7 +220,7 @@ const file_listener_v1_listener_proto_rawDesc = "" +
 	"\rfilter_chains\x18\x03 \x03(\v2\x18.listener.v1.FilterChainR\ffilterChains\x12;\n" +
 	"\fapi_listener\x18\x13 \x01(\v2\x18.listener.v1.ApiListenerR\vapiListener\x12?\n" +
 	"\x10listener_filters\x18\t \x03(\v2\x14.google.protobuf.AnyR\x0flistenerFilters\x12D\n" +
-	"\x10use_original_dst\x18\f \x01(\v2\x1a.google.protobuf.BoolValueR\x0euseOriginalDstB:Z8github.com/dubbo-inherent/xds-api/listener/v1;listenerv1b\x06proto3"
+	"\x10use_original_dst\x18\f \x01(\v2\x1a.google.protobuf.BoolValueR\x0euseOriginalDstB2Z0github.com/kdubbo/xds-api/listener/v1;listenerv1b\x06proto3"
 
 var (
 	file_listener_v1_listener_proto_rawDescOnce sync.Once

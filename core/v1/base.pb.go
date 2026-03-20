@@ -315,7 +315,7 @@ const file_core_v1_base_proto_rawDesc = "" +
 	"\fControlPlane\x12\x1e\n" +
 	"\n" +
 	"identifier\x18\x01 \x01(\tR\n" +
-	"identifierB2Z0github.com/dubbo-inherent/xds-api/core/v1;corev1b\x06proto3"
+	"identifierB*Z(github.com/kdubbo/xds-api/core/v1;corev1b\x06proto3"
 
 var (
 	file_core_v1_base_proto_rawDescOnce sync.Once

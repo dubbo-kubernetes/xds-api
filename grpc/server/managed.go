@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	xdscreds "github.com/dubbo-inherent/xds-api/grpc/credentials"
+	xdscreds "github.com/kdubbo/xds-api/grpc/credentials"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

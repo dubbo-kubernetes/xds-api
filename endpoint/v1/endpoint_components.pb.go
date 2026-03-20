@@ -7,7 +7,7 @@
 package endpointv1
 
 import (
-	v1 "github.com/dubbo-inherent/xds-api/core/v1"
+	v1 "github.com/kdubbo/xds-api/core/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	wrapperspb "google.golang.org/protobuf/types/known/wrapperspb"
@@ -315,7 +315,7 @@ const file_endpoint_v1_endpoint_components_proto_rawDesc = "" +
 	"\bpriority\x18\x05 \x01(\rR\bpriority\x12:\n" +
 	"\tproximity\x18\x06 \x01(\v2\x1c.google.protobuf.UInt32ValueR\tproximity\x1aL\n" +
 	"\x0eLbEndpointList\x12:\n" +
-	"\flb_endpoints\x18\x01 \x03(\v2\x17.endpoint.v1.LbEndpointR\vlbEndpointsB:Z8github.com/dubbo-inherent/xds-api/endpoint/v1;endpointv1b\x06proto3"
+	"\flb_endpoints\x18\x01 \x03(\v2\x17.endpoint.v1.LbEndpointR\vlbEndpointsB2Z0github.com/kdubbo/xds-api/endpoint/v1;endpointv1b\x06proto3"
 
 var (
 	file_endpoint_v1_endpoint_components_proto_rawDescOnce sync.Once

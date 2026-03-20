@@ -9,7 +9,7 @@ import (
 	"net"
 	"os"
 
-	tlsv1 "github.com/dubbo-inherent/xds-api/extensions/transport_sockets/tls/v1"
+	tlsv1 "github.com/kdubbo/xds-api/extensions/transport_sockets/tls/v1"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/resolver"

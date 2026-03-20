@@ -296,7 +296,7 @@ const file_core_v1_config_source_proto_rawDesc = "" +
 	"\x17config_source_specifier*\x16\n" +
 	"\n" +
 	"ApiVersion\x12\b\n" +
-	"\x04AUTO\x10\x00B2Z0github.com/dubbo-inherent/xds-api/core/v1;corev1b\x06proto3"
+	"\x04AUTO\x10\x00B*Z(github.com/kdubbo/xds-api/core/v1;corev1b\x06proto3"
 
 var (
 	file_core_v1_config_source_proto_rawDescOnce sync.Once
