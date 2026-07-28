@@ -61,6 +61,7 @@ message RouteAction {
   }
   google.protobuf.Duration timeout = 4;
   RetryPolicy retry_policy = 9;
+  FaultPolicy fault_policy = 10;
 }
 
 message RetryPolicy {
@@ -74,4 +75,19 @@ message RetryPolicy {
   google.protobuf.Duration per_try_timeout = 3;
   repeated uint32 retriable_status_codes = 7;
   RetryBackOff retry_back_off = 8;
+}
+
+message FaultPolicy {
+  FaultDelay delay = 1;
+  FaultAbort abort = 2;
+}
+
+message FaultDelay {
+  google.protobuf.Duration fixed_delay = 1;
+  google.protobuf.UInt32Value percentage = 2;
+}
+
+message FaultAbort {
+  uint32 http_status = 1;
+  google.protobuf.UInt32Value percentage = 2;
 }
