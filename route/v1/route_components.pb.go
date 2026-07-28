@@ -491,6 +491,7 @@ type RouteAction struct {
 	//	*RouteAction_WeightedClusters
 	ClusterSpecifier isRouteAction_ClusterSpecifier `protobuf_oneof:"cluster_specifier"`
 	Timeout          *durationpb.Duration           `protobuf:"bytes,4,opt,name=timeout,proto3" json:"timeout,omitempty"`
+	RetryPolicy      *RetryPolicy                   `protobuf:"bytes,9,opt,name=retry_policy,json=retryPolicy,proto3" json:"retry_policy,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -557,6 +558,13 @@ func (x *RouteAction) GetTimeout() *durationpb.Duration {
 	return nil
 }
 
+func (x *RouteAction) GetRetryPolicy() *RetryPolicy {
+	if x != nil {
+		return x.RetryPolicy
+	}
+	return nil
+}
+
 type isRouteAction_ClusterSpecifier interface {
 	isRouteAction_ClusterSpecifier()
 }
@@ -573,6 +581,82 @@ func (*RouteAction_Cluster) isRouteAction_ClusterSpecifier() {}
 
 func (*RouteAction_WeightedClusters) isRouteAction_ClusterSpecifier() {}
 
+type RetryPolicy struct {
+	state                protoimpl.MessageState    `protogen:"open.v1"`
+	RetryOn              string                    `protobuf:"bytes,1,opt,name=retry_on,json=retryOn,proto3" json:"retry_on,omitempty"`
+	NumRetries           *wrapperspb.UInt32Value   `protobuf:"bytes,2,opt,name=num_retries,json=numRetries,proto3" json:"num_retries,omitempty"`
+	PerTryTimeout        *durationpb.Duration      `protobuf:"bytes,3,opt,name=per_try_timeout,json=perTryTimeout,proto3" json:"per_try_timeout,omitempty"`
+	RetriableStatusCodes []uint32                  `protobuf:"varint,7,rep,packed,name=retriable_status_codes,json=retriableStatusCodes,proto3" json:"retriable_status_codes,omitempty"`
+	RetryBackOff         *RetryPolicy_RetryBackOff `protobuf:"bytes,8,opt,name=retry_back_off,json=retryBackOff,proto3" json:"retry_back_off,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
+}
+
+func (x *RetryPolicy) Reset() {
+	*x = RetryPolicy{}
+	mi := &file_route_v1_route_components_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RetryPolicy) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RetryPolicy) ProtoMessage() {}
+
+func (x *RetryPolicy) ProtoReflect() protoreflect.Message {
+	mi := &file_route_v1_route_components_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RetryPolicy.ProtoReflect.Descriptor instead.
+func (*RetryPolicy) Descriptor() ([]byte, []int) {
+	return file_route_v1_route_components_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *RetryPolicy) GetRetryOn() string {
+	if x != nil {
+		return x.RetryOn
+	}
+	return ""
+}
+
+func (x *RetryPolicy) GetNumRetries() *wrapperspb.UInt32Value {
+	if x != nil {
+		return x.NumRetries
+	}
+	return nil
+}
+
+func (x *RetryPolicy) GetPerTryTimeout() *durationpb.Duration {
+	if x != nil {
+		return x.PerTryTimeout
+	}
+	return nil
+}
+
+func (x *RetryPolicy) GetRetriableStatusCodes() []uint32 {
+	if x != nil {
+		return x.RetriableStatusCodes
+	}
+	return nil
+}
+
+func (x *RetryPolicy) GetRetryBackOff() *RetryPolicy_RetryBackOff {
+	if x != nil {
+		return x.RetryBackOff
+	}
+	return nil
+}
+
 type WeightedCluster_ClusterWeight struct {
 	state         protoimpl.MessageState  `protogen:"open.v1"`
 	Name          string                  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -584,7 +668,7 @@ type WeightedCluster_ClusterWeight struct {
 
 func (x *WeightedCluster_ClusterWeight) Reset() {
 	*x = WeightedCluster_ClusterWeight{}
-	mi := &file_route_v1_route_components_proto_msgTypes[7]
+	mi := &file_route_v1_route_components_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -596,7 +680,7 @@ func (x *WeightedCluster_ClusterWeight) String() string {
 func (*WeightedCluster_ClusterWeight) ProtoMessage() {}
 
 func (x *WeightedCluster_ClusterWeight) ProtoReflect() protoreflect.Message {
-	mi := &file_route_v1_route_components_proto_msgTypes[7]
+	mi := &file_route_v1_route_components_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -631,6 +715,58 @@ func (x *WeightedCluster_ClusterWeight) GetClusterHeader() string {
 		return x.ClusterHeader
 	}
 	return ""
+}
+
+type RetryPolicy_RetryBackOff struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	BaseInterval  *durationpb.Duration   `protobuf:"bytes,1,opt,name=base_interval,json=baseInterval,proto3" json:"base_interval,omitempty"`
+	MaxInterval   *durationpb.Duration   `protobuf:"bytes,2,opt,name=max_interval,json=maxInterval,proto3" json:"max_interval,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RetryPolicy_RetryBackOff) Reset() {
+	*x = RetryPolicy_RetryBackOff{}
+	mi := &file_route_v1_route_components_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RetryPolicy_RetryBackOff) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RetryPolicy_RetryBackOff) ProtoMessage() {}
+
+func (x *RetryPolicy_RetryBackOff) ProtoReflect() protoreflect.Message {
+	mi := &file_route_v1_route_components_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RetryPolicy_RetryBackOff.ProtoReflect.Descriptor instead.
+func (*RetryPolicy_RetryBackOff) Descriptor() ([]byte, []int) {
+	return file_route_v1_route_components_proto_rawDescGZIP(), []int{7, 0}
+}
+
+func (x *RetryPolicy_RetryBackOff) GetBaseInterval() *durationpb.Duration {
+	if x != nil {
+		return x.BaseInterval
+	}
+	return nil
+}
+
+func (x *RetryPolicy_RetryBackOff) GetMaxInterval() *durationpb.Duration {
+	if x != nil {
+		return x.MaxInterval
+	}
+	return nil
 }
 
 var File_route_v1_route_components_proto protoreflect.FileDescriptor
@@ -671,12 +807,23 @@ const file_route_v1_route_components_proto_rawDesc = "" +
 	"exactMatch\x12#\n" +
 	"\fprefix_match\x18\t \x01(\tH\x00R\vprefixMatch\x12I\n" +
 	"\x10safe_regex_match\x18\v \x01(\v2\x1d.type.matcher.v1.RegexMatcherH\x00R\x0esafeRegexMatchB\x18\n" +
-	"\x16header_match_specifier\"\xbd\x01\n" +
+	"\x16header_match_specifier\"\xf7\x01\n" +
 	"\vRouteAction\x12\x1a\n" +
 	"\acluster\x18\x01 \x01(\tH\x00R\acluster\x12H\n" +
 	"\x11weighted_clusters\x18\x03 \x01(\v2\x19.route.v1.WeightedClusterH\x00R\x10weightedClusters\x123\n" +
-	"\atimeout\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\atimeoutB\x13\n" +
-	"\x11cluster_specifierB,Z*github.com/kdubbo/xds-api/route/v1;routev1b\x06proto3"
+	"\atimeout\x18\x04 \x01(\v2\x19.google.protobuf.DurationR\atimeout\x128\n" +
+	"\fretry_policy\x18\t \x01(\v2\x15.route.v1.RetryPolicyR\vretryPolicyB\x13\n" +
+	"\x11cluster_specifier\"\xb9\x03\n" +
+	"\vRetryPolicy\x12\x19\n" +
+	"\bretry_on\x18\x01 \x01(\tR\aretryOn\x12=\n" +
+	"\vnum_retries\x18\x02 \x01(\v2\x1c.google.protobuf.UInt32ValueR\n" +
+	"numRetries\x12A\n" +
+	"\x0fper_try_timeout\x18\x03 \x01(\v2\x19.google.protobuf.DurationR\rperTryTimeout\x124\n" +
+	"\x16retriable_status_codes\x18\a \x03(\rR\x14retriableStatusCodes\x12H\n" +
+	"\x0eretry_back_off\x18\b \x01(\v2\".route.v1.RetryPolicy.RetryBackOffR\fretryBackOff\x1a\x8c\x01\n" +
+	"\fRetryBackOff\x12>\n" +
+	"\rbase_interval\x18\x01 \x01(\v2\x19.google.protobuf.DurationR\fbaseInterval\x12<\n" +
+	"\fmax_interval\x18\x02 \x01(\v2\x19.google.protobuf.DurationR\vmaxIntervalB,Z*github.com/kdubbo/xds-api/route/v1;routev1b\x06proto3"
 
 var (
 	file_route_v1_route_components_proto_rawDescOnce sync.Once
@@ -690,7 +837,7 @@ func file_route_v1_route_components_proto_rawDescGZIP() []byte {
 	return file_route_v1_route_components_proto_rawDescData
 }
 
-var file_route_v1_route_components_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_route_v1_route_components_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_route_v1_route_components_proto_goTypes = []any{
 	(*VirtualHost)(nil),                   // 0: route.v1.VirtualHost
 	(*Route)(nil),                         // 1: route.v1.Route
@@ -699,29 +846,37 @@ var file_route_v1_route_components_proto_goTypes = []any{
 	(*RouteMatch)(nil),                    // 4: route.v1.RouteMatch
 	(*HeaderMatcher)(nil),                 // 5: route.v1.HeaderMatcher
 	(*RouteAction)(nil),                   // 6: route.v1.RouteAction
-	(*WeightedCluster_ClusterWeight)(nil), // 7: route.v1.WeightedCluster.ClusterWeight
-	(*wrapperspb.UInt32Value)(nil),        // 8: google.protobuf.UInt32Value
-	(*v1.RegexMatcher)(nil),               // 9: type.matcher.v1.RegexMatcher
-	(*durationpb.Duration)(nil),           // 10: google.protobuf.Duration
+	(*RetryPolicy)(nil),                   // 7: route.v1.RetryPolicy
+	(*WeightedCluster_ClusterWeight)(nil), // 8: route.v1.WeightedCluster.ClusterWeight
+	(*RetryPolicy_RetryBackOff)(nil),      // 9: route.v1.RetryPolicy.RetryBackOff
+	(*wrapperspb.UInt32Value)(nil),        // 10: google.protobuf.UInt32Value
+	(*v1.RegexMatcher)(nil),               // 11: type.matcher.v1.RegexMatcher
+	(*durationpb.Duration)(nil),           // 12: google.protobuf.Duration
 }
 var file_route_v1_route_components_proto_depIdxs = []int32{
 	1,  // 0: route.v1.VirtualHost.routes:type_name -> route.v1.Route
 	4,  // 1: route.v1.Route.match:type_name -> route.v1.RouteMatch
 	6,  // 2: route.v1.Route.route:type_name -> route.v1.RouteAction
 	2,  // 3: route.v1.Route.non_forwarding_action:type_name -> route.v1.NonForwardingAction
-	7,  // 4: route.v1.WeightedCluster.clusters:type_name -> route.v1.WeightedCluster.ClusterWeight
-	8,  // 5: route.v1.WeightedCluster.total_weight:type_name -> google.protobuf.UInt32Value
-	9,  // 6: route.v1.RouteMatch.safe_regex:type_name -> type.matcher.v1.RegexMatcher
+	8,  // 4: route.v1.WeightedCluster.clusters:type_name -> route.v1.WeightedCluster.ClusterWeight
+	10, // 5: route.v1.WeightedCluster.total_weight:type_name -> google.protobuf.UInt32Value
+	11, // 6: route.v1.RouteMatch.safe_regex:type_name -> type.matcher.v1.RegexMatcher
 	5,  // 7: route.v1.RouteMatch.headers:type_name -> route.v1.HeaderMatcher
-	9,  // 8: route.v1.HeaderMatcher.safe_regex_match:type_name -> type.matcher.v1.RegexMatcher
+	11, // 8: route.v1.HeaderMatcher.safe_regex_match:type_name -> type.matcher.v1.RegexMatcher
 	3,  // 9: route.v1.RouteAction.weighted_clusters:type_name -> route.v1.WeightedCluster
-	10, // 10: route.v1.RouteAction.timeout:type_name -> google.protobuf.Duration
-	8,  // 11: route.v1.WeightedCluster.ClusterWeight.weight:type_name -> google.protobuf.UInt32Value
-	12, // [12:12] is the sub-list for method output_type
-	12, // [12:12] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	12, // 10: route.v1.RouteAction.timeout:type_name -> google.protobuf.Duration
+	7,  // 11: route.v1.RouteAction.retry_policy:type_name -> route.v1.RetryPolicy
+	10, // 12: route.v1.RetryPolicy.num_retries:type_name -> google.protobuf.UInt32Value
+	12, // 13: route.v1.RetryPolicy.per_try_timeout:type_name -> google.protobuf.Duration
+	9,  // 14: route.v1.RetryPolicy.retry_back_off:type_name -> route.v1.RetryPolicy.RetryBackOff
+	10, // 15: route.v1.WeightedCluster.ClusterWeight.weight:type_name -> google.protobuf.UInt32Value
+	12, // 16: route.v1.RetryPolicy.RetryBackOff.base_interval:type_name -> google.protobuf.Duration
+	12, // 17: route.v1.RetryPolicy.RetryBackOff.max_interval:type_name -> google.protobuf.Duration
+	18, // [18:18] is the sub-list for method output_type
+	18, // [18:18] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_route_v1_route_components_proto_init() }
@@ -753,7 +908,7 @@ func file_route_v1_route_components_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_route_v1_route_components_proto_rawDesc), len(file_route_v1_route_components_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

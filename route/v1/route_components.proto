@@ -60,4 +60,18 @@ message RouteAction {
     WeightedCluster weighted_clusters = 3;
   }
   google.protobuf.Duration timeout = 4;
+  RetryPolicy retry_policy = 9;
+}
+
+message RetryPolicy {
+  message RetryBackOff {
+    google.protobuf.Duration base_interval = 1;
+    google.protobuf.Duration max_interval = 2;
+  }
+
+  string retry_on = 1;
+  google.protobuf.UInt32Value num_retries = 2;
+  google.protobuf.Duration per_try_timeout = 3;
+  repeated uint32 retriable_status_codes = 7;
+  RetryBackOff retry_back_off = 8;
 }
