@@ -263,7 +263,7 @@ func tlsFingerprint(ctx *tlsv1.UpstreamTlsContext) string {
 	if ctx.CommonTlsContext != nil && ctx.CommonTlsContext.TlsCertificateCertificateProviderInstance != nil {
 		hasCert = ctx.CommonTlsContext.TlsCertificateCertificateProviderInstance.InstanceName
 	}
-	return fmt.Sprintf("mtls:sni=%s:cert=%s", sni, hasCert)
+	return fmt.Sprintf("mtls:sni=%s:cert=%s:sans=%s", sni, hasCert, strings.Join(subjectAltNames(ctx), ","))
 }
 
 // updateClusterTLS parses TransportSocket from a CDS response, stores the TLS

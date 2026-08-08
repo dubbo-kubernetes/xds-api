@@ -205,7 +205,7 @@ func DataPlaneTLSConfigFromBootstrap(bootstrap *BootstrapConfig, upstream *tlsv1
 		RootCAs:            roots,
 		InsecureSkipVerify: true, // VerifyPeerCertificate performs CA-chain validation for SPIFFE URI SAN certs.
 		VerifyPeerCertificate: func(rawCerts [][]byte, _ [][]*x509.Certificate) error {
-			return verifyPeerCertificateChain(rawCerts, roots)
+			return verifyPeerCertificateChain(rawCerts, roots, subjectAltNames(upstream))
 		},
 	}
 	if common := upstream.GetCommonTlsContext(); common != nil {
@@ -240,7 +240,18 @@ func fileWatcherConfigsForUpstreamTLS(bootstrap *BootstrapConfig, upstream *tlsv
 	return certProvider, rootProvider, nil
 }
 
-func verifyPeerCertificateChain(rawCerts [][]byte, roots *x509.CertPool) error {
+func subjectAltNames(upstream *tlsv1.UpstreamTlsContext) []string {
+	if upstream == nil || upstream.GetCommonTlsContext() == nil {
+		return nil
+	}
+	combined := upstream.GetCommonTlsContext().GetCombinedValidationContext()
+	if combined == nil || combined.GetDefaultValidationContext() == nil {
+		return nil
+	}
+	return append([]string(nil), combined.GetDefaultValidationContext().GetMatchSubjectAltNames()...)
+}
+
+func verifyPeerCertificateChain(rawCerts [][]byte, roots *x509.CertPool, allowedSANs []string) error {
 	if len(rawCerts) == 0 {
 		return fmt.Errorf("peer presented no certificate")
 	}
@@ -256,11 +267,35 @@ func verifyPeerCertificateChain(rawCerts [][]byte, roots *x509.CertPool) error {
 		}
 		intermediates.AddCert(cert)
 	}
-	_, err = leaf.Verify(x509.VerifyOptions{
+	if _, err = leaf.Verify(x509.VerifyOptions{
 		Roots:         roots,
 		Intermediates: intermediates,
-	})
-	return err
+	}); err != nil {
+		return err
+	}
+	if len(allowedSANs) == 0 {
+		return nil
+	}
+	for _, uri := range leaf.URIs {
+		if containsString(allowedSANs, uri.String()) {
+			return nil
+		}
+	}
+	for _, dnsName := range leaf.DNSNames {
+		if containsString(allowedSANs, dnsName) {
+			return nil
+		}
+	}
+	return fmt.Errorf("peer certificate SAN is not in CDS allowlist %v", allowedSANs)
+}
+
+func containsString(values []string, target string) bool {
+	for _, value := range values {
+		if value == target {
+			return true
+		}
+	}
+	return false
 }
 
 func hostOnly(authority string) string {

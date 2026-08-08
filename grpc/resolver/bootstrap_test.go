@@ -7,6 +7,7 @@ import (
 	"crypto/x509/pkix"
 	"encoding/pem"
 	"math/big"
+	"net/url"
 	"os"
 	"path/filepath"
 	"testing"
@@ -224,6 +225,9 @@ func TestDataPlaneTLSConfigFromBootstrapUsesCDSContext(t *testing.T) {
 			},
 			ValidationContextType: &tlsv1.CommonTlsContext_CombinedValidationContext{
 				CombinedValidationContext: &tlsv1.CommonTlsContext_CombinedCertificateValidationContext{
+					DefaultValidationContext: &tlsv1.CertificateValidationContext{
+						MatchSubjectAltNames: []string{"spiffe://cluster.local/ns/app/sa/payment"},
+					},
 					ValidationContextCertificateProviderInstance: &tlsv1.CommonTlsContext_CertificateProviderInstance{
 						InstanceName: "default",
 					},
@@ -245,6 +249,11 @@ func TestDataPlaneTLSConfigFromBootstrapUsesCDSContext(t *testing.T) {
 	}
 	if err := cfg.VerifyPeerCertificate([][]byte{leafDER}, nil); err != nil {
 		t.Fatalf("VerifyPeerCertificate() failed: %v", err)
+	}
+	if err := verifyPeerCertificateChain([][]byte{leafDER}, cfg.RootCAs, []string{
+		"spiffe://cluster.local/ns/app/sa/other",
+	}); err == nil {
+		t.Fatal("certificate outside the CDS SAN allowlist was accepted")
 	}
 }
 
@@ -288,6 +297,11 @@ func newTestLeaf(t *testing.T, rootDER []byte, rootKey *rsa.PrivateKey) ([]byte,
 		KeyUsage:     x509.KeyUsageDigitalSignature,
 		ExtKeyUsage:  []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth, x509.ExtKeyUsageClientAuth},
 	}
+	identity, err := url.Parse("spiffe://cluster.local/ns/app/sa/payment")
+	if err != nil {
+		t.Fatalf("parse SPIFFE identity: %v", err)
+	}
+	tmpl.URIs = []*url.URL{identity}
 	der, err := x509.CreateCertificate(rand.Reader, tmpl, root, &key.PublicKey, rootKey)
 	if err != nil {
 		t.Fatalf("CreateCertificate(leaf) failed: %v", err)
