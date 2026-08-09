@@ -32,7 +32,7 @@ func TestParseBootstrapReadsManagementServerChannelCreds(t *testing.T) {
     }],
     "server_features": ["xds_v3"]
   }],
-  "node": {"id": "proxyless~10.0.0.1~client.app~app.svc.cluster.local"},
+  "node": {"id": "inherent~10.0.0.1~client.app~app.svc.cluster.local"},
   "dubbo_grpc_keepalive": {
     "enabled": true,
     "time": "30s",
@@ -70,7 +70,7 @@ func TestParseBootstrapReadsManagementServerChannelCreds(t *testing.T) {
 	if got, want := cfg.ChannelCreds[0].Config.CACertificateFile, "/etc/dubbo/proxy/root-cert.pem"; got != want {
 		t.Fatalf("channel creds CA = %q, want %q", got, want)
 	}
-	if cfg.Node == nil || cfg.Node.Id != "proxyless~10.0.0.1~client.app~app.svc.cluster.local" {
+	if cfg.Node == nil || cfg.Node.Id != "inherent~10.0.0.1~client.app~app.svc.cluster.local" {
 		t.Fatalf("node id = %#v", cfg.Node)
 	}
 	if got, want := cfg.CertProviders["default"].CertificateFile, "/etc/dubbo/proxy/cert-chain.pem"; got != want {

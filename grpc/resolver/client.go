@@ -338,7 +338,7 @@ func dialClient(ctx context.Context, addr string, node *corev1.Node, opts ...grp
 
 // buildNodeFromEnv builds a minimal Node from environment variables.
 func buildNodeFromEnv() *corev1.Node {
-	nodeType := "proxyless"
+	nodeType := "inherent"
 
 	podIP := os.Getenv("POD_IP")
 	if podIP == "" {
