@@ -171,10 +171,8 @@ func (r *xdsResolver) watcher() {
 					clusters = append(clusters, c)
 				}
 				r.pendingClusters = clusters
-				// Always re-subscribe to CDS. If DestinationRule was absent when
-				// VirtualService was first applied, the subset clusters would have
-				// been silently dropped by the control plane. Re-subscribing here
-				// ensures we pick them up once the DestinationRule is created.
+				// Always re-subscribe to CDS so route-driven cluster changes are
+				// observed after an RDS update.
 				if err := client.Subscribe(clusterType, clusters); err != nil {
 					log.Printf("[xds-resolver] Failed to subscribe to CDS: %v", err)
 				}
@@ -183,7 +181,7 @@ func (r *xdsResolver) watcher() {
 		case clusterType:
 			// Parse TransportSocket from CDS and collect names of clusters that
 			// were actually returned. An empty slice means the control plane sent
-			// 0 resources (DestinationRule not yet created).
+			// no matching resources.
 			resolvedClusters, tlsChanged := r.updateClusterTLS(resp)
 
 			var edsClusters []string
@@ -195,12 +193,10 @@ func (r *xdsResolver) watcher() {
 				// No RDS weights at all — fall back to the plain default cluster.
 				edsClusters = []string{buildClusterName(r.target)}
 			default:
-				// CDS returned 0 resources for the requested subsets. This happens
-				// when VirtualService exists but DestinationRule has not been applied
-				// yet. Skip the EDS subscribe to avoid the control-plane push-loop
-				// warning. The next RDS push will re-trigger CDS subscription.
-				log.Printf("[xds-resolver] CDS returned 0 matching subset clusters; "+
-					"waiting for DestinationRule (pending: %v)", r.pendingClusters)
+				// Skip EDS subscription when CDS returned no matching resources.
+				// The next RDS push will re-trigger CDS subscription.
+				log.Printf("[xds-resolver] CDS returned 0 matching clusters; "+
+					"waiting for a route update (pending: %v)", r.pendingClusters)
 				continue
 			}
 			// Re-subscribe on first resolution for a cluster, or when TLS changes.
