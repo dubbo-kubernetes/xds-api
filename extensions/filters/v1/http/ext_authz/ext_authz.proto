@@ -3,6 +3,7 @@ syntax = "proto3";
 package extensions.filters.http.ext_authz.v1;
 
 import "google/protobuf/duration.proto";
+import "extensions/filters/v1/http/rbac/rbac.proto";
 
 option go_package = "github.com/kdubbo/xds-api/extensions/filters/v1/http/ext_authz;ext_authzv1";
 
@@ -23,4 +24,5 @@ message ExtAuthz {
   google.protobuf.Duration timeout = 9;
   bool fail_open = 10;
   bool shadow = 11;
+  repeated extensions.filters.http.rbac.v1.Rule rules = 12;
 }

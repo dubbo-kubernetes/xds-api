@@ -7,6 +7,7 @@
 package ext_authzv1
 
 import (
+	rbac "github.com/kdubbo/xds-api/extensions/filters/v1/http/rbac"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	durationpb "google.golang.org/protobuf/types/known/durationpb"
@@ -81,6 +82,7 @@ type ExtAuthz struct {
 	Timeout                      *durationpb.Duration   `protobuf:"bytes,9,opt,name=timeout,proto3" json:"timeout,omitempty"`
 	FailOpen                     bool                   `protobuf:"varint,10,opt,name=fail_open,json=failOpen,proto3" json:"fail_open,omitempty"`
 	Shadow                       bool                   `protobuf:"varint,11,opt,name=shadow,proto3" json:"shadow,omitempty"`
+	Rules                        []*rbac.Rule           `protobuf:"bytes,12,rep,name=rules,proto3" json:"rules,omitempty"`
 	unknownFields                protoimpl.UnknownFields
 	sizeCache                    protoimpl.SizeCache
 }
@@ -192,11 +194,18 @@ func (x *ExtAuthz) GetShadow() bool {
 	return false
 }
 
+func (x *ExtAuthz) GetRules() []*rbac.Rule {
+	if x != nil {
+		return x.Rules
+	}
+	return nil
+}
+
 var File_extensions_filters_v1_http_ext_authz_ext_authz_proto protoreflect.FileDescriptor
 
 const file_extensions_filters_v1_http_ext_authz_ext_authz_proto_rawDesc = "" +
 	"\n" +
-	"4extensions/filters/v1/http/ext_authz/ext_authz.proto\x12$extensions.filters.http.ext_authz.v1\x1a\x1egoogle/protobuf/duration.proto\"\x9e\x04\n" +
+	"4extensions/filters/v1/http/ext_authz/ext_authz.proto\x12$extensions.filters.http.ext_authz.v1\x1a\x1egoogle/protobuf/duration.proto\x1a*extensions/filters/v1/http/rbac/rbac.proto\"\xdb\x04\n" +
 	"\bExtAuthz\x12\x1a\n" +
 	"\bprovider\x18\x01 \x01(\tR\bprovider\x12S\n" +
 	"\bprotocol\x18\x02 \x01(\x0e27.extensions.filters.http.ext_authz.v1.ExtAuthz.ProtocolR\bprotocol\x12\x18\n" +
@@ -210,7 +219,8 @@ const file_extensions_filters_v1_http_ext_authz_ext_authz_proto_rawDesc = "" +
 	"\atimeout\x18\t \x01(\v2\x19.google.protobuf.DurationR\atimeout\x12\x1b\n" +
 	"\tfail_open\x18\n" +
 	" \x01(\bR\bfailOpen\x12\x16\n" +
-	"\x06shadow\x18\v \x01(\bR\x06shadow\"\x1e\n" +
+	"\x06shadow\x18\v \x01(\bR\x06shadow\x12;\n" +
+	"\x05rules\x18\f \x03(\v2%.extensions.filters.http.rbac.v1.RuleR\x05rules\"\x1e\n" +
 	"\bProtocol\x12\b\n" +
 	"\x04HTTP\x10\x00\x12\b\n" +
 	"\x04GRPC\x10\x01BLZJgithub.com/kdubbo/xds-api/extensions/filters/v1/http/ext_authz;ext_authzv1b\x06proto3"
@@ -233,15 +243,17 @@ var file_extensions_filters_v1_http_ext_authz_ext_authz_proto_goTypes = []any{
 	(ExtAuthz_Protocol)(0),      // 0: extensions.filters.http.ext_authz.v1.ExtAuthz.Protocol
 	(*ExtAuthz)(nil),            // 1: extensions.filters.http.ext_authz.v1.ExtAuthz
 	(*durationpb.Duration)(nil), // 2: google.protobuf.Duration
+	(*rbac.Rule)(nil),           // 3: extensions.filters.http.rbac.v1.Rule
 }
 var file_extensions_filters_v1_http_ext_authz_ext_authz_proto_depIdxs = []int32{
 	0, // 0: extensions.filters.http.ext_authz.v1.ExtAuthz.protocol:type_name -> extensions.filters.http.ext_authz.v1.ExtAuthz.Protocol
 	2, // 1: extensions.filters.http.ext_authz.v1.ExtAuthz.timeout:type_name -> google.protobuf.Duration
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	3, // 2: extensions.filters.http.ext_authz.v1.ExtAuthz.rules:type_name -> extensions.filters.http.rbac.v1.Rule
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_extensions_filters_v1_http_ext_authz_ext_authz_proto_init() }
