@@ -71,6 +71,8 @@ type RBAC struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Action        RBAC_Action            `protobuf:"varint,1,opt,name=action,proto3,enum=extensions.filters.http.rbac.v1.RBAC_Action" json:"action,omitempty"`
 	Rules         []*Rule                `protobuf:"bytes,2,rep,name=rules,proto3" json:"rules,omitempty"`
+	Shadow        bool                   `protobuf:"varint,3,opt,name=shadow,proto3" json:"shadow,omitempty"`
+	PolicyName    string                 `protobuf:"bytes,4,opt,name=policy_name,json=policyName,proto3" json:"policy_name,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -119,10 +121,25 @@ func (x *RBAC) GetRules() []*Rule {
 	return nil
 }
 
+func (x *RBAC) GetShadow() bool {
+	if x != nil {
+		return x.Shadow
+	}
+	return false
+}
+
+func (x *RBAC) GetPolicyName() string {
+	if x != nil {
+		return x.PolicyName
+	}
+	return ""
+}
+
 type Rule struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Sources       []*Source              `protobuf:"bytes,1,rep,name=sources,proto3" json:"sources,omitempty"`
 	When          []*Condition           `protobuf:"bytes,2,rep,name=when,proto3" json:"when,omitempty"`
+	Operations    []*Operation           `protobuf:"bytes,3,rep,name=operations,proto3" json:"operations,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -171,11 +188,29 @@ func (x *Rule) GetWhen() []*Condition {
 	return nil
 }
 
+func (x *Rule) GetOperations() []*Operation {
+	if x != nil {
+		return x.Operations
+	}
+	return nil
+}
+
 type Source struct {
-	state             protoimpl.MessageState `protogen:"open.v1"`
-	RequestPrincipals []string               `protobuf:"bytes,1,rep,name=request_principals,json=requestPrincipals,proto3" json:"request_principals,omitempty"`
-	unknownFields     protoimpl.UnknownFields
-	sizeCache         protoimpl.SizeCache
+	state                protoimpl.MessageState `protogen:"open.v1"`
+	RequestPrincipals    []string               `protobuf:"bytes,1,rep,name=request_principals,json=requestPrincipals,proto3" json:"request_principals,omitempty"`
+	Principals           []string               `protobuf:"bytes,2,rep,name=principals,proto3" json:"principals,omitempty"`
+	NotPrincipals        []string               `protobuf:"bytes,3,rep,name=not_principals,json=notPrincipals,proto3" json:"not_principals,omitempty"`
+	NotRequestPrincipals []string               `protobuf:"bytes,4,rep,name=not_request_principals,json=notRequestPrincipals,proto3" json:"not_request_principals,omitempty"`
+	Namespaces           []string               `protobuf:"bytes,5,rep,name=namespaces,proto3" json:"namespaces,omitempty"`
+	NotNamespaces        []string               `protobuf:"bytes,6,rep,name=not_namespaces,json=notNamespaces,proto3" json:"not_namespaces,omitempty"`
+	ServiceAccounts      []string               `protobuf:"bytes,7,rep,name=service_accounts,json=serviceAccounts,proto3" json:"service_accounts,omitempty"`
+	NotServiceAccounts   []string               `protobuf:"bytes,8,rep,name=not_service_accounts,json=notServiceAccounts,proto3" json:"not_service_accounts,omitempty"`
+	IpBlocks             []string               `protobuf:"bytes,9,rep,name=ip_blocks,json=ipBlocks,proto3" json:"ip_blocks,omitempty"`
+	NotIpBlocks          []string               `protobuf:"bytes,10,rep,name=not_ip_blocks,json=notIpBlocks,proto3" json:"not_ip_blocks,omitempty"`
+	RemoteIpBlocks       []string               `protobuf:"bytes,11,rep,name=remote_ip_blocks,json=remoteIpBlocks,proto3" json:"remote_ip_blocks,omitempty"`
+	NotRemoteIpBlocks    []string               `protobuf:"bytes,12,rep,name=not_remote_ip_blocks,json=notRemoteIpBlocks,proto3" json:"not_remote_ip_blocks,omitempty"`
+	unknownFields        protoimpl.UnknownFields
+	sizeCache            protoimpl.SizeCache
 }
 
 func (x *Source) Reset() {
@@ -215,6 +250,183 @@ func (x *Source) GetRequestPrincipals() []string {
 	return nil
 }
 
+func (x *Source) GetPrincipals() []string {
+	if x != nil {
+		return x.Principals
+	}
+	return nil
+}
+
+func (x *Source) GetNotPrincipals() []string {
+	if x != nil {
+		return x.NotPrincipals
+	}
+	return nil
+}
+
+func (x *Source) GetNotRequestPrincipals() []string {
+	if x != nil {
+		return x.NotRequestPrincipals
+	}
+	return nil
+}
+
+func (x *Source) GetNamespaces() []string {
+	if x != nil {
+		return x.Namespaces
+	}
+	return nil
+}
+
+func (x *Source) GetNotNamespaces() []string {
+	if x != nil {
+		return x.NotNamespaces
+	}
+	return nil
+}
+
+func (x *Source) GetServiceAccounts() []string {
+	if x != nil {
+		return x.ServiceAccounts
+	}
+	return nil
+}
+
+func (x *Source) GetNotServiceAccounts() []string {
+	if x != nil {
+		return x.NotServiceAccounts
+	}
+	return nil
+}
+
+func (x *Source) GetIpBlocks() []string {
+	if x != nil {
+		return x.IpBlocks
+	}
+	return nil
+}
+
+func (x *Source) GetNotIpBlocks() []string {
+	if x != nil {
+		return x.NotIpBlocks
+	}
+	return nil
+}
+
+func (x *Source) GetRemoteIpBlocks() []string {
+	if x != nil {
+		return x.RemoteIpBlocks
+	}
+	return nil
+}
+
+func (x *Source) GetNotRemoteIpBlocks() []string {
+	if x != nil {
+		return x.NotRemoteIpBlocks
+	}
+	return nil
+}
+
+type Operation struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Hosts         []string               `protobuf:"bytes,1,rep,name=hosts,proto3" json:"hosts,omitempty"`
+	NotHosts      []string               `protobuf:"bytes,2,rep,name=not_hosts,json=notHosts,proto3" json:"not_hosts,omitempty"`
+	Ports         []string               `protobuf:"bytes,3,rep,name=ports,proto3" json:"ports,omitempty"`
+	NotPorts      []string               `protobuf:"bytes,4,rep,name=not_ports,json=notPorts,proto3" json:"not_ports,omitempty"`
+	Methods       []string               `protobuf:"bytes,5,rep,name=methods,proto3" json:"methods,omitempty"`
+	NotMethods    []string               `protobuf:"bytes,6,rep,name=not_methods,json=notMethods,proto3" json:"not_methods,omitempty"`
+	Paths         []string               `protobuf:"bytes,7,rep,name=paths,proto3" json:"paths,omitempty"`
+	NotPaths      []string               `protobuf:"bytes,8,rep,name=not_paths,json=notPaths,proto3" json:"not_paths,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Operation) Reset() {
+	*x = Operation{}
+	mi := &file_extensions_filters_v1_http_rbac_rbac_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Operation) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Operation) ProtoMessage() {}
+
+func (x *Operation) ProtoReflect() protoreflect.Message {
+	mi := &file_extensions_filters_v1_http_rbac_rbac_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Operation.ProtoReflect.Descriptor instead.
+func (*Operation) Descriptor() ([]byte, []int) {
+	return file_extensions_filters_v1_http_rbac_rbac_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *Operation) GetHosts() []string {
+	if x != nil {
+		return x.Hosts
+	}
+	return nil
+}
+
+func (x *Operation) GetNotHosts() []string {
+	if x != nil {
+		return x.NotHosts
+	}
+	return nil
+}
+
+func (x *Operation) GetPorts() []string {
+	if x != nil {
+		return x.Ports
+	}
+	return nil
+}
+
+func (x *Operation) GetNotPorts() []string {
+	if x != nil {
+		return x.NotPorts
+	}
+	return nil
+}
+
+func (x *Operation) GetMethods() []string {
+	if x != nil {
+		return x.Methods
+	}
+	return nil
+}
+
+func (x *Operation) GetNotMethods() []string {
+	if x != nil {
+		return x.NotMethods
+	}
+	return nil
+}
+
+func (x *Operation) GetPaths() []string {
+	if x != nil {
+		return x.Paths
+	}
+	return nil
+}
+
+func (x *Operation) GetNotPaths() []string {
+	if x != nil {
+		return x.NotPaths
+	}
+	return nil
+}
+
 type Condition struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Key           string                 `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
@@ -226,7 +438,7 @@ type Condition struct {
 
 func (x *Condition) Reset() {
 	*x = Condition{}
-	mi := &file_extensions_filters_v1_http_rbac_rbac_proto_msgTypes[3]
+	mi := &file_extensions_filters_v1_http_rbac_rbac_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -238,7 +450,7 @@ func (x *Condition) String() string {
 func (*Condition) ProtoMessage() {}
 
 func (x *Condition) ProtoReflect() protoreflect.Message {
-	mi := &file_extensions_filters_v1_http_rbac_rbac_proto_msgTypes[3]
+	mi := &file_extensions_filters_v1_http_rbac_rbac_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -251,7 +463,7 @@ func (x *Condition) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Condition.ProtoReflect.Descriptor instead.
 func (*Condition) Descriptor() ([]byte, []int) {
-	return file_extensions_filters_v1_http_rbac_rbac_proto_rawDescGZIP(), []int{3}
+	return file_extensions_filters_v1_http_rbac_rbac_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Condition) GetKey() string {
@@ -279,18 +491,50 @@ var File_extensions_filters_v1_http_rbac_rbac_proto protoreflect.FileDescriptor
 
 const file_extensions_filters_v1_http_rbac_rbac_proto_rawDesc = "" +
 	"\n" +
-	"*extensions/filters/v1/http/rbac/rbac.proto\x12\x1fextensions.filters.http.rbac.v1\"\xa8\x01\n" +
+	"*extensions/filters/v1/http/rbac/rbac.proto\x12\x1fextensions.filters.http.rbac.v1\"\xe1\x01\n" +
 	"\x04RBAC\x12D\n" +
 	"\x06action\x18\x01 \x01(\x0e2,.extensions.filters.http.rbac.v1.RBAC.ActionR\x06action\x12;\n" +
-	"\x05rules\x18\x02 \x03(\v2%.extensions.filters.http.rbac.v1.RuleR\x05rules\"\x1d\n" +
+	"\x05rules\x18\x02 \x03(\v2%.extensions.filters.http.rbac.v1.RuleR\x05rules\x12\x16\n" +
+	"\x06shadow\x18\x03 \x01(\bR\x06shadow\x12\x1f\n" +
+	"\vpolicy_name\x18\x04 \x01(\tR\n" +
+	"policyName\"\x1d\n" +
 	"\x06Action\x12\t\n" +
 	"\x05ALLOW\x10\x00\x12\b\n" +
-	"\x04DENY\x10\x01\"\x89\x01\n" +
+	"\x04DENY\x10\x01\"\xd5\x01\n" +
 	"\x04Rule\x12A\n" +
 	"\asources\x18\x01 \x03(\v2'.extensions.filters.http.rbac.v1.SourceR\asources\x12>\n" +
-	"\x04when\x18\x02 \x03(\v2*.extensions.filters.http.rbac.v1.ConditionR\x04when\"7\n" +
+	"\x04when\x18\x02 \x03(\v2*.extensions.filters.http.rbac.v1.ConditionR\x04when\x12J\n" +
+	"\n" +
+	"operations\x18\x03 \x03(\v2*.extensions.filters.http.rbac.v1.OperationR\n" +
+	"operations\"\xf4\x03\n" +
 	"\x06Source\x12-\n" +
-	"\x12request_principals\x18\x01 \x03(\tR\x11requestPrincipals\"T\n" +
+	"\x12request_principals\x18\x01 \x03(\tR\x11requestPrincipals\x12\x1e\n" +
+	"\n" +
+	"principals\x18\x02 \x03(\tR\n" +
+	"principals\x12%\n" +
+	"\x0enot_principals\x18\x03 \x03(\tR\rnotPrincipals\x124\n" +
+	"\x16not_request_principals\x18\x04 \x03(\tR\x14notRequestPrincipals\x12\x1e\n" +
+	"\n" +
+	"namespaces\x18\x05 \x03(\tR\n" +
+	"namespaces\x12%\n" +
+	"\x0enot_namespaces\x18\x06 \x03(\tR\rnotNamespaces\x12)\n" +
+	"\x10service_accounts\x18\a \x03(\tR\x0fserviceAccounts\x120\n" +
+	"\x14not_service_accounts\x18\b \x03(\tR\x12notServiceAccounts\x12\x1b\n" +
+	"\tip_blocks\x18\t \x03(\tR\bipBlocks\x12\"\n" +
+	"\rnot_ip_blocks\x18\n" +
+	" \x03(\tR\vnotIpBlocks\x12(\n" +
+	"\x10remote_ip_blocks\x18\v \x03(\tR\x0eremoteIpBlocks\x12/\n" +
+	"\x14not_remote_ip_blocks\x18\f \x03(\tR\x11notRemoteIpBlocks\"\xdf\x01\n" +
+	"\tOperation\x12\x14\n" +
+	"\x05hosts\x18\x01 \x03(\tR\x05hosts\x12\x1b\n" +
+	"\tnot_hosts\x18\x02 \x03(\tR\bnotHosts\x12\x14\n" +
+	"\x05ports\x18\x03 \x03(\tR\x05ports\x12\x1b\n" +
+	"\tnot_ports\x18\x04 \x03(\tR\bnotPorts\x12\x18\n" +
+	"\amethods\x18\x05 \x03(\tR\amethods\x12\x1f\n" +
+	"\vnot_methods\x18\x06 \x03(\tR\n" +
+	"notMethods\x12\x14\n" +
+	"\x05paths\x18\a \x03(\tR\x05paths\x12\x1b\n" +
+	"\tnot_paths\x18\b \x03(\tR\bnotPaths\"T\n" +
 	"\tCondition\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x16\n" +
 	"\x06values\x18\x02 \x03(\tR\x06values\x12\x1d\n" +
@@ -310,24 +554,26 @@ func file_extensions_filters_v1_http_rbac_rbac_proto_rawDescGZIP() []byte {
 }
 
 var file_extensions_filters_v1_http_rbac_rbac_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_extensions_filters_v1_http_rbac_rbac_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_extensions_filters_v1_http_rbac_rbac_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_extensions_filters_v1_http_rbac_rbac_proto_goTypes = []any{
 	(RBAC_Action)(0),  // 0: extensions.filters.http.rbac.v1.RBAC.Action
 	(*RBAC)(nil),      // 1: extensions.filters.http.rbac.v1.RBAC
 	(*Rule)(nil),      // 2: extensions.filters.http.rbac.v1.Rule
 	(*Source)(nil),    // 3: extensions.filters.http.rbac.v1.Source
-	(*Condition)(nil), // 4: extensions.filters.http.rbac.v1.Condition
+	(*Operation)(nil), // 4: extensions.filters.http.rbac.v1.Operation
+	(*Condition)(nil), // 5: extensions.filters.http.rbac.v1.Condition
 }
 var file_extensions_filters_v1_http_rbac_rbac_proto_depIdxs = []int32{
 	0, // 0: extensions.filters.http.rbac.v1.RBAC.action:type_name -> extensions.filters.http.rbac.v1.RBAC.Action
 	2, // 1: extensions.filters.http.rbac.v1.RBAC.rules:type_name -> extensions.filters.http.rbac.v1.Rule
 	3, // 2: extensions.filters.http.rbac.v1.Rule.sources:type_name -> extensions.filters.http.rbac.v1.Source
-	4, // 3: extensions.filters.http.rbac.v1.Rule.when:type_name -> extensions.filters.http.rbac.v1.Condition
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	5, // 3: extensions.filters.http.rbac.v1.Rule.when:type_name -> extensions.filters.http.rbac.v1.Condition
+	4, // 4: extensions.filters.http.rbac.v1.Rule.operations:type_name -> extensions.filters.http.rbac.v1.Operation
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_extensions_filters_v1_http_rbac_rbac_proto_init() }
@@ -341,7 +587,7 @@ func file_extensions_filters_v1_http_rbac_rbac_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_extensions_filters_v1_http_rbac_rbac_proto_rawDesc), len(file_extensions_filters_v1_http_rbac_rbac_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   4,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

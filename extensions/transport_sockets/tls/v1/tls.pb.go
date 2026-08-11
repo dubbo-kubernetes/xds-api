@@ -23,6 +23,55 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type TlsParameters_TlsProtocol int32
+
+const (
+	TlsParameters_TLS_AUTO TlsParameters_TlsProtocol = 0
+	TlsParameters_TLSV1_2  TlsParameters_TlsProtocol = 1
+	TlsParameters_TLSV1_3  TlsParameters_TlsProtocol = 2
+)
+
+// Enum value maps for TlsParameters_TlsProtocol.
+var (
+	TlsParameters_TlsProtocol_name = map[int32]string{
+		0: "TLS_AUTO",
+		1: "TLSV1_2",
+		2: "TLSV1_3",
+	}
+	TlsParameters_TlsProtocol_value = map[string]int32{
+		"TLS_AUTO": 0,
+		"TLSV1_2":  1,
+		"TLSV1_3":  2,
+	}
+)
+
+func (x TlsParameters_TlsProtocol) Enum() *TlsParameters_TlsProtocol {
+	p := new(TlsParameters_TlsProtocol)
+	*p = x
+	return p
+}
+
+func (x TlsParameters_TlsProtocol) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (TlsParameters_TlsProtocol) Descriptor() protoreflect.EnumDescriptor {
+	return file_extensions_transport_sockets_tls_v1_tls_proto_enumTypes[0].Descriptor()
+}
+
+func (TlsParameters_TlsProtocol) Type() protoreflect.EnumType {
+	return &file_extensions_transport_sockets_tls_v1_tls_proto_enumTypes[0]
+}
+
+func (x TlsParameters_TlsProtocol) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use TlsParameters_TlsProtocol.Descriptor instead.
+func (TlsParameters_TlsProtocol) EnumDescriptor() ([]byte, []int) {
+	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP(), []int{6, 0}
+}
+
 type CertificateValidationContext struct {
 	state                protoimpl.MessageState `protogen:"open.v1"`
 	MatchSubjectAltNames []string               `protobuf:"bytes,1,rep,name=match_subject_alt_names,json=matchSubjectAltNames,proto3" json:"match_subject_alt_names,omitempty"`
@@ -329,6 +378,7 @@ type CommonTlsContext struct {
 	//
 	//	*CommonTlsContext_CombinedValidationContext
 	ValidationContextType isCommonTlsContext_ValidationContextType `protobuf_oneof:"validation_context_type"`
+	TlsParams             *TlsParameters                           `protobuf:"bytes,10,opt,name=tls_params,json=tlsParams,proto3" json:"tls_params,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
 }
@@ -393,6 +443,13 @@ func (x *CommonTlsContext) GetCombinedValidationContext() *CommonTlsContext_Comb
 	return nil
 }
 
+func (x *CommonTlsContext) GetTlsParams() *TlsParameters {
+	if x != nil {
+		return x.TlsParams
+	}
+	return nil
+}
+
 type isCommonTlsContext_ValidationContextType interface {
 	isCommonTlsContext_ValidationContextType()
 }
@@ -402,6 +459,50 @@ type CommonTlsContext_CombinedValidationContext struct {
 }
 
 func (*CommonTlsContext_CombinedValidationContext) isCommonTlsContext_ValidationContextType() {}
+
+type TlsParameters struct {
+	state              protoimpl.MessageState    `protogen:"open.v1"`
+	MinProtocolVersion TlsParameters_TlsProtocol `protobuf:"varint,1,opt,name=min_protocol_version,json=minProtocolVersion,proto3,enum=extensions.transport_sockets.tls.v1.TlsParameters_TlsProtocol" json:"min_protocol_version,omitempty"`
+	unknownFields      protoimpl.UnknownFields
+	sizeCache          protoimpl.SizeCache
+}
+
+func (x *TlsParameters) Reset() {
+	*x = TlsParameters{}
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TlsParameters) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TlsParameters) ProtoMessage() {}
+
+func (x *TlsParameters) ProtoReflect() protoreflect.Message {
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TlsParameters.ProtoReflect.Descriptor instead.
+func (*TlsParameters) Descriptor() ([]byte, []int) {
+	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *TlsParameters) GetMinProtocolVersion() TlsParameters_TlsProtocol {
+	if x != nil {
+		return x.MinProtocolVersion
+	}
+	return TlsParameters_TLS_AUTO
+}
 
 type CommonTlsContext_CertificateProviderInstance struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
@@ -413,7 +514,7 @@ type CommonTlsContext_CertificateProviderInstance struct {
 
 func (x *CommonTlsContext_CertificateProviderInstance) Reset() {
 	*x = CommonTlsContext_CertificateProviderInstance{}
-	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[6]
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -425,7 +526,7 @@ func (x *CommonTlsContext_CertificateProviderInstance) String() string {
 func (*CommonTlsContext_CertificateProviderInstance) ProtoMessage() {}
 
 func (x *CommonTlsContext_CertificateProviderInstance) ProtoReflect() protoreflect.Message {
-	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[6]
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -465,7 +566,7 @@ type CommonTlsContext_CombinedCertificateValidationContext struct {
 
 func (x *CommonTlsContext_CombinedCertificateValidationContext) Reset() {
 	*x = CommonTlsContext_CombinedCertificateValidationContext{}
-	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[7]
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -477,7 +578,7 @@ func (x *CommonTlsContext_CombinedCertificateValidationContext) String() string 
 func (*CommonTlsContext_CombinedCertificateValidationContext) ProtoMessage() {}
 
 func (x *CommonTlsContext_CombinedCertificateValidationContext) ProtoReflect() protoreflect.Message {
-	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[7]
+	mi := &file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -530,18 +631,27 @@ const file_extensions_transport_sockets_tls_v1_tls_proto_rawDesc = "" +
 	"\x03sni\x18\x02 \x01(\tR\x03sni\"\xd5\x01\n" +
 	"\x14DownstreamTlsContext\x12c\n" +
 	"\x12common_tls_context\x18\x01 \x01(\v25.extensions.transport_sockets.tls.v1.CommonTlsContextR\x10commonTlsContext\x12X\n" +
-	"\x1arequire_client_certificate\x18\x02 \x01(\v2\x1a.google.protobuf.BoolValueR\x18requireClientCertificate\"\x84\a\n" +
+	"\x1arequire_client_certificate\x18\x02 \x01(\v2\x1a.google.protobuf.BoolValueR\x18requireClientCertificate\"\xd7\a\n" +
 	"\x10CommonTlsContext\x12\xb3\x01\n" +
 	"-tls_certificate_certificate_provider_instance\x18\t \x01(\v2Q.extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstanceR)tlsCertificateCertificateProviderInstance\x12%\n" +
 	"\x0ealpn_protocols\x18\x04 \x03(\tR\ralpnProtocols\x12\x9c\x01\n" +
-	"\x1bcombined_validation_context\x18\b \x01(\v2Z.extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContextH\x00R\x19combinedValidationContext\x1am\n" +
+	"\x1bcombined_validation_context\x18\b \x01(\v2Z.extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContextH\x00R\x19combinedValidationContext\x12Q\n" +
+	"\n" +
+	"tls_params\x18\n" +
+	" \x01(\v22.extensions.transport_sockets.tls.v1.TlsParametersR\ttlsParams\x1am\n" +
 	"\x1bCertificateProviderInstance\x12#\n" +
 	"\rinstance_name\x18\x01 \x01(\tR\finstanceName\x12)\n" +
 	"\x10certificate_name\x18\x02 \x01(\tR\x0fcertificateName\x1a\xe3\x02\n" +
 	"$CombinedCertificateValidationContext\x12\xb9\x01\n" +
 	"0validation_context_certificate_provider_instance\x18\x02 \x01(\v2Q.extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstanceR,validationContextCertificateProviderInstance\x12\x7f\n" +
 	"\x1adefault_validation_context\x18\x03 \x01(\v2A.extensions.transport_sockets.tls.v1.CertificateValidationContextR\x18defaultValidationContextB\x19\n" +
-	"\x17validation_context_typeJ\x04\b\x05\x10\x06BEZCgithub.com/kdubbo/xds-api/extensions/transport_sockets/tls/v1;tlsv1b\x06proto3"
+	"\x17validation_context_typeJ\x04\b\x05\x10\x06\"\xb8\x01\n" +
+	"\rTlsParameters\x12p\n" +
+	"\x14min_protocol_version\x18\x01 \x01(\x0e2>.extensions.transport_sockets.tls.v1.TlsParameters.TlsProtocolR\x12minProtocolVersion\"5\n" +
+	"\vTlsProtocol\x12\f\n" +
+	"\bTLS_AUTO\x10\x00\x12\v\n" +
+	"\aTLSV1_2\x10\x01\x12\v\n" +
+	"\aTLSV1_3\x10\x02BEZCgithub.com/kdubbo/xds-api/extensions/transport_sockets/tls/v1;tlsv1b\x06proto3"
 
 var (
 	file_extensions_transport_sockets_tls_v1_tls_proto_rawDescOnce sync.Once
@@ -555,37 +665,42 @@ func file_extensions_transport_sockets_tls_v1_tls_proto_rawDescGZIP() []byte {
 	return file_extensions_transport_sockets_tls_v1_tls_proto_rawDescData
 }
 
-var file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_extensions_transport_sockets_tls_v1_tls_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_extensions_transport_sockets_tls_v1_tls_proto_goTypes = []any{
-	(*CertificateValidationContext)(nil),                          // 0: extensions.transport_sockets.tls.v1.CertificateValidationContext
-	(*TlsCertificate)(nil),                                        // 1: extensions.transport_sockets.tls.v1.TlsCertificate
-	(*Secret)(nil),                                                // 2: extensions.transport_sockets.tls.v1.Secret
-	(*UpstreamTlsContext)(nil),                                    // 3: extensions.transport_sockets.tls.v1.UpstreamTlsContext
-	(*DownstreamTlsContext)(nil),                                  // 4: extensions.transport_sockets.tls.v1.DownstreamTlsContext
-	(*CommonTlsContext)(nil),                                      // 5: extensions.transport_sockets.tls.v1.CommonTlsContext
-	(*CommonTlsContext_CertificateProviderInstance)(nil),          // 6: extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstance
-	(*CommonTlsContext_CombinedCertificateValidationContext)(nil), // 7: extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContext
-	(*v1.DataSource)(nil),                                         // 8: core.v1.DataSource
-	(*wrapperspb.BoolValue)(nil),                                  // 9: google.protobuf.BoolValue
+	(TlsParameters_TlsProtocol)(0),                                // 0: extensions.transport_sockets.tls.v1.TlsParameters.TlsProtocol
+	(*CertificateValidationContext)(nil),                          // 1: extensions.transport_sockets.tls.v1.CertificateValidationContext
+	(*TlsCertificate)(nil),                                        // 2: extensions.transport_sockets.tls.v1.TlsCertificate
+	(*Secret)(nil),                                                // 3: extensions.transport_sockets.tls.v1.Secret
+	(*UpstreamTlsContext)(nil),                                    // 4: extensions.transport_sockets.tls.v1.UpstreamTlsContext
+	(*DownstreamTlsContext)(nil),                                  // 5: extensions.transport_sockets.tls.v1.DownstreamTlsContext
+	(*CommonTlsContext)(nil),                                      // 6: extensions.transport_sockets.tls.v1.CommonTlsContext
+	(*TlsParameters)(nil),                                         // 7: extensions.transport_sockets.tls.v1.TlsParameters
+	(*CommonTlsContext_CertificateProviderInstance)(nil),          // 8: extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstance
+	(*CommonTlsContext_CombinedCertificateValidationContext)(nil), // 9: extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContext
+	(*v1.DataSource)(nil),                                         // 10: core.v1.DataSource
+	(*wrapperspb.BoolValue)(nil),                                  // 11: google.protobuf.BoolValue
 }
 var file_extensions_transport_sockets_tls_v1_tls_proto_depIdxs = []int32{
-	8,  // 0: extensions.transport_sockets.tls.v1.CertificateValidationContext.trusted_ca:type_name -> core.v1.DataSource
-	8,  // 1: extensions.transport_sockets.tls.v1.TlsCertificate.certificate_chain:type_name -> core.v1.DataSource
-	8,  // 2: extensions.transport_sockets.tls.v1.TlsCertificate.private_key:type_name -> core.v1.DataSource
-	1,  // 3: extensions.transport_sockets.tls.v1.Secret.tls_certificate:type_name -> extensions.transport_sockets.tls.v1.TlsCertificate
-	0,  // 4: extensions.transport_sockets.tls.v1.Secret.validation_context:type_name -> extensions.transport_sockets.tls.v1.CertificateValidationContext
-	5,  // 5: extensions.transport_sockets.tls.v1.UpstreamTlsContext.common_tls_context:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext
-	5,  // 6: extensions.transport_sockets.tls.v1.DownstreamTlsContext.common_tls_context:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext
-	9,  // 7: extensions.transport_sockets.tls.v1.DownstreamTlsContext.require_client_certificate:type_name -> google.protobuf.BoolValue
-	6,  // 8: extensions.transport_sockets.tls.v1.CommonTlsContext.tls_certificate_certificate_provider_instance:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstance
-	7,  // 9: extensions.transport_sockets.tls.v1.CommonTlsContext.combined_validation_context:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContext
-	6,  // 10: extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContext.validation_context_certificate_provider_instance:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstance
-	0,  // 11: extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContext.default_validation_context:type_name -> extensions.transport_sockets.tls.v1.CertificateValidationContext
-	12, // [12:12] is the sub-list for method output_type
-	12, // [12:12] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	10, // 0: extensions.transport_sockets.tls.v1.CertificateValidationContext.trusted_ca:type_name -> core.v1.DataSource
+	10, // 1: extensions.transport_sockets.tls.v1.TlsCertificate.certificate_chain:type_name -> core.v1.DataSource
+	10, // 2: extensions.transport_sockets.tls.v1.TlsCertificate.private_key:type_name -> core.v1.DataSource
+	2,  // 3: extensions.transport_sockets.tls.v1.Secret.tls_certificate:type_name -> extensions.transport_sockets.tls.v1.TlsCertificate
+	1,  // 4: extensions.transport_sockets.tls.v1.Secret.validation_context:type_name -> extensions.transport_sockets.tls.v1.CertificateValidationContext
+	6,  // 5: extensions.transport_sockets.tls.v1.UpstreamTlsContext.common_tls_context:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext
+	6,  // 6: extensions.transport_sockets.tls.v1.DownstreamTlsContext.common_tls_context:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext
+	11, // 7: extensions.transport_sockets.tls.v1.DownstreamTlsContext.require_client_certificate:type_name -> google.protobuf.BoolValue
+	8,  // 8: extensions.transport_sockets.tls.v1.CommonTlsContext.tls_certificate_certificate_provider_instance:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstance
+	9,  // 9: extensions.transport_sockets.tls.v1.CommonTlsContext.combined_validation_context:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContext
+	7,  // 10: extensions.transport_sockets.tls.v1.CommonTlsContext.tls_params:type_name -> extensions.transport_sockets.tls.v1.TlsParameters
+	0,  // 11: extensions.transport_sockets.tls.v1.TlsParameters.min_protocol_version:type_name -> extensions.transport_sockets.tls.v1.TlsParameters.TlsProtocol
+	8,  // 12: extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContext.validation_context_certificate_provider_instance:type_name -> extensions.transport_sockets.tls.v1.CommonTlsContext.CertificateProviderInstance
+	1,  // 13: extensions.transport_sockets.tls.v1.CommonTlsContext.CombinedCertificateValidationContext.default_validation_context:type_name -> extensions.transport_sockets.tls.v1.CertificateValidationContext
+	14, // [14:14] is the sub-list for method output_type
+	14, // [14:14] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_extensions_transport_sockets_tls_v1_tls_proto_init() }
@@ -605,13 +720,14 @@ func file_extensions_transport_sockets_tls_v1_tls_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_extensions_transport_sockets_tls_v1_tls_proto_rawDesc), len(file_extensions_transport_sockets_tls_v1_tls_proto_rawDesc)),
-			NumEnums:      0,
-			NumMessages:   8,
+			NumEnums:      1,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_extensions_transport_sockets_tls_v1_tls_proto_goTypes,
 		DependencyIndexes: file_extensions_transport_sockets_tls_v1_tls_proto_depIdxs,
+		EnumInfos:         file_extensions_transport_sockets_tls_v1_tls_proto_enumTypes,
 		MessageInfos:      file_extensions_transport_sockets_tls_v1_tls_proto_msgTypes,
 	}.Build()
 	File_extensions_transport_sockets_tls_v1_tls_proto = out.File
