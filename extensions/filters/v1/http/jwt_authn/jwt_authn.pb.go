@@ -74,19 +74,15 @@ func (x *JwtAuthentication) GetAllowMissing() bool {
 }
 
 type JwtProvider struct {
-	state                 protoimpl.MessageState `protogen:"open.v1"`
-	Issuer                string                 `protobuf:"bytes,1,opt,name=issuer,proto3" json:"issuer,omitempty"`
-	Audiences             []string               `protobuf:"bytes,2,rep,name=audiences,proto3" json:"audiences,omitempty"`
-	JwksUri               string                 `protobuf:"bytes,3,opt,name=jwks_uri,json=jwksUri,proto3" json:"jwks_uri,omitempty"`
-	Jwks                  string                 `protobuf:"bytes,4,opt,name=jwks,proto3" json:"jwks,omitempty"`
-	FromHeaders           []*JwtHeader           `protobuf:"bytes,5,rep,name=from_headers,json=fromHeaders,proto3" json:"from_headers,omitempty"`
-	FromParams            []string               `protobuf:"bytes,6,rep,name=from_params,json=fromParams,proto3" json:"from_params,omitempty"`
-	FromCookies           []string               `protobuf:"bytes,7,rep,name=from_cookies,json=fromCookies,proto3" json:"from_cookies,omitempty"`
-	ForwardOriginalToken  bool                   `protobuf:"varint,8,opt,name=forward_original_token,json=forwardOriginalToken,proto3" json:"forward_original_token,omitempty"`
-	OutputPayloadToHeader string                 `protobuf:"bytes,9,opt,name=output_payload_to_header,json=outputPayloadToHeader,proto3" json:"output_payload_to_header,omitempty"`
-	OutputClaimToHeaders  []*ClaimToHeader       `protobuf:"bytes,10,rep,name=output_claim_to_headers,json=outputClaimToHeaders,proto3" json:"output_claim_to_headers,omitempty"`
-	unknownFields         protoimpl.UnknownFields
-	sizeCache             protoimpl.SizeCache
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Issuer        string                 `protobuf:"bytes,1,opt,name=issuer,proto3" json:"issuer,omitempty"`
+	Audiences     []string               `protobuf:"bytes,2,rep,name=audiences,proto3" json:"audiences,omitempty"`
+	JwksUri       string                 `protobuf:"bytes,3,opt,name=jwks_uri,json=jwksUri,proto3" json:"jwks_uri,omitempty"`
+	Jwks          string                 `protobuf:"bytes,4,opt,name=jwks,proto3" json:"jwks,omitempty"`
+	FromHeaders   []*JwtHeader           `protobuf:"bytes,5,rep,name=from_headers,json=fromHeaders,proto3" json:"from_headers,omitempty"`
+	FromParams    []string               `protobuf:"bytes,6,rep,name=from_params,json=fromParams,proto3" json:"from_params,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *JwtProvider) Reset() {
@@ -161,34 +157,6 @@ func (x *JwtProvider) GetFromParams() []string {
 	return nil
 }
 
-func (x *JwtProvider) GetFromCookies() []string {
-	if x != nil {
-		return x.FromCookies
-	}
-	return nil
-}
-
-func (x *JwtProvider) GetForwardOriginalToken() bool {
-	if x != nil {
-		return x.ForwardOriginalToken
-	}
-	return false
-}
-
-func (x *JwtProvider) GetOutputPayloadToHeader() string {
-	if x != nil {
-		return x.OutputPayloadToHeader
-	}
-	return ""
-}
-
-func (x *JwtProvider) GetOutputClaimToHeaders() []*ClaimToHeader {
-	if x != nil {
-		return x.OutputClaimToHeaders
-	}
-	return nil
-}
-
 type JwtHeader struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -241,58 +209,6 @@ func (x *JwtHeader) GetPrefix() string {
 	return ""
 }
 
-type ClaimToHeader struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Claim         string                 `protobuf:"bytes,1,opt,name=claim,proto3" json:"claim,omitempty"`
-	Header        string                 `protobuf:"bytes,2,opt,name=header,proto3" json:"header,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ClaimToHeader) Reset() {
-	*x = ClaimToHeader{}
-	mi := &file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ClaimToHeader) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ClaimToHeader) ProtoMessage() {}
-
-func (x *ClaimToHeader) ProtoReflect() protoreflect.Message {
-	mi := &file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ClaimToHeader.ProtoReflect.Descriptor instead.
-func (*ClaimToHeader) Descriptor() ([]byte, []int) {
-	return file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *ClaimToHeader) GetClaim() string {
-	if x != nil {
-		return x.Claim
-	}
-	return ""
-}
-
-func (x *ClaimToHeader) GetHeader() string {
-	if x != nil {
-		return x.Header
-	}
-	return ""
-}
-
 var File_extensions_filters_v1_http_jwt_authn_jwt_authn_proto protoreflect.FileDescriptor
 
 const file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_rawDesc = "" +
@@ -300,7 +216,7 @@ const file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_rawDesc = "" +
 	"4extensions/filters/v1/http/jwt_authn/jwt_authn.proto\x12$extensions.filters.http.jwt_authn.v1\"\x89\x01\n" +
 	"\x11JwtAuthentication\x12O\n" +
 	"\tproviders\x18\x01 \x03(\v21.extensions.filters.http.jwt_authn.v1.JwtProviderR\tproviders\x12#\n" +
-	"\rallow_missing\x18\x02 \x01(\bR\fallowMissing\"\xe5\x03\n" +
+	"\rallow_missing\x18\x02 \x01(\bR\fallowMissing\"\xe7\x01\n" +
 	"\vJwtProvider\x12\x16\n" +
 	"\x06issuer\x18\x01 \x01(\tR\x06issuer\x12\x1c\n" +
 	"\taudiences\x18\x02 \x03(\tR\taudiences\x12\x19\n" +
@@ -308,18 +224,10 @@ const file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_rawDesc = "" +
 	"\x04jwks\x18\x04 \x01(\tR\x04jwks\x12R\n" +
 	"\ffrom_headers\x18\x05 \x03(\v2/.extensions.filters.http.jwt_authn.v1.JwtHeaderR\vfromHeaders\x12\x1f\n" +
 	"\vfrom_params\x18\x06 \x03(\tR\n" +
-	"fromParams\x12!\n" +
-	"\ffrom_cookies\x18\a \x03(\tR\vfromCookies\x124\n" +
-	"\x16forward_original_token\x18\b \x01(\bR\x14forwardOriginalToken\x127\n" +
-	"\x18output_payload_to_header\x18\t \x01(\tR\x15outputPayloadToHeader\x12j\n" +
-	"\x17output_claim_to_headers\x18\n" +
-	" \x03(\v23.extensions.filters.http.jwt_authn.v1.ClaimToHeaderR\x14outputClaimToHeaders\"7\n" +
+	"fromParams\"7\n" +
 	"\tJwtHeader\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x16\n" +
-	"\x06prefix\x18\x02 \x01(\tR\x06prefix\"=\n" +
-	"\rClaimToHeader\x12\x14\n" +
-	"\x05claim\x18\x01 \x01(\tR\x05claim\x12\x16\n" +
-	"\x06header\x18\x02 \x01(\tR\x06headerBLZJgithub.com/kdubbo/xds-api/extensions/filters/v1/http/jwt_authn;jwt_authnv1b\x06proto3"
+	"\x06prefix\x18\x02 \x01(\tR\x06prefixBLZJgithub.com/kdubbo/xds-api/extensions/filters/v1/http/jwt_authn;jwt_authnv1b\x06proto3"
 
 var (
 	file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_rawDescOnce sync.Once
@@ -333,22 +241,20 @@ func file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_rawDescGZIP() []b
 	return file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_rawDescData
 }
 
-var file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_goTypes = []any{
 	(*JwtAuthentication)(nil), // 0: extensions.filters.http.jwt_authn.v1.JwtAuthentication
 	(*JwtProvider)(nil),       // 1: extensions.filters.http.jwt_authn.v1.JwtProvider
 	(*JwtHeader)(nil),         // 2: extensions.filters.http.jwt_authn.v1.JwtHeader
-	(*ClaimToHeader)(nil),     // 3: extensions.filters.http.jwt_authn.v1.ClaimToHeader
 }
 var file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_depIdxs = []int32{
 	1, // 0: extensions.filters.http.jwt_authn.v1.JwtAuthentication.providers:type_name -> extensions.filters.http.jwt_authn.v1.JwtProvider
 	2, // 1: extensions.filters.http.jwt_authn.v1.JwtProvider.from_headers:type_name -> extensions.filters.http.jwt_authn.v1.JwtHeader
-	3, // 2: extensions.filters.http.jwt_authn.v1.JwtProvider.output_claim_to_headers:type_name -> extensions.filters.http.jwt_authn.v1.ClaimToHeader
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_init() }
@@ -362,7 +268,7 @@ func file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_rawDesc), len(file_extensions_filters_v1_http_jwt_authn_jwt_authn_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
