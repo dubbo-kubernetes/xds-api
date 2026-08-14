@@ -65,7 +65,9 @@ func (p *weightedPicker) Pick(info balancer.PickInfo) (balancer.PickResult, erro
 	return balancer.PickResult{
 		SubConn: p.slots[idx%uint64(len(p.slots))].sc,
 		Done: func(done balancer.DoneInfo) {
-			runtimetelemetry.Default().RecordClient(info.FullMethodName, done.Err)
+			if !runtimetelemetry.UsesNativeStats(info.Ctx) {
+				runtimetelemetry.Default().RecordClient(info.FullMethodName, done.Err)
+			}
 		},
 	}, nil
 }
