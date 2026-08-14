@@ -224,6 +224,10 @@ func (r *Runtime) WritePrometheus(w io.Writer) error {
 	r.metricsMu.RLock()
 	snapshot := make(map[metricKey]uint64, len(r.requests))
 	for key, count := range r.requests {
+		if key.reporter == "client" && !config.client ||
+			key.reporter == "server" && !config.server {
+			continue
+		}
 		if config.removeResponseStatus {
 			key.status = codes.OK
 		}

@@ -72,6 +72,25 @@ func TestRuntimeRemovesGRPCResponseStatus(t *testing.T) {
 	}
 }
 
+func TestRuntimeFiltersPreviouslyRecordedReporterAfterScopeChange(t *testing.T) {
+	runtime := NewRuntime("")
+	runtime.config.Store(&metricConfig{enabled: true, client: true, server: true})
+	runtime.RecordClient("/payments.Payment/Get", nil)
+	runtime.recordServer("/payments.Payment/Get", nil)
+	runtime.config.Store(&metricConfig{enabled: true, client: true})
+
+	var output bytes.Buffer
+	if err := runtime.WritePrometheus(&output); err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(output.String(), `reporter="client"`) {
+		t.Fatalf("client metric missing:\n%s", output.String())
+	}
+	if strings.Contains(output.String(), `reporter="server"`) {
+		t.Fatalf("server metric exported outside current scope:\n%s", output.String())
+	}
+}
+
 func TestRuntimeDisabledDoesNotRecord(t *testing.T) {
 	path := writeConfig(t, `{"telemetry":{"metrics":{"enabled":false}}}`)
 	runtime := NewRuntime(path)
