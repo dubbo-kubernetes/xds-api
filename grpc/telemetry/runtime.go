@@ -262,33 +262,46 @@ func (r *Runtime) WritePrometheus(w io.Writer) error {
 
 type rpcMethodKey struct{}
 
-type serverStatsHandler struct {
-	runtime *Runtime
+type rpcStatsHandler struct {
+	runtime  *Runtime
+	reporter string
 }
 
 func (r *Runtime) ServerStatsHandler() stats.Handler {
-	return &serverStatsHandler{runtime: r}
+	return &rpcStatsHandler{runtime: r, reporter: "server"}
 }
 
 func (r *Runtime) ServerOption() grpc.ServerOption {
 	return grpc.StatsHandler(r.ServerStatsHandler())
 }
 
-func (h *serverStatsHandler) TagRPC(ctx context.Context, info *stats.RPCTagInfo) context.Context {
+func (r *Runtime) ClientStatsHandler() stats.Handler {
+	return &rpcStatsHandler{runtime: r, reporter: "client"}
+}
+
+func (r *Runtime) ClientDialOption() grpc.DialOption {
+	return grpc.WithStatsHandler(r.ClientStatsHandler())
+}
+
+func (h *rpcStatsHandler) TagRPC(ctx context.Context, info *stats.RPCTagInfo) context.Context {
 	return context.WithValue(ctx, rpcMethodKey{}, info.FullMethodName)
 }
 
-func (*serverStatsHandler) TagConn(ctx context.Context, _ *stats.ConnTagInfo) context.Context {
+func (*rpcStatsHandler) TagConn(ctx context.Context, _ *stats.ConnTagInfo) context.Context {
 	return ctx
 }
 
-func (h *serverStatsHandler) HandleConn(context.Context, stats.ConnStats) {}
+func (*rpcStatsHandler) HandleConn(context.Context, stats.ConnStats) {}
 
-func (h *serverStatsHandler) HandleRPC(ctx context.Context, event stats.RPCStats) {
+func (h *rpcStatsHandler) HandleRPC(ctx context.Context, event stats.RPCStats) {
 	end, ok := event.(*stats.End)
 	if !ok {
 		return
 	}
 	method, _ := ctx.Value(rpcMethodKey{}).(string)
+	if h.reporter == "client" {
+		h.runtime.RecordClient(method, end.Error)
+		return
+	}
 	h.runtime.recordServer(method, end.Error)
 }

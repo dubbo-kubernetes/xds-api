@@ -22,7 +22,9 @@ func TestRuntimeRecordsClientAndServerWithoutRemovedStatus(t *testing.T) {
 		}}
 	}`)
 	runtime := NewRuntime(path)
-	runtime.RecordClient("/payments.Payment/Get", nil)
+	clientHandler := runtime.ClientStatsHandler()
+	clientCtx := clientHandler.TagRPC(context.Background(), &stats.RPCTagInfo{FullMethodName: "/payments.Payment/Get"})
+	clientHandler.HandleRPC(clientCtx, &stats.End{})
 
 	handler := runtime.ServerStatsHandler()
 	ctx := handler.TagRPC(context.Background(), &stats.RPCTagInfo{FullMethodName: "/payments.Payment/Get"})
