@@ -3,6 +3,7 @@ package resolver
 import (
 	"sync/atomic"
 
+	runtimetelemetry "github.com/kdubbo/xds-api/grpc/telemetry"
 	"google.golang.org/grpc/balancer"
 	"google.golang.org/grpc/balancer/base"
 )
@@ -59,9 +60,12 @@ type weightedPicker struct {
 	next  uint64
 }
 
-func (p *weightedPicker) Pick(_ balancer.PickInfo) (balancer.PickResult, error) {
+func (p *weightedPicker) Pick(info balancer.PickInfo) (balancer.PickResult, error) {
 	idx := atomic.AddUint64(&p.next, 1) - 1
-	return balancer.PickResult{SubConn: p.slots[idx%uint64(len(p.slots))].sc}, nil
+	return balancer.PickResult{
+		SubConn: p.slots[idx%uint64(len(p.slots))].sc,
+		Done: func(done balancer.DoneInfo) {
+			runtimetelemetry.Default().RecordClient(info.FullMethodName, done.Err)
+		},
+	}, nil
 }
-
-
