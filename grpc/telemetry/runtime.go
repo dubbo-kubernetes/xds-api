@@ -37,19 +37,34 @@ type metricSideConfig struct {
 }
 
 type runtimeConfig struct {
-	Telemetry *struct {
-		Metrics *struct {
-			Enabled   bool     `json:"enabled"`
-			Providers []string `json:"providers"`
-			Rules     []struct {
-				Metric string `json:"metric"`
-				Scope  string `json:"scope"`
-				Tags   map[string]struct {
-					Action string `json:"action"`
-				} `json:"tags"`
-			} `json:"rules"`
-		} `json:"metrics"`
-	} `json:"telemetry"`
+	Telemetry *runtimeTelemetryConfig `json:"telemetry"`
+}
+
+type runtimeTelemetryConfig struct {
+	Metrics *struct {
+		Enabled   bool     `json:"enabled"`
+		Providers []string `json:"providers"`
+		Rules     []struct {
+			Metric string `json:"metric"`
+			Scope  string `json:"scope"`
+			Tags   map[string]struct {
+				Action string `json:"action"`
+			} `json:"tags"`
+		} `json:"rules"`
+	} `json:"metrics"`
+	Logging []runtimeLoggingConfig `json:"logging"`
+}
+
+// runtimeLoggingConfig is the per-workload form written by dubbod into the
+// projected Secret. It intentionally uses strings and maps instead of the API
+// protobuf types so native applications only need this module at runtime.
+type runtimeLoggingConfig struct {
+	Providers        []string          `json:"providers"`
+	Disabled         bool              `json:"disabled"`
+	Mode             string            `json:"mode"`
+	FilterExpression string            `json:"filterExpression"`
+	Tags             map[string]string `json:"tags"`
+	Endpoint         string            `json:"endpoint"`
 }
 
 type metricKey struct {
@@ -69,7 +84,8 @@ type metricValue struct {
 type Runtime struct {
 	path string
 
-	config atomic.Pointer[metricConfig]
+	config  atomic.Pointer[metricConfig]
+	logging atomic.Pointer[loggingConfig]
 
 	reloadMu      sync.Mutex
 	lastCheckNano atomic.Int64
@@ -78,11 +94,31 @@ type Runtime struct {
 
 	metricsMu sync.RWMutex
 	values    map[metricKey]metricValue
+
+	accessLogQueue       chan accessLogRecord
+	accessLogStop        chan struct{}
+	accessLogDone        chan struct{}
+	accessLogStart       sync.Once
+	accessLogStopOnce    sync.Once
+	accessLogStarted     atomic.Bool
+	accessLogClosed      atomic.Bool
+	accessLogExportersMu sync.Mutex
+	accessLogExporters   map[string]*otlpLogExporter
+	accessLogDropped     atomic.Uint64
+	accessLogFailed      atomic.Uint64
 }
 
 func NewRuntime(path string) *Runtime {
-	runtime := &Runtime{path: path, values: make(map[metricKey]metricValue)}
+	runtime := &Runtime{
+		path:               path,
+		values:             make(map[metricKey]metricValue),
+		accessLogQueue:     make(chan accessLogRecord, defaultAccessLogQueueSize),
+		accessLogStop:      make(chan struct{}),
+		accessLogDone:      make(chan struct{}),
+		accessLogExporters: make(map[string]*otlpLogExporter),
+	}
 	runtime.config.Store(&metricConfig{})
+	runtime.logging.Store(&loggingConfig{})
 	_ = runtime.Reload()
 	return runtime
 }
@@ -98,6 +134,7 @@ func Default() *Runtime {
 func (r *Runtime) Reload() error {
 	if strings.TrimSpace(r.path) == "" {
 		r.config.Store(&metricConfig{})
+		r.logging.Store(&loggingConfig{})
 		return nil
 	}
 	info, err := os.Stat(r.path)
@@ -108,7 +145,7 @@ func (r *Runtime) Reload() error {
 	if err != nil {
 		return fmt.Errorf("read runtime config: %w", err)
 	}
-	config, err := parseMetricConfig(data)
+	metrics, logging, err := parseRuntimeConfig(data)
 	if err != nil {
 		return err
 	}
@@ -116,7 +153,8 @@ func (r *Runtime) Reload() error {
 	r.modTimeNano = info.ModTime().UnixNano()
 	r.fileSize = info.Size()
 	r.reloadMu.Unlock()
-	r.config.Store(&config)
+	r.config.Store(&metrics)
+	r.logging.Store(&logging)
 	return nil
 }
 
@@ -125,6 +163,26 @@ func parseMetricConfig(data []byte) (metricConfig, error) {
 	if err := json.Unmarshal(data, &raw); err != nil {
 		return metricConfig{}, fmt.Errorf("parse runtime telemetry: %w", err)
 	}
+	return parseMetricConfigFromRuntime(raw)
+}
+
+func parseRuntimeConfig(data []byte) (metricConfig, loggingConfig, error) {
+	var raw runtimeConfig
+	if err := json.Unmarshal(data, &raw); err != nil {
+		return metricConfig{}, loggingConfig{}, fmt.Errorf("parse runtime telemetry: %w", err)
+	}
+	metrics, err := parseMetricConfigFromRuntime(raw)
+	if err != nil {
+		return metricConfig{}, loggingConfig{}, err
+	}
+	logging, err := parseLoggingConfig(raw.Telemetry)
+	if err != nil {
+		return metricConfig{}, loggingConfig{}, err
+	}
+	return metrics, logging, nil
+}
+
+func parseMetricConfigFromRuntime(raw runtimeConfig) (metricConfig, error) {
 	if raw.Telemetry == nil || raw.Telemetry.Metrics == nil || !raw.Telemetry.Metrics.Enabled {
 		return metricConfig{}, nil
 	}
@@ -219,27 +277,27 @@ func (r *Runtime) recordCount(reporter, fullMethod string, code codes.Code) {
 func (r *Runtime) recordRPC(reporter, fullMethod string, code codes.Code, duration time.Duration, requestSize, responseSize uint64) {
 	r.reloadIfChanged()
 	config := r.config.Load()
-	if config == nil || !config.enabled {
-		return
-	}
 	service, method := splitMethod(fullMethod)
-	key := metricKey{reporter: reporter, service: service, method: method, status: code}
-	r.metricsMu.Lock()
-	value := r.values[key]
-	if metricEnabled(config, RequestCountMetric, reporter) {
-		value.requests++
+	if config != nil && config.enabled {
+		key := metricKey{reporter: reporter, service: service, method: method, status: code}
+		r.metricsMu.Lock()
+		value := r.values[key]
+		if metricEnabled(config, RequestCountMetric, reporter) {
+			value.requests++
+		}
+		if metricEnabled(config, RequestDurationMetric, reporter) {
+			value.requestDuration.observe(duration.Seconds(), durationBuckets)
+		}
+		if metricEnabled(config, RequestSizeMetric, reporter) {
+			value.requestSize.observe(float64(requestSize), sizeBuckets)
+		}
+		if metricEnabled(config, ResponseSizeMetric, reporter) {
+			value.responseSize.observe(float64(responseSize), sizeBuckets)
+		}
+		r.values[key] = value
+		r.metricsMu.Unlock()
 	}
-	if metricEnabled(config, RequestDurationMetric, reporter) {
-		value.requestDuration.observe(duration.Seconds(), durationBuckets)
-	}
-	if metricEnabled(config, RequestSizeMetric, reporter) {
-		value.requestSize.observe(float64(requestSize), sizeBuckets)
-	}
-	if metricEnabled(config, ResponseSizeMetric, reporter) {
-		value.responseSize.observe(float64(responseSize), sizeBuckets)
-	}
-	r.values[key] = value
-	r.metricsMu.Unlock()
+	r.recordAccessLogs(r.logging.Load(), reporter, service, method, code, duration)
 }
 
 func metricEnabled(config *metricConfig, metric, reporter string) bool {
